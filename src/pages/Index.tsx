@@ -478,8 +478,8 @@ const Index = () => {
               ))}
             </ul>
 
-            <a href="mailto:FlowSights.sales@outlook.com" className="inline-flex items-center gap-2 mt-8 text-primary font-medium hover:underline">
-              <Mail className="w-4 h-4" /> FlowSights.sales@outlook.com
+            <a href="mailto:contacto@flowsights.it.com" className="inline-flex items-center gap-2 mt-8 text-primary font-medium hover:underline">
+              <Mail className="w-4 h-4" /> contacto@flowsights.it.com
             </a>
           </div>
 
