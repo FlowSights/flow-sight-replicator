@@ -436,10 +436,7 @@ const Index = () => {
               const c = pickAccent(i);
               return (
                 <Card key={ind.title} className={`p-6 glass-card hover:-translate-y-1 transition-all ${c.border}`}>
-                  <div
-                    className={`w-11 h-11 rounded-xl ${c.bg} ${c.text} grid place-items-center mb-4`}
-                    style={{ boxShadow: `0 8px 24px -8px hsl(var(--c) / 0.4)`, ...({} as object) }}
-                  >
+                  <div className={`w-11 h-11 rounded-xl ${c.bg} ${c.text} grid place-items-center mb-4`}>
                     <Icon className="w-5 h-5" />
                   </div>
                   <h3 className="font-display text-xl font-bold mb-2">{ind.title}</h3>
