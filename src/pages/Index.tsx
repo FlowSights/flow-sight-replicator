@@ -524,8 +524,8 @@ const Index = () => {
                 <Label htmlFor="message">Mensaje</Label>
                 <Textarea id="message" rows={4} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} className="mt-1.5" placeholder="Cuéntanos brevemente tu situación..." />
               </div>
-              <Button type="submit" variant="hero" size="lg" className="w-full">
-                Solicitar diagnóstico gratuito <ArrowRight className="ml-1" />
+              <Button type="submit" variant="hero" size="lg" className="w-full" disabled={submitting}>
+                {submitting ? "Enviando..." : <>Solicitar diagnóstico gratuito <ArrowRight className="ml-1" /></>}
               </Button>
               <p className="text-xs text-muted-foreground text-center">
                 Al enviar este formulario aceptas nuestra <a href="#" className="text-primary hover:underline">política de privacidad</a>.
