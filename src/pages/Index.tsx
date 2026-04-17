@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import heroDashboard from "@/assets/hero-dashboard.png";
 import { useState } from "react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const Index = () => {
   const { toast } = useToast();
@@ -102,9 +103,12 @@ const Index = () => {
               <a key={l.href} href={l.href} className="hover:text-foreground transition-colors">{l.label}</a>
             ))}
           </div>
-          <Button variant="hero" size="sm" asChild>
-            <a href="#contacto">Diagnóstico gratuito</a>
-          </Button>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <Button variant="hero" size="sm" asChild>
+              <a href="#contacto">Diagnóstico gratuito</a>
+            </Button>
+          </div>
         </nav>
       </header>
 
