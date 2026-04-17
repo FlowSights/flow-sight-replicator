@@ -52,6 +52,17 @@ const parseStat = (raw: string): HeroStat => {
   };
 };
 
+// Rotating accent palette — semantic tokens defined in index.css
+const accentPalette = [
+  { text: "text-[hsl(var(--accent-violet))]", bg: "bg-[hsl(var(--accent-violet)/0.12)]", border: "hover:border-[hsl(var(--accent-violet)/0.6)]", ring: "[--c:var(--accent-violet)]" },
+  { text: "text-[hsl(var(--accent-amber))]", bg: "bg-[hsl(var(--accent-amber)/0.12)]", border: "hover:border-[hsl(var(--accent-amber)/0.6)]", ring: "[--c:var(--accent-amber)]" },
+  { text: "text-[hsl(var(--accent-rose))]", bg: "bg-[hsl(var(--accent-rose)/0.12)]", border: "hover:border-[hsl(var(--accent-rose)/0.6)]", ring: "[--c:var(--accent-rose)]" },
+  { text: "text-[hsl(var(--accent-sky))]", bg: "bg-[hsl(var(--accent-sky)/0.12)]", border: "hover:border-[hsl(var(--accent-sky)/0.6)]", ring: "[--c:var(--accent-sky)]" },
+  { text: "text-[hsl(var(--accent-lime))]", bg: "bg-[hsl(var(--accent-lime)/0.12)]", border: "hover:border-[hsl(var(--accent-lime)/0.6)]", ring: "[--c:var(--accent-lime)]" },
+  { text: "text-[hsl(var(--accent-coral))]", bg: "bg-[hsl(var(--accent-coral)/0.12)]", border: "hover:border-[hsl(var(--accent-coral)/0.6)]", ring: "[--c:var(--accent-coral)]" },
+];
+const pickAccent = (i: number) => accentPalette[i % accentPalette.length];
+
 const Index = () => {
   const { toast } = useToast();
   const [form, setForm] = useState({ name: "", email: "", company: "", message: "" });
