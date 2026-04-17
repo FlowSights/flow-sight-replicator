@@ -386,13 +386,18 @@ const Index = () => {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {results.map((r) => {
+            {results.map((r, i) => {
               const Icon = r.icon;
+              const c = pickAccent(i);
+              const stat = parseStat(r.value);
               return (
-                <Card key={r.title} className="p-7 glass-card hover:border-primary/50 transition-all">
+                <Card key={r.title} className={`p-7 glass-card transition-all ${c.border}`}>
                   <div className="flex items-start justify-between mb-4">
-                    <div className="font-display text-5xl font-bold text-gradient">{r.value}</div>
-                    <span className="w-11 h-11 rounded-xl bg-primary/10 text-primary grid place-items-center">
+                    <AnimatedStat
+                      stat={{ ...stat, label: "" }}
+                      className={`font-display text-5xl font-bold ${c.text}`}
+                    />
+                    <span className={`w-11 h-11 rounded-xl ${c.bg} ${c.text} grid place-items-center`}>
                       <Icon className="w-5 h-5" />
                     </span>
                   </div>
@@ -426,12 +431,16 @@ const Index = () => {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            {industries.map((ind) => {
+            {industries.map((ind, i) => {
               const Icon = ind.icon;
+              const c = pickAccent(i);
               return (
-                <Card key={ind.title} className="p-6 glass-card hover:-translate-y-1 hover:border-primary/50 transition-all">
-                  <div className="w-11 h-11 rounded-xl bg-gradient-primary grid place-items-center mb-4 shadow-glow">
-                    <Icon className="w-5 h-5 text-primary-foreground" />
+                <Card key={ind.title} className={`p-6 glass-card hover:-translate-y-1 transition-all ${c.border}`}>
+                  <div
+                    className={`w-11 h-11 rounded-xl ${c.bg} ${c.text} grid place-items-center mb-4`}
+                    style={{ boxShadow: `0 8px 24px -8px hsl(var(--c) / 0.4)`, ...({} as object) }}
+                  >
+                    <Icon className="w-5 h-5" />
                   </div>
                   <h3 className="font-display text-xl font-bold mb-2">{ind.title}</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed mb-4">{ind.desc}</p>
