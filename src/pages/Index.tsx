@@ -194,13 +194,9 @@ const Index = () => {
               En FlowSights ayudamos a empresas a limpiar sus datos, optimizar procesos y detectar oportunidades ocultas en sus operaciones.
             </p>
             <div className="flex flex-wrap gap-3">
-              {["Limpieza de datos", "Insights operativos", "Dashboards en tiempo real"].map((t, i) => (
-                <span
-                  key={t}
-                  style={{ animationDelay: `${i * 0.4}s` }}
-                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-border bg-card/50 text-sm animate-float cursor-default transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:border-primary/60 hover:bg-primary/10 hover:text-foreground hover:shadow-[0_8px_24px_-8px_hsl(var(--primary)/0.4)]"
-                >
-                  <Check className="w-4 h-4 text-primary transition-transform duration-300 group-hover:rotate-12" /> {t}
+              {["Limpieza de datos", "Insights operativos", "Dashboards en tiempo real"].map((t) => (
+                <span key={t} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-border bg-card/50 text-sm">
+                  <Check className="w-4 h-4 text-primary" /> {t}
                 </span>
               ))}
             </div>
