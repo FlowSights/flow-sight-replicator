@@ -103,6 +103,14 @@
     --shadow-card: 0 20px 60px -20px hsl(215 80% 2% / 0.6);
     --shadow-elevated: 0 30px 80px -20px hsl(215 80% 2% / 0.8);
 
+    /* Accent palette (slightly brighter on dark) */
+    --accent-violet: 265 85% 70%;
+    --accent-amber: 38 95% 62%;
+    --accent-rose: 340 85% 68%;
+    --accent-sky: 200 95% 65%;
+    --accent-lime: 95 70% 60%;
+    --accent-coral: 12 90% 68%;
+
     --sidebar-background: 215 55% 9%;
     --sidebar-foreground: 210 40% 98%;
     --sidebar-primary: 158 84% 45%;
