@@ -58,6 +58,12 @@ export default {
           ring: "hsl(var(--sidebar-ring))",
         },
         "primary-glow": "hsl(var(--primary-glow))",
+        violet: "hsl(var(--accent-violet))",
+        amber: "hsl(var(--accent-amber))",
+        rose: "hsl(var(--accent-rose))",
+        sky: "hsl(var(--accent-sky))",
+        lime: "hsl(var(--accent-lime))",
+        coral: "hsl(var(--accent-coral))",
       },
       fontFamily: {
         sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],

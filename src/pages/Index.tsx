@@ -25,18 +25,43 @@ import {
 
 type HeroStat = { value: number; suffix: string; prefix?: string; label: string; decimals?: number };
 
-const AnimatedStat = ({ stat }: { stat: HeroStat }) => {
+const AnimatedStat = ({ stat, className = "font-display text-3xl font-bold text-gradient" }: { stat: HeroStat; className?: string }) => {
   const v = useCountUp(stat.value, 1800, stat.decimals ?? 0);
   const formatted = (stat.decimals ?? 0) > 0 ? v.toFixed(stat.decimals) : Math.round(v).toString();
   return (
     <div>
-      <div className="font-display text-3xl font-bold text-gradient">
+      <div className={className}>
         {stat.prefix ?? ""}{formatted}{stat.suffix}
       </div>
-      <div className="text-sm text-muted-foreground mt-1">{stat.label}</div>
+      {stat.label ? <div className="text-sm text-muted-foreground mt-1">{stat.label}</div> : null}
     </div>
   );
 };
+
+/** Parse strings like "-30%", "+2x", "95%", "360°", "10x", "+40%" into a HeroStat */
+const parseStat = (raw: string): HeroStat => {
+  const m = raw.match(/^([+-]?)(\d+(?:\.\d+)?)(.*)$/);
+  if (!m) return { value: 0, suffix: raw, label: "" };
+  const [, sign, num, suffix] = m;
+  return {
+    value: parseFloat(num),
+    prefix: sign === "+" ? "+" : sign === "-" ? "-" : "",
+    suffix,
+    decimals: num.includes(".") ? 1 : 0,
+    label: "",
+  };
+};
+
+// Rotating accent palette — semantic tokens defined in index.css
+const accentPalette = [
+  { text: "text-[hsl(var(--accent-violet))]", bg: "bg-[hsl(var(--accent-violet)/0.12)]", border: "hover:border-[hsl(var(--accent-violet)/0.6)]", ring: "[--c:var(--accent-violet)]" },
+  { text: "text-[hsl(var(--accent-amber))]", bg: "bg-[hsl(var(--accent-amber)/0.12)]", border: "hover:border-[hsl(var(--accent-amber)/0.6)]", ring: "[--c:var(--accent-amber)]" },
+  { text: "text-[hsl(var(--accent-rose))]", bg: "bg-[hsl(var(--accent-rose)/0.12)]", border: "hover:border-[hsl(var(--accent-rose)/0.6)]", ring: "[--c:var(--accent-rose)]" },
+  { text: "text-[hsl(var(--accent-sky))]", bg: "bg-[hsl(var(--accent-sky)/0.12)]", border: "hover:border-[hsl(var(--accent-sky)/0.6)]", ring: "[--c:var(--accent-sky)]" },
+  { text: "text-[hsl(var(--accent-lime))]", bg: "bg-[hsl(var(--accent-lime)/0.12)]", border: "hover:border-[hsl(var(--accent-lime)/0.6)]", ring: "[--c:var(--accent-lime)]" },
+  { text: "text-[hsl(var(--accent-coral))]", bg: "bg-[hsl(var(--accent-coral)/0.12)]", border: "hover:border-[hsl(var(--accent-coral)/0.6)]", ring: "[--c:var(--accent-coral)]" },
+];
+const pickAccent = (i: number) => accentPalette[i % accentPalette.length];
 
 const Index = () => {
   const { toast } = useToast();
@@ -180,13 +205,9 @@ const Index = () => {
               En FlowSights ayudamos a empresas a limpiar sus datos, optimizar procesos y detectar oportunidades ocultas en sus operaciones.
             </p>
             <div className="flex flex-wrap gap-3">
-              {["Limpieza de datos", "Insights operativos", "Dashboards en tiempo real"].map((t, i) => (
-                <span
-                  key={t}
-                  style={{ animationDelay: `${i * 0.4}s` }}
-                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-border bg-card/50 text-sm animate-float cursor-default transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:border-primary/60 hover:bg-primary/10 hover:text-foreground hover:shadow-[0_8px_24px_-8px_hsl(var(--primary)/0.4)]"
-                >
-                  <Check className="w-4 h-4 text-primary transition-transform duration-300 group-hover:rotate-12" /> {t}
+              {["Limpieza de datos", "Insights operativos", "Dashboards en tiempo real"].map((t) => (
+                <span key={t} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-border bg-card/50 text-sm">
+                  <Check className="w-4 h-4 text-primary" /> {t}
                 </span>
               ))}
             </div>
@@ -250,15 +271,18 @@ const Index = () => {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {problems.map((p) => (
-              <Card key={p.title} className="p-6 glass-card hover:border-primary/50 transition-all hover:-translate-y-1 group">
-                <div className="w-10 h-10 rounded-lg bg-destructive/10 text-destructive grid place-items-center mb-4 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
-                  <Zap className="w-5 h-5" />
-                </div>
-                <h3 className="font-semibold text-lg mb-2">{p.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{p.desc}</p>
-              </Card>
-            ))}
+            {problems.map((p, i) => {
+              const c = pickAccent(i);
+              return (
+                <Card key={p.title} className={`p-6 glass-card transition-all hover:-translate-y-1 group ${c.border}`}>
+                  <div className={`w-10 h-10 rounded-lg ${c.bg} ${c.text} grid place-items-center mb-4 transition-colors`}>
+                    <Zap className="w-5 h-5" />
+                  </div>
+                  <h3 className="font-semibold text-lg mb-2">{p.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{p.desc}</p>
+                </Card>
+              );
+            })}
           </div>
 
           <Card className="mt-10 p-8 md:p-10 glass-card border-primary/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 bg-gradient-to-br from-primary/10 to-accent/5">
@@ -287,16 +311,19 @@ const Index = () => {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {steps.map((s, i) => (
-              <Card key={s.n} className="p-6 glass-card relative overflow-hidden group hover:border-primary/50 transition-all">
-                <div className="text-xs font-semibold text-primary tracking-widest mb-3">PASO {s.n}</div>
-                <div className="font-display text-7xl font-bold text-primary/10 absolute -right-2 -top-2 group-hover:text-primary/20 transition-colors">
-                  {i + 1}
-                </div>
-                <h3 className="font-semibold text-lg mb-2 relative">{s.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed relative">{s.desc}</p>
-              </Card>
-            ))}
+            {steps.map((s, i) => {
+              const c = pickAccent(i);
+              return (
+                <Card key={s.n} className={`p-6 glass-card relative overflow-hidden group transition-all ${c.border}`}>
+                  <div className={`text-xs font-semibold tracking-widest mb-3 ${c.text}`}>PASO {s.n}</div>
+                  <div className={`font-display text-7xl font-bold absolute -right-2 -top-2 transition-colors opacity-10 group-hover:opacity-25 ${c.text}`}>
+                    {i + 1}
+                  </div>
+                  <h3 className="font-semibold text-lg mb-2 relative">{s.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed relative">{s.desc}</p>
+                </Card>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -315,25 +342,26 @@ const Index = () => {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {services.map((s) => {
+            {services.map((s, i) => {
               const Icon = s.icon;
+              const c = pickAccent(i + 1);
               return (
-                <Card key={s.title} className={`p-7 glass-card hover:-translate-y-1 transition-all relative ${s.popular ? "border-primary/60 shadow-glow" : "hover:border-primary/40"}`}>
+                <Card key={s.title} className={`p-7 glass-card hover:-translate-y-1 transition-all relative ${s.popular ? "border-primary/60 shadow-glow" : c.border}`}>
                   {s.popular && (
                     <span className="absolute -top-3 right-6 bg-gradient-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full">
                       Más popular
                     </span>
                   )}
-                  <div className="w-12 h-12 rounded-xl bg-gradient-primary grid place-items-center mb-5 shadow-glow">
-                    <Icon className="w-6 h-6 text-primary-foreground" />
+                  <div className={`w-12 h-12 rounded-xl ${c.bg} ${c.text} grid place-items-center mb-5`}>
+                    <Icon className="w-6 h-6" />
                   </div>
-                  <div className="text-xs text-primary font-semibold uppercase tracking-wider mb-2">{s.tag}</div>
+                  <div className={`text-xs font-semibold uppercase tracking-wider mb-2 ${c.text}`}>{s.tag}</div>
                   <h3 className="font-display text-2xl font-bold mb-3">{s.title}</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed mb-5">{s.desc}</p>
                   <ul className="space-y-2 mb-2">
                     {s.items.map((it) => (
                       <li key={it} className="flex items-center gap-2 text-sm">
-                        <Check className="w-4 h-4 text-primary shrink-0" /> {it}
+                        <Check className={`w-4 h-4 shrink-0 ${c.text}`} /> {it}
                       </li>
                     ))}
                   </ul>
@@ -358,13 +386,18 @@ const Index = () => {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {results.map((r) => {
+            {results.map((r, i) => {
               const Icon = r.icon;
+              const c = pickAccent(i);
+              const stat = parseStat(r.value);
               return (
-                <Card key={r.title} className="p-7 glass-card hover:border-primary/50 transition-all">
+                <Card key={r.title} className={`p-7 glass-card transition-all ${c.border}`}>
                   <div className="flex items-start justify-between mb-4">
-                    <div className="font-display text-5xl font-bold text-gradient">{r.value}</div>
-                    <span className="w-11 h-11 rounded-xl bg-primary/10 text-primary grid place-items-center">
+                    <AnimatedStat
+                      stat={{ ...stat, label: "" }}
+                      className={`font-display text-5xl font-bold ${c.text}`}
+                    />
+                    <span className={`w-11 h-11 rounded-xl ${c.bg} ${c.text} grid place-items-center`}>
                       <Icon className="w-5 h-5" />
                     </span>
                   </div>
@@ -398,12 +431,13 @@ const Index = () => {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            {industries.map((ind) => {
+            {industries.map((ind, i) => {
               const Icon = ind.icon;
+              const c = pickAccent(i);
               return (
-                <Card key={ind.title} className="p-6 glass-card hover:-translate-y-1 hover:border-primary/50 transition-all">
-                  <div className="w-11 h-11 rounded-xl bg-gradient-primary grid place-items-center mb-4 shadow-glow">
-                    <Icon className="w-5 h-5 text-primary-foreground" />
+                <Card key={ind.title} className={`p-6 glass-card hover:-translate-y-1 transition-all ${c.border}`}>
+                  <div className={`w-11 h-11 rounded-xl ${c.bg} ${c.text} grid place-items-center mb-4`}>
+                    <Icon className="w-5 h-5" />
                   </div>
                   <h3 className="font-display text-xl font-bold mb-2">{ind.title}</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed mb-4">{ind.desc}</p>

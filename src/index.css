@@ -45,6 +45,14 @@
     --shadow-card: 0 20px 60px -20px hsl(220 30% 30% / 0.15);
     --shadow-elevated: 0 30px 80px -20px hsl(220 30% 20% / 0.25);
 
+    /* Accent palette for visual variety */
+    --accent-violet: 265 80% 60%;
+    --accent-amber: 35 95% 55%;
+    --accent-rose: 340 82% 60%;
+    --accent-sky: 200 90% 55%;
+    --accent-lime: 95 65% 50%;
+    --accent-coral: 12 88% 62%;
+
     --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 220 50% 10%;
     --sidebar-primary: 158 75% 38%;
@@ -94,6 +102,14 @@
     --shadow-glow: 0 0 60px -10px hsl(158 84% 45% / 0.4);
     --shadow-card: 0 20px 60px -20px hsl(215 80% 2% / 0.6);
     --shadow-elevated: 0 30px 80px -20px hsl(215 80% 2% / 0.8);
+
+    /* Accent palette (slightly brighter on dark) */
+    --accent-violet: 265 85% 70%;
+    --accent-amber: 38 95% 62%;
+    --accent-rose: 340 85% 68%;
+    --accent-sky: 200 95% 65%;
+    --accent-lime: 95 70% 60%;
+    --accent-coral: 12 90% 68%;
 
     --sidebar-background: 215 55% 9%;
     --sidebar-foreground: 210 40% 98%;
