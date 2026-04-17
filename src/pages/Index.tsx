@@ -8,13 +8,35 @@ import {
   ArrowRight, ArrowDown, ArrowUp, Play, Check, Sparkles, Database, LineChart,
   Workflow, BarChart3, Activity, Factory, Truck, Hotel, UtensilsCrossed,
   Stethoscope, ShoppingBag, HardHat, Plus, Mail, ShieldCheck, Zap, Eye,
-  TrendingUp, Clock, DollarSign,
+  TrendingUp, Clock, DollarSign, Menu,
 } from "lucide-react";
 import heroDashboard from "@/assets/hero-dashboard.png";
 import logo from "@/assets/logo.png";
 import { useState } from "react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { supabase } from "@/integrations/supabase/client";
+import { useCountUp } from "@/hooks/useCountUp";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+type HeroStat = { value: number; suffix: string; prefix?: string; label: string; decimals?: number };
+
+const AnimatedStat = ({ stat }: { stat: HeroStat }) => {
+  const v = useCountUp(stat.value, 1800, stat.decimals ?? 0);
+  const formatted = (stat.decimals ?? 0) > 0 ? v.toFixed(stat.decimals) : Math.round(v).toString();
+  return (
+    <div>
+      <div className="font-display text-3xl font-bold text-gradient">
+        {stat.prefix ?? ""}{formatted}{stat.suffix}
+      </div>
+      <div className="text-sm text-muted-foreground mt-1">{stat.label}</div>
+    </div>
+  );
+};
 
 const Index = () => {
   const { toast } = useToast();
@@ -117,13 +139,23 @@ const Index = () => {
             <img src={logo} alt="FlowSights logo" width={36} height={36} className="w-9 h-9 object-contain" />
             <span>FlowSights</span>
           </a>
-          <div className="hidden md:flex items-center gap-8 text-sm text-muted-foreground">
-            {navLinks.map((l) => (
-              <a key={l.href} href={l.href} className="hover:text-foreground transition-colors">{l.label}</a>
-            ))}
-          </div>
           <div className="flex items-center gap-2">
             <ThemeToggle />
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="gap-2">
+                  <Menu className="w-4 h-4" />
+                  <span className="hidden sm:inline">Menú</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56 bg-background/95 backdrop-blur-xl">
+                {navLinks.map((l) => (
+                  <DropdownMenuItem key={l.href} asChild>
+                    <a href={l.href} className="cursor-pointer">{l.label}</a>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
             <Button variant="hero" size="sm" asChild>
               <a href="#contacto">Diagnóstico gratuito</a>
             </Button>
@@ -148,9 +180,13 @@ const Index = () => {
               En FlowSights ayudamos a empresas a limpiar sus datos, optimizar procesos y detectar oportunidades ocultas en sus operaciones.
             </p>
             <div className="flex flex-wrap gap-3">
-              {["Limpieza de datos", "Insights operativos", "Dashboards en tiempo real"].map((t) => (
-                <span key={t} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-border bg-card/50 text-sm">
-                  <Check className="w-4 h-4 text-primary" /> {t}
+              {["Limpieza de datos", "Insights operativos", "Dashboards en tiempo real"].map((t, i) => (
+                <span
+                  key={t}
+                  style={{ animationDelay: `${i * 0.4}s` }}
+                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-border bg-card/50 text-sm animate-float cursor-default transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:border-primary/60 hover:bg-primary/10 hover:text-foreground hover:shadow-[0_8px_24px_-8px_hsl(var(--primary)/0.4)]"
+                >
+                  <Check className="w-4 h-4 text-primary transition-transform duration-300 group-hover:rotate-12" /> {t}
                 </span>
               ))}
             </div>
@@ -163,15 +199,12 @@ const Index = () => {
               </Button>
             </div>
             <div className="grid grid-cols-3 gap-6 pt-8 border-t border-border/60 max-w-lg">
-              {[
-                { v: "30%", l: "Reducción de costos" },
-                { v: "2x", l: "Mayor productividad" },
-                { v: "95%", l: "Precisión de datos" },
-              ].map((s) => (
-                <div key={s.l}>
-                  <div className="font-display text-3xl font-bold text-gradient">{s.v}</div>
-                  <div className="text-sm text-muted-foreground mt-1">{s.l}</div>
-                </div>
+              {([
+                { value: 30, suffix: "%", label: "Reducción de costos" },
+                { value: 2, suffix: "x", label: "Mayor productividad" },
+                { value: 95, suffix: "%", label: "Precisión de datos" },
+              ] as HeroStat[]).map((s) => (
+                <AnimatedStat key={s.label} stat={s} />
               ))}
             </div>
           </div>
