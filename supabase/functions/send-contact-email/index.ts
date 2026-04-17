@@ -5,7 +5,10 @@ const corsHeaders = {
 };
 
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/resend";
-const TO_EMAIL = "contacto@flowsights.it.com";
+// Sandbox de Resend: solo puede enviar a la cuenta dueña del API key.
+// Una vez verifiques flowsights.it.com en resend.com/domains, cambia esto a "contacto@flowsights.it.com"
+// y el `from` a "FlowSights <contacto@flowsights.it.com>".
+const TO_EMAIL = "spineda2014.123@gmail.com";
 
 interface ContactPayload {
   name: string;
