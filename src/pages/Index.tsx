@@ -271,15 +271,18 @@ const Index = () => {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {problems.map((p) => (
-              <Card key={p.title} className="p-6 glass-card hover:border-primary/50 transition-all hover:-translate-y-1 group">
-                <div className="w-10 h-10 rounded-lg bg-destructive/10 text-destructive grid place-items-center mb-4 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
-                  <Zap className="w-5 h-5" />
-                </div>
-                <h3 className="font-semibold text-lg mb-2">{p.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{p.desc}</p>
-              </Card>
-            ))}
+            {problems.map((p, i) => {
+              const c = pickAccent(i);
+              return (
+                <Card key={p.title} className={`p-6 glass-card transition-all hover:-translate-y-1 group ${c.border}`}>
+                  <div className={`w-10 h-10 rounded-lg ${c.bg} ${c.text} grid place-items-center mb-4 transition-colors`}>
+                    <Zap className="w-5 h-5" />
+                  </div>
+                  <h3 className="font-semibold text-lg mb-2">{p.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{p.desc}</p>
+                </Card>
+              );
+            })}
           </div>
 
           <Card className="mt-10 p-8 md:p-10 glass-card border-primary/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 bg-gradient-to-br from-primary/10 to-accent/5">
@@ -308,16 +311,19 @@ const Index = () => {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {steps.map((s, i) => (
-              <Card key={s.n} className="p-6 glass-card relative overflow-hidden group hover:border-primary/50 transition-all">
-                <div className="text-xs font-semibold text-primary tracking-widest mb-3">PASO {s.n}</div>
-                <div className="font-display text-7xl font-bold text-primary/10 absolute -right-2 -top-2 group-hover:text-primary/20 transition-colors">
-                  {i + 1}
-                </div>
-                <h3 className="font-semibold text-lg mb-2 relative">{s.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed relative">{s.desc}</p>
-              </Card>
-            ))}
+            {steps.map((s, i) => {
+              const c = pickAccent(i);
+              return (
+                <Card key={s.n} className={`p-6 glass-card relative overflow-hidden group transition-all ${c.border}`}>
+                  <div className={`text-xs font-semibold tracking-widest mb-3 ${c.text}`}>PASO {s.n}</div>
+                  <div className={`font-display text-7xl font-bold absolute -right-2 -top-2 transition-colors opacity-10 group-hover:opacity-25 ${c.text}`}>
+                    {i + 1}
+                  </div>
+                  <h3 className="font-semibold text-lg mb-2 relative">{s.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed relative">{s.desc}</p>
+                </Card>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -336,25 +342,26 @@ const Index = () => {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {services.map((s) => {
+            {services.map((s, i) => {
               const Icon = s.icon;
+              const c = pickAccent(i + 1);
               return (
-                <Card key={s.title} className={`p-7 glass-card hover:-translate-y-1 transition-all relative ${s.popular ? "border-primary/60 shadow-glow" : "hover:border-primary/40"}`}>
+                <Card key={s.title} className={`p-7 glass-card hover:-translate-y-1 transition-all relative ${s.popular ? "border-primary/60 shadow-glow" : c.border}`}>
                   {s.popular && (
                     <span className="absolute -top-3 right-6 bg-gradient-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full">
                       Más popular
                     </span>
                   )}
-                  <div className="w-12 h-12 rounded-xl bg-gradient-primary grid place-items-center mb-5 shadow-glow">
-                    <Icon className="w-6 h-6 text-primary-foreground" />
+                  <div className={`w-12 h-12 rounded-xl ${c.bg} ${c.text} grid place-items-center mb-5`}>
+                    <Icon className="w-6 h-6" />
                   </div>
-                  <div className="text-xs text-primary font-semibold uppercase tracking-wider mb-2">{s.tag}</div>
+                  <div className={`text-xs font-semibold uppercase tracking-wider mb-2 ${c.text}`}>{s.tag}</div>
                   <h3 className="font-display text-2xl font-bold mb-3">{s.title}</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed mb-5">{s.desc}</p>
                   <ul className="space-y-2 mb-2">
                     {s.items.map((it) => (
                       <li key={it} className="flex items-center gap-2 text-sm">
-                        <Check className="w-4 h-4 text-primary shrink-0" /> {it}
+                        <Check className={`w-4 h-4 shrink-0 ${c.text}`} /> {it}
                       </li>
                     ))}
                   </ul>
