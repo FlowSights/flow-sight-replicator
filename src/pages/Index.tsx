@@ -94,7 +94,7 @@ const Index = () => {
       <header className="fixed top-0 inset-x-0 z-50 backdrop-blur-xl bg-background/70 border-b border-border/50">
         <nav className="container flex items-center justify-between h-16">
           <a href="#" className="flex items-center gap-2 font-display font-bold text-lg">
-            <img src={logo} alt="FlowSights logo" width={36} height={36} className="w-9 h-9 object-contain" />
+            <img src={logo} alt="FlowSights logo" width={108} height={108} className="w-[6.75rem] h-[6.75rem] object-contain" />
             <span>FlowSights</span>
           </a>
           <div className="hidden md:flex items-center gap-8 text-sm text-muted-foreground">
