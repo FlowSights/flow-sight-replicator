@@ -14,6 +14,7 @@ import heroDashboard from "@/assets/hero-dashboard.png";
 import logo from "@/assets/logo.png";
 import { useState } from "react";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
   const { toast } = useToast();
@@ -82,10 +83,29 @@ const Index = () => {
     { initials: "OZ", name: "Oscar Zapata", role: "Especialista en Control de Inventarios", desc: "Especialista en control de inventarios, manejo de operaciones y ventas", tags: ["Control de inventarios", "Manejo de operaciones", "Ventas"] },
   ];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({ title: "¡Solicitud enviada!", description: "Te contactaremos en menos de 24 horas." });
-    setForm({ name: "", email: "", company: "", message: "" });
+    if (submitting) return;
+    setSubmitting(true);
+    try {
+      const { error } = await supabase.functions.invoke("send-contact-email", {
+        body: form,
+      });
+      if (error) throw error;
+      toast({ title: "¡Solicitud enviada!", description: "Te contactaremos en menos de 24 horas." });
+      setForm({ name: "", email: "", company: "", message: "" });
+    } catch (err) {
+      console.error(err);
+      toast({
+        title: "No se pudo enviar",
+        description: "Ocurrió un error. Inténtalo de nuevo o escríbenos a contacto@flowsights.it.com",
+        variant: "destructive",
+      });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -504,8 +524,8 @@ const Index = () => {
                 <Label htmlFor="message">Mensaje</Label>
                 <Textarea id="message" rows={4} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} className="mt-1.5" placeholder="Cuéntanos brevemente tu situación..." />
               </div>
-              <Button type="submit" variant="hero" size="lg" className="w-full">
-                Solicitar diagnóstico gratuito <ArrowRight className="ml-1" />
+              <Button type="submit" variant="hero" size="lg" className="w-full" disabled={submitting}>
+                {submitting ? "Enviando..." : <>Solicitar diagnóstico gratuito <ArrowRight className="ml-1" /></>}
               </Button>
               <p className="text-xs text-muted-foreground text-center">
                 Al enviar este formulario aceptas nuestra <a href="#" className="text-primary hover:underline">política de privacidad</a>.
