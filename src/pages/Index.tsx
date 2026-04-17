@@ -515,14 +515,58 @@ const Index = () => {
         </div>
       </section>
 
-      {/* FOOTER */}
-      <footer className="py-10 border-t border-border/50">
-        <div className="container flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
-          <div className="flex items-center gap-2 font-display font-bold text-foreground">
-            <img src={logo} alt="FlowSights logo" width={28} height={28} className="w-7 h-7 object-contain" />
-            FlowSights
+      {/* FOOTER EXPANDIDO */}
+      <footer className="border-t border-border/50 bg-card/30">
+        <div className="container py-16 grid gap-10 md:grid-cols-2 lg:grid-cols-4">
+          <div className="lg:col-span-1">
+            <div className="flex items-center gap-2 font-display font-bold text-foreground text-lg">
+              <img src={logo} alt="FlowSights logo" width={32} height={32} className="w-8 h-8 object-contain" />
+              FlowSights
+            </div>
+            <p className="text-sm text-muted-foreground mt-4 leading-relaxed">
+              Transformamos datos empresariales en decisiones inteligentes. Limpieza de datos, insights operativos y optimización de procesos para empresas en crecimiento.
+            </p>
           </div>
-          <p>© {new Date().getFullYear()} FlowSights. Todos los derechos reservados.</p>
+
+          <div>
+            <h4 className="font-display font-semibold text-foreground mb-4">Servicios</h4>
+            <ul className="space-y-2.5 text-sm text-muted-foreground">
+              {["Data Cleaning", "Operational Insights", "Process Optimization", "Dashboard Creation", "Performance Monitoring"].map((s) => (
+                <li key={s}>
+                  <a href="#servicios" className="hover:text-primary transition-colors">{s}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-display font-semibold text-foreground mb-4">Industrias</h4>
+            <ul className="space-y-2.5 text-sm text-muted-foreground">
+              {["Manufactura", "Logística", "Hoteles", "Restaurantes", "Clínicas", "Retail"].map((i) => (
+                <li key={i}>
+                  <a href="#industrias" className="hover:text-primary transition-colors">{i}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-display font-semibold text-foreground mb-4">Contacto</h4>
+            <ul className="space-y-2.5 text-sm text-muted-foreground">
+              <li>
+                <a href="mailto:contacto@flowsights.it.com" className="inline-flex items-center gap-2 hover:text-primary transition-colors">
+                  <Mail className="w-4 h-4" /> contacto@flowsights.it.com
+                </a>
+              </li>
+              <li>San José, Costa Rica</li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="border-t border-border/50">
+          <div className="container py-6 text-center text-sm text-muted-foreground">
+            © {new Date().getFullYear()} FlowSights. Todos los derechos reservados.
+          </div>
         </div>
       </footer>
     </div>
