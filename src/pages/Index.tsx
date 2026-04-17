@@ -11,6 +11,7 @@ import {
   TrendingUp, Clock, DollarSign,
 } from "lucide-react";
 import heroDashboard from "@/assets/hero-dashboard.png";
+import logo from "@/assets/logo.png";
 import { useState } from "react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
@@ -93,9 +94,7 @@ const Index = () => {
       <header className="fixed top-0 inset-x-0 z-50 backdrop-blur-xl bg-background/70 border-b border-border/50">
         <nav className="container flex items-center justify-between h-16">
           <a href="#" className="flex items-center gap-2 font-display font-bold text-lg">
-            <span className="w-8 h-8 rounded-lg bg-gradient-primary grid place-items-center shadow-glow">
-              <Activity className="w-4 h-4 text-primary-foreground" />
-            </span>
+            <img src={logo} alt="FlowSights logo" width={36} height={36} className="w-9 h-9 object-contain" />
             <span>FlowSights</span>
           </a>
           <div className="hidden md:flex items-center gap-8 text-sm text-muted-foreground">
@@ -520,9 +519,7 @@ const Index = () => {
       <footer className="py-10 border-t border-border/50">
         <div className="container flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
           <div className="flex items-center gap-2 font-display font-bold text-foreground">
-            <span className="w-7 h-7 rounded-lg bg-gradient-primary grid place-items-center">
-              <Activity className="w-3.5 h-3.5 text-primary-foreground" />
-            </span>
+            <img src={logo} alt="FlowSights logo" width={28} height={28} className="w-7 h-7 object-contain" />
             FlowSights
           </div>
           <p>© {new Date().getFullYear()} FlowSights. Todos los derechos reservados.</p>
