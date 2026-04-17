@@ -83,10 +83,29 @@ const Index = () => {
     { initials: "OZ", name: "Oscar Zapata", role: "Especialista en Control de Inventarios", desc: "Especialista en control de inventarios, manejo de operaciones y ventas", tags: ["Control de inventarios", "Manejo de operaciones", "Ventas"] },
   ];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({ title: "¡Solicitud enviada!", description: "Te contactaremos en menos de 24 horas." });
-    setForm({ name: "", email: "", company: "", message: "" });
+    if (submitting) return;
+    setSubmitting(true);
+    try {
+      const { error } = await supabase.functions.invoke("send-contact-email", {
+        body: form,
+      });
+      if (error) throw error;
+      toast({ title: "¡Solicitud enviada!", description: "Te contactaremos en menos de 24 horas." });
+      setForm({ name: "", email: "", company: "", message: "" });
+    } catch (err) {
+      console.error(err);
+      toast({
+        title: "No se pudo enviar",
+        description: "Ocurrió un error. Inténtalo de nuevo o escríbenos a contacto@flowsights.it.com",
+        variant: "destructive",
+      });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
