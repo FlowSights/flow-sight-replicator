@@ -166,11 +166,11 @@ const Index = () => {
     <div className="min-h-screen overflow-x-hidden">
       {/* NAVBAR */}
       <header className="fixed top-0 inset-x-0 z-50 backdrop-blur-xl bg-background/70 border-b border-border/50">
-        <nav className="container flex items-center justify-between h-16">
-          <a href="#" className="flex items-center gap-2 font-display font-bold text-lg">
-            <img src={logo} alt="FlowSights logo" width={36} height={36} className="w-9 h-9 object-contain" />
+        <nav className="container flex items-center justify-between h-20">
+          <Link to="/" className="flex items-center gap-2.5 font-display font-bold text-xl md:text-2xl hover:opacity-90 transition-opacity">
+            <img src={logo} alt="FlowSights logo" width={48} height={48} className="w-12 h-12 object-contain" />
             <span>FlowSights</span>
-          </a>
+          </Link>
           <div className="flex items-center gap-2">
             <ThemeToggle />
             <DropdownMenu>
@@ -188,7 +188,7 @@ const Index = () => {
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button variant="hero" size="sm" asChild>
+            <Button variant="hero" size="sm" asChild className="hidden sm:inline-flex">
               <a href="#contacto">Diagnóstico gratuito</a>
             </Button>
           </div>
@@ -204,11 +204,11 @@ const Index = () => {
               <span className="w-2 h-2 rounded-full bg-primary animate-pulse-glow" />
               Plataforma de Inteligencia Operativa
             </span>
-            <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.05]">
+            <h1 className="font-display text-6xl md:text-7xl lg:text-8xl font-bold leading-[1.05]">
               Convierte tus datos en{" "}
               <span className="text-gradient">decisiones inteligentes</span>
             </h1>
-            <p className="text-lg text-muted-foreground max-w-xl leading-relaxed">
+            <p className="text-xl md:text-2xl text-muted-foreground max-w-xl leading-relaxed">
               En FlowSights ayudamos a empresas a limpiar sus datos, optimizar procesos y detectar oportunidades ocultas en sus operaciones.
             </p>
             <div className="flex flex-wrap gap-3">
@@ -218,12 +218,17 @@ const Index = () => {
                 </span>
               ))}
             </div>
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-3">
               <Button variant="hero" size="lg" asChild>
                 <a href="#contacto">Solicitar diagnóstico gratuito <ArrowRight className="ml-1" /></a>
               </Button>
+              <Button size="lg" asChild className="bg-[#25D366] hover:bg-[#20bd5a] text-white">
+                <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
+                  <MessageCircle className="mr-1" /> WhatsApp
+                </a>
+              </Button>
               <Button variant="outline" size="lg" asChild>
-                <a href="#proceso"><Play className="mr-1" /> Ver cómo funciona</a>
+                <a href={EMAIL_URL}><Mail className="mr-1" /> Contáctanos</a>
               </Button>
             </div>
             <div className="grid grid-cols-3 gap-6 pt-8 border-t border-border/60 max-w-lg">
