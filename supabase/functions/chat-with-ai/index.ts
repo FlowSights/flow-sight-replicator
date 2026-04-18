@@ -69,8 +69,8 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const GEMINI_API_KEY = Deno.env.get("GEMINI_SECRET_KEY");
-    if (!GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is not configured");
+    const GROQ_API_KEY = Deno.env.get("GROQ_API_KEY");
+    if (!GROQ_API_KEY) throw new Error("GROQ_API_KEY is not configured");
 
     const body = (await req.json()) as Partial<ChatPayload>;
     const messages = Array.isArray(body.messages) ? body.messages : [];
@@ -82,31 +82,35 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Construir el contenido para Gemini
-    const contents = messages.slice(-10).map((m) => ({
-      role: m.role === "assistant" ? "model" : "user",
-      parts: [{ text: m.content.toString().slice(0, 2000) }],
-    }));
+    // Construir el contenido para Groq (formato OpenAI)
+    const chatMessages = [
+      { role: "system", content: SYSTEM_PROMPT },
+      ...messages.slice(-10).map((m) => ({
+        role: m.role,
+        content: m.content.toString().slice(0, 2000),
+      })),
+    ];
 
-    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
+    const groqUrl = "https://api.groq.com/openai/v1/chat/completions";
 
-    const resp = await fetch(geminiUrl, {
+    const resp = await fetch(groqUrl, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${GROQ_API_KEY}`,
+      },
       body: JSON.stringify({
-        systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
-        contents,
-        generationConfig: {
-          temperature: 0.7,
-          maxOutputTokens: 300,
-          topP: 0.9,
-        },
+        model: "llama-3.3-70b-versatile",
+        messages: chatMessages,
+        temperature: 0.7,
+        max_tokens: 300,
+        top_p: 0.9,
       }),
     });
 
     const data = await resp.json();
     if (!resp.ok) {
-      console.error("Gemini error", resp.status, data);
+      console.error("Groq error", resp.status, data);
       return new Response(
         JSON.stringify({ error: "Error al procesar la solicitud", details: data }),
         { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } },
@@ -114,7 +118,7 @@ Deno.serve(async (req) => {
     }
 
     const reply =
-      data?.candidates?.[0]?.content?.parts?.[0]?.text ??
+      data?.choices?.[0]?.message?.content ??
       "Lo siento, no pude procesar tu mensaje. ¿Podrías reformularlo?";
 
     return new Response(JSON.stringify({ reply }), {
