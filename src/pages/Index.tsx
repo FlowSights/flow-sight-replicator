@@ -128,12 +128,12 @@ const Index = () => {
   const testimonials = [
     { quote: "FlowSights nos ayudó a identificar que teníamos un 18% de duplicados en nuestra base de clientes. Después de la limpieza, nuestros reportes son mucho más precisos y ahorramos tiempo en cada cierre mensual.", initials: "CM", name: "Carlos Mendoza", role: "Director de Operaciones · Grupo Logístico Norte", sector: "Logística" },
     { quote: "Teníamos datos de ocupación dispersos en tres sistemas diferentes. FlowSights los unificó y nos entregó un dashboard que ahora usamos todos los días para tomar decisiones de pricing.", initials: "AR", name: "Ana Rodríguez", role: "Gerente General · Hotel Palmas Reales", sector: "Hotelería" },
-    { quote: "Detectaron un problema en nuestro inventario que nos estaba costando $200,000 pesos al mes en sobre-stock. En 3 semanas ya teníamos el proceso corregido y los datos en orden.", initials: "RF", name: "Roberto Fuentes", role: "CEO · Manufactura Fuentes S.A.", sector: "Manufactura" },
+    { quote: "Detectaron un problema en nuestro inventario que nos estaba costando ₡120.000.000 (colones) al mes en sobre-stock. En 3 semanas ya teníamos el proceso corregido y los datos en orden.", initials: "RF", name: "Roberto Fuentes", role: "CEO · Manufactura Fuentes S.A.", sector: "Manufactura" },
   ];
 
   const team = [
     { initials: "MG", name: "Marcos García", role: "Ingeniero Industrial", desc: "Amplio conocimiento en optimización de procesos", tags: ["Optimización de procesos", "Análisis operativo", "Eficiencia"] },
-    { initials: "SP", name: "Steven Pineda", role: "International Operations", desc: "Customer Experience & Sales Professional con más de 5 años de experiencia en múltiples industrias", tags: ["Experiencia del cliente", "Operaciones internacionales", "Ventas"] },
+    { initials: "SP", name: "Steven Pineda", role: "AI Data Analyst Junior · International Operations", desc: "AI Data Analyst Junior y Customer Experience & Sales Professional con más de 5 años de experiencia en múltiples industrias.", tags: ["AI Data Analyst Junior", "Experiencia del cliente", "Operaciones internacionales"] },
     { initials: "OZ", name: "Oscar Zapata", role: "Especialista en Control de Inventarios", desc: "Especialista en control de inventarios, manejo de operaciones y ventas", tags: ["Control de inventarios", "Manejo de operaciones", "Ventas"] },
   ];
 
@@ -269,7 +269,10 @@ const Index = () => {
         </div>
       </section>
 
-      {/* PROBLEM */}
+      {/* TOOLS MARQUEE */}
+      <ToolsMarquee />
+
+
       <section className="py-24 relative">
         <div className="container">
           <div className="text-center max-w-2xl mx-auto mb-16">
@@ -607,7 +610,7 @@ const Index = () => {
                 {submitting ? "Enviando..." : <>Solicitar diagnóstico gratuito <ArrowRight className="ml-1" /></>}
               </Button>
               <p className="text-xs text-muted-foreground text-center">
-                Al enviar este formulario aceptas nuestra <a href="#" className="text-primary hover:underline">política de privacidad</a>.
+                Al enviar este formulario aceptas nuestra <Link to="/privacidad" className="text-primary hover:underline">política de privacidad</Link>.
               </p>
             </form>
           </Card>
@@ -657,14 +660,38 @@ const Index = () => {
                   <Mail className="w-4 h-4" /> contacto@flowsights.it.com
                 </a>
               </li>
+              <li>
+                <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 hover:text-primary transition-colors">
+                  <MessageCircle className="w-4 h-4" /> WhatsApp
+                </a>
+              </li>
+              <li>
+                <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 hover:text-primary transition-colors">
+                  <Instagram className="w-4 h-4" /> @flowsights_cr
+                </a>
+              </li>
               <li>San José, Costa Rica</li>
+              <li>
+                <Link to="/privacidad" className="hover:text-primary transition-colors">Política de privacidad</Link>
+              </li>
             </ul>
           </div>
         </div>
 
         <div className="border-t border-border/50">
-          <div className="container py-6 text-center text-sm text-muted-foreground">
-            © {new Date().getFullYear()} FlowSights. Todos los derechos reservados.
+          <div className="container py-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
+            <span>© {new Date().getFullYear()} FlowSights. Todos los derechos reservados.</span>
+            <div className="flex items-center gap-3">
+              <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="w-9 h-9 grid place-items-center rounded-full border border-border/60 hover:border-primary/50 hover:text-primary transition-colors">
+                <Instagram className="w-4 h-4" />
+              </a>
+              <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="w-9 h-9 grid place-items-center rounded-full border border-border/60 hover:border-primary/50 hover:text-primary transition-colors">
+                <MessageCircle className="w-4 h-4" />
+              </a>
+              <a href={EMAIL_URL} aria-label="Email" className="w-9 h-9 grid place-items-center rounded-full border border-border/60 hover:border-primary/50 hover:text-primary transition-colors">
+                <Mail className="w-4 h-4" />
+              </a>
+            </div>
           </div>
         </div>
       </footer>
