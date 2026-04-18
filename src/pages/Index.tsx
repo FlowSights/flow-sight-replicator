@@ -79,7 +79,14 @@ const Index = () => {
     { label: "Servicios", href: "#servicios" },
     { label: "Industrias", href: "#industrias" },
     { label: "Quiénes somos", href: "#equipo" },
+    { label: "Blog", href: "/blog" },
     { label: "Contacto", href: "#contacto" },
+  ];
+
+  const blogPreview = [
+    { slug: "5-senales-datos-sucios", category: "Calidad de Datos", title: "5 señales de que tus datos están saboteando tus decisiones", excerpt: "Si tus reportes nunca cuadran o cada gerente trae un número distinto, probablemente tienes un problema de calidad de datos.", readingTime: "4 min" },
+    { slug: "como-empezar-dashboard-operativo", category: "Dashboards", title: "Cómo empezar con un dashboard operativo (sin morir en el intento)", excerpt: "No necesitas un equipo de BI ni un software caro para empezar. 4 pasos para construir tu primer dashboard útil.", readingTime: "5 min" },
+    { slug: "kpis-operativos-que-importan", category: "Operaciones", title: "Los 7 KPIs operativos que realmente importan en una PyME", excerpt: "Olvídate de los tableros con 40 métricas. Estos son los indicadores que cualquier gerente debería revisar cada semana.", readingTime: "6 min" },
   ];
 
   const problems = [
@@ -183,7 +190,11 @@ const Index = () => {
               <DropdownMenuContent align="end" className="w-56 bg-background/95 backdrop-blur-xl">
                 {navLinks.map((l) => (
                   <DropdownMenuItem key={l.href} asChild>
-                    <a href={l.href} className="cursor-pointer">{l.label}</a>
+                    {l.href.startsWith("/") ? (
+                      <Link to={l.href} className="cursor-pointer">{l.label}</Link>
+                    ) : (
+                      <a href={l.href} className="cursor-pointer">{l.label}</a>
+                    )}
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
@@ -552,6 +563,48 @@ const Index = () => {
         </div>
       </section>
 
+      {/* BLOG PREVIEW */}
+      <section id="blog" className="py-24 border-t border-border/50">
+        <div className="container">
+          <div className="text-center max-w-2xl mx-auto mb-14">
+            <span className="text-sm font-semibold text-primary uppercase tracking-wider">Blog & Recursos</span>
+            <h2 className="font-display text-4xl md:text-5xl font-bold mt-3">
+              Aprende a operar con <span className="text-gradient">datos confiables</span>
+            </h2>
+            <p className="text-muted-foreground mt-4 text-lg">
+              Artículos cortos y prácticos sobre operaciones, calidad de datos y decisiones inteligentes.
+            </p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-3">
+            {blogPreview.map((post, i) => {
+              const a = pickAccent(i);
+              return (
+                <Link key={post.slug} to={`/blog/${post.slug}`} className="group">
+                  <Card className={`p-6 h-full glass-card border border-border/60 transition-all duration-300 hover:-translate-y-1 hover:shadow-glow ${a.border}`}>
+                    <div className="flex items-center justify-between text-xs text-muted-foreground mb-3">
+                      <span className={`px-2 py-0.5 rounded-full ${a.bg} ${a.text} font-medium`}>{post.category}</span>
+                      <span>{post.readingTime}</span>
+                    </div>
+                    <h3 className="font-display text-lg font-bold leading-snug group-hover:text-primary transition-colors">{post.title}</h3>
+                    <p className="text-sm text-muted-foreground mt-3 leading-relaxed">{post.excerpt}</p>
+                    <span className="inline-flex items-center gap-1 mt-5 text-primary text-sm font-medium">
+                      Leer artículo <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+                    </span>
+                  </Card>
+                </Link>
+              );
+            })}
+          </div>
+
+          <div className="text-center mt-10">
+            <Button variant="outline" size="lg" asChild>
+              <Link to="/blog">Ver todos los artículos <ArrowRight className="ml-1" /></Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
       {/* CONTACT */}
       <section id="contacto" className="py-24 bg-card/30 border-t border-border/50">
         <div className="container grid lg:grid-cols-2 gap-12">
@@ -671,6 +724,9 @@ const Index = () => {
                 </a>
               </li>
               <li>San José, Costa Rica</li>
+              <li>
+                <Link to="/blog" className="hover:text-primary transition-colors">Blog</Link>
+              </li>
               <li>
                 <Link to="/privacidad" className="hover:text-primary transition-colors">Política de privacidad</Link>
               </li>
