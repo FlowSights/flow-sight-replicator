@@ -79,7 +79,14 @@ const Index = () => {
     { label: "Servicios", href: "#servicios" },
     { label: "Industrias", href: "#industrias" },
     { label: "Quiénes somos", href: "#equipo" },
+    { label: "Blog", href: "/blog" },
     { label: "Contacto", href: "#contacto" },
+  ];
+
+  const blogPreview = [
+    { slug: "5-senales-datos-sucios", category: "Calidad de Datos", title: "5 señales de que tus datos están saboteando tus decisiones", excerpt: "Si tus reportes nunca cuadran o cada gerente trae un número distinto, probablemente tienes un problema de calidad de datos.", readingTime: "4 min" },
+    { slug: "como-empezar-dashboard-operativo", category: "Dashboards", title: "Cómo empezar con un dashboard operativo (sin morir en el intento)", excerpt: "No necesitas un equipo de BI ni un software caro para empezar. 4 pasos para construir tu primer dashboard útil.", readingTime: "5 min" },
+    { slug: "kpis-operativos-que-importan", category: "Operaciones", title: "Los 7 KPIs operativos que realmente importan en una PyME", excerpt: "Olvídate de los tableros con 40 métricas. Estos son los indicadores que cualquier gerente debería revisar cada semana.", readingTime: "6 min" },
   ];
 
   const problems = [
