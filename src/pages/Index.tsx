@@ -493,7 +493,7 @@ const Index = () => {
 
           <div className="grid md:grid-cols-3 gap-6">
             {testimonials.map((t) => (
-              <Card key={t.name} className="p-7 glass-card hover:border-primary/40 transition-all flex flex-col">
+              <Card key={t.name} className="p-7 glass-card hover:border-primary/60 hover:-translate-y-1 hover:shadow-glow transition-all flex flex-col group">
                 <div className="text-primary text-4xl font-display leading-none mb-3">"</div>
                 <p className="text-foreground/90 leading-relaxed flex-1">{t.quote}</p>
                 <div className="flex items-center gap-3 mt-6 pt-6 border-t border-border/60">
