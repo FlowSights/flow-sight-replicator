@@ -190,7 +190,11 @@ const Index = () => {
               <DropdownMenuContent align="end" className="w-56 bg-background/95 backdrop-blur-xl">
                 {navLinks.map((l) => (
                   <DropdownMenuItem key={l.href} asChild>
-                    <a href={l.href} className="cursor-pointer">{l.label}</a>
+                    {l.href.startsWith("/") ? (
+                      <Link to={l.href} className="cursor-pointer">{l.label}</Link>
+                    ) : (
+                      <a href={l.href} className="cursor-pointer">{l.label}</a>
+                    )}
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
