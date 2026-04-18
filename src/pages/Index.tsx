@@ -8,20 +8,26 @@ import {
   ArrowRight, ArrowDown, ArrowUp, Play, Check, Sparkles, Database, LineChart,
   Workflow, BarChart3, Activity, Factory, Truck, Hotel, UtensilsCrossed,
   Stethoscope, ShoppingBag, HardHat, Plus, Mail, ShieldCheck, Zap, Eye,
-  TrendingUp, Clock, DollarSign, Menu,
+  TrendingUp, Clock, DollarSign, Menu, MessageCircle, Instagram,
 } from "lucide-react";
 import heroDashboard from "@/assets/hero-dashboard.png";
 import logo from "@/assets/logo.png";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { supabase } from "@/integrations/supabase/client";
 import { useCountUp } from "@/hooks/useCountUp";
+import { ToolsMarquee } from "@/components/ToolsMarquee";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
+const WHATSAPP_URL = "https://wa.me/message/FVHDA5OZHN66P1";
+const EMAIL_URL = "mailto:contacto@flowsights.it.com";
+const INSTAGRAM_URL = "https://www.instagram.com/flowsights_cr/";
 
 type HeroStat = { value: number; suffix: string; prefix?: string; label: string; decimals?: number };
 
