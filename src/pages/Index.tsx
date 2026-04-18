@@ -28,6 +28,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { supabase } from "@/integrations/supabase/client";
 import { useCountUp } from "@/hooks/useCountUp";
 import { ToolsMarquee } from "@/components/ToolsMarquee";
+import { AIChatbot } from "@/components/AIChatbot";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -849,6 +850,9 @@ const Index = () => {
           </div>
         </div>
       </footer>
+
+      {/* AI Chatbot flotante */}
+      <AIChatbot />
     </div>
   );
 };
