@@ -13,6 +13,7 @@ import {
 import { Instagram } from "@/components/icons/Instagram";
 import heroDashboard from "@/assets/hero-dashboard.png";
 import logo from "@/assets/logo.png";
+import stevenPhoto from "@/assets/team-steven.jpg";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -139,9 +140,9 @@ const Index = () => {
   ];
 
   const team = [
-    { initials: "MG", name: "Marcos García", role: "Ingeniero Industrial", desc: "Amplio conocimiento en optimización de procesos", tags: ["Optimización de procesos", "Análisis operativo", "Eficiencia"] },
-    { initials: "SP", name: "Steven Pineda", role: "AI Data Analyst Junior · International Operations", desc: "AI Data Analyst Junior y Customer Experience & Sales Professional con más de 5 años de experiencia en múltiples industrias.", tags: ["AI Data Analyst Junior", "Experiencia del cliente", "Operaciones internacionales"] },
-    { initials: "OZ", name: "Oscar Zapata", role: "Especialista en Control de Inventarios", desc: "Especialista en control de inventarios, manejo de operaciones y ventas", tags: ["Control de inventarios", "Manejo de operaciones", "Ventas"] },
+    { initials: "MG", name: "Marcos García", role: "Ingeniero Industrial", desc: "Amplio conocimiento en optimización de procesos", tags: ["Optimización de procesos", "Análisis operativo", "Eficiencia"], photo: null as string | null },
+    { initials: "SP", name: "Steven Pineda", role: "AI Data Analyst Junior · International Operations", desc: "AI Data Analyst Junior y Customer Experience & Sales Professional con más de 5 años de experiencia en múltiples industrias.", tags: ["AI Data Analyst Junior", "Experiencia del cliente", "Operaciones internacionales"], photo: stevenPhoto },
+    { initials: "OZ", name: "Oscar Zapata", role: "Especialista en Control de Inventarios", desc: "Especialista en control de inventarios, manejo de operaciones y ventas", tags: ["Control de inventarios", "Manejo de operaciones", "Ventas"], photo: null as string | null },
   ];
 
   const [submitting, setSubmitting] = useState(false);
@@ -539,9 +540,17 @@ const Index = () => {
           <div className="grid md:grid-cols-3 gap-6 mb-12">
             {team.map((m) => (
               <Card key={m.name} className="p-7 glass-card text-center hover:border-primary/60 hover:-translate-y-1 hover:shadow-glow transition-all group">
-                <div className="w-20 h-20 rounded-full bg-gradient-primary grid place-items-center text-primary-foreground font-bold text-xl mx-auto mb-4 shadow-glow">
-                  {m.initials}
-                </div>
+                {m.photo ? (
+                  <img
+                    src={m.photo}
+                    alt={`Foto de ${m.name}`}
+                    className="w-20 h-20 rounded-full object-cover mx-auto mb-4 shadow-glow ring-2 ring-primary/40"
+                  />
+                ) : (
+                  <div className="w-20 h-20 rounded-full bg-gradient-primary grid place-items-center text-primary-foreground font-bold text-xl mx-auto mb-4 shadow-glow">
+                    {m.initials}
+                  </div>
+                )}
                 <h3 className="font-display text-xl font-bold">{m.name}</h3>
                 <div className="text-primary text-sm font-medium mt-1">{m.role}</div>
                 <p className="text-sm text-muted-foreground mt-3 leading-relaxed">{m.desc}</p>
