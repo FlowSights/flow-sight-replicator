@@ -627,9 +627,9 @@ const Index = () => {
                   <Plus className="w-5 h-5" />
                 </div>
                 <h3 className="font-display text-xl font-bold mb-2">¿Tu industria no está aquí?</h3>
-                <p className="text-sm text-muted-foreground mb-4">Trabajamos con cualquier empresa que maneje datos operativos. Contáctanos para una consulta personalizada.</p>
+                <p className="text-sm text-muted-foreground mb-4">Si tu empresa maneja datos operativos, podemos ayudarte. Cuéntanos tu caso y te decimos cómo aportarte valor.</p>
                 <a href="#contacto" className="text-primary text-sm font-semibold inline-flex items-center gap-1 hover:gap-2 transition-all">
-                  Contáctanos <ArrowRight className="w-4 h-4" />
+                  Hablar con un experto <ArrowRight className="w-4 h-4" />
                 </a>
               </Card>
             </motion.div>
