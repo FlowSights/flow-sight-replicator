@@ -16,6 +16,7 @@ import {
   Stethoscope, ShoppingBag, HardHat, Plus, Mail, ShieldCheck, Zap, Eye,
   TrendingUp, Clock, DollarSign, Menu, MessageCircle,
 } from "lucide-react";
+import { motion } from "framer-motion";
 import { Instagram } from "@/components/icons/Instagram";
 import heroDashboard from "@/assets/hero-dashboard.png";
 import logo from "@/assets/logo.png";
@@ -29,6 +30,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useCountUp } from "@/hooks/useCountUp";
 import { ToolsMarquee } from "@/components/ToolsMarquee";
 import { AIChatbot } from "@/components/AIChatbot";
+import { ExplodedLaptop } from "@/components/ExplodedLaptop";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -241,19 +243,39 @@ const Index = () => {
                 </span>
               ))}
             </div>
-            <div className="flex flex-wrap gap-3">
-              <Button variant="hero" size="lg" asChild>
-                <a href="#contacto">Solicitar diagnóstico gratuito <ArrowRight className="ml-1" /></a>
-              </Button>
-              <Button size="lg" asChild className="bg-[#25D366] hover:bg-[#20bd5a] text-white">
-                <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
-                  <MessageCircle className="mr-1" /> WhatsApp
-                </a>
-              </Button>
-              <Button variant="outline" size="lg" asChild>
-                <a href={EMAIL_URL}><Mail className="mr-1" /> Contáctanos</a>
-              </Button>
-            </div>
+            <motion.div 
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: {
+                    staggerChildren: 0.2,
+                    delayChildren: 1.2
+                  }
+                }
+              }}
+              className="flex flex-wrap gap-3"
+            >
+              <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}>
+                <Button variant="hero" size="lg" asChild>
+                  <a href="#contacto">Solicitar diagnóstico gratuito <ArrowRight className="ml-1" /></a>
+                </Button>
+              </motion.div>
+              <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}>
+                <Button size="lg" asChild className="bg-[#25D366] hover:bg-[#20bd5a] text-white">
+                  <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
+                    <MessageCircle className="mr-1" /> WhatsApp
+                  </a>
+                </Button>
+              </motion.div>
+              <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}>
+                <Button variant="outline" size="lg" asChild>
+                  <a href={EMAIL_URL}><Mail className="mr-1" /> Contáctanos</a>
+                </Button>
+              </motion.div>
+            </motion.div>
             <div className="grid grid-cols-3 gap-6 pt-8 border-t border-border/60 max-w-lg">
               {([
                 { value: 30, suffix: "%", label: "Reducción de costos" },
@@ -265,29 +287,9 @@ const Index = () => {
             </div>
           </div>
 
-          <div className="relative animate-fade-up" style={{ animationDelay: "0.2s" }}>
-            <div className="absolute -inset-10 bg-primary/20 blur-3xl rounded-full" />
-            <img
-              src={heroDashboard}
-              alt="FlowSights Dashboard — Análisis operativo en tiempo real"
-              width={1280}
-              height={960}
-              className="relative w-full h-auto animate-float"
-            />
-            <Card className="absolute top-8 left-0 md:-left-6 glass-card p-4 flex items-center gap-3 shadow-elevated animate-float" style={{ animationDelay: "1s" }}>
-              <span className="w-10 h-10 rounded-full bg-primary/20 grid place-items-center text-primary"><ArrowDown className="w-5 h-5" /></span>
-              <div>
-                <div className="text-xs text-muted-foreground">Costos operativos</div>
-                <div className="font-semibold text-primary">-24% este mes</div>
-              </div>
-            </Card>
-            <Card className="absolute bottom-8 right-0 md:-right-4 glass-card p-4 flex items-center gap-3 shadow-elevated animate-float" style={{ animationDelay: "2s" }}>
-              <span className="w-10 h-10 rounded-full bg-accent/20 grid place-items-center text-accent"><ArrowUp className="w-5 h-5" /></span>
-              <div>
-                <div className="text-xs text-muted-foreground">Eficiencia</div>
-                <div className="font-semibold text-accent">+18% productividad</div>
-              </div>
-            </Card>
+          <div className="relative">
+            <div className="absolute -inset-20 bg-primary/10 blur-[120px] rounded-full pointer-events-none" />
+            <ExplodedLaptop />
           </div>
         </div>
       </section>
@@ -308,20 +310,40 @@ const Index = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: { staggerChildren: 0.1 }
+              }
+            }}
+            className="grid md:grid-cols-2 lg:grid-cols-3 gap-5"
+          >
             {problems.map((p, i) => {
               const c = pickAccent(i);
               return (
-                <Card key={p.title} className={`p-6 glass-card transition-all hover:-translate-y-1 group ${c.border}`}>
-                  <div className={`w-10 h-10 rounded-lg ${c.bg} ${c.text} grid place-items-center mb-4 transition-colors`}>
-                    <Zap className="w-5 h-5" />
-                  </div>
-                  <h3 className="font-semibold text-lg mb-2">{p.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{p.desc}</p>
-                </Card>
+                <motion.div
+                  key={p.title}
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    visible: { opacity: 1, y: 0 }
+                  }}
+                >
+                  <Card className={`p-6 glass-card h-full transition-all hover:-translate-y-1 group ${c.border}`}>
+                    <div className={`w-10 h-10 rounded-lg ${c.bg} ${c.text} grid place-items-center mb-4 transition-colors`}>
+                      <Zap className="w-5 h-5" />
+                    </div>
+                    <h3 className="font-semibold text-lg mb-2">{p.title}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{p.desc}</p>
+                  </Card>
+                </motion.div>
               );
             })}
-          </div>
+          </motion.div>
 
           <Card className="mt-10 p-8 md:p-10 glass-card border-primary/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 bg-gradient-to-br from-primary/10 to-accent/5">
             <div>
@@ -348,21 +370,41 @@ const Index = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: { staggerChildren: 0.15 }
+              }
+            }}
+            className="grid md:grid-cols-2 lg:grid-cols-4 gap-6"
+          >
             {steps.map((s, i) => {
               const c = pickAccent(i);
               return (
-                <Card key={s.n} className={`p-6 glass-card relative overflow-hidden group transition-all ${c.border}`}>
-                  <div className={`text-xs font-semibold tracking-widest mb-3 ${c.text}`}>PASO {s.n}</div>
-                  <div className={`font-display text-7xl font-bold absolute -right-2 -top-2 transition-colors opacity-10 group-hover:opacity-25 ${c.text}`}>
-                    {i + 1}
-                  </div>
-                  <h3 className="font-semibold text-lg mb-2 relative">{s.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed relative">{s.desc}</p>
-                </Card>
+                <motion.div
+                  key={s.n}
+                  variants={{
+                    hidden: { opacity: 0, scale: 0.95, y: 20 },
+                    visible: { opacity: 1, scale: 1, y: 0 }
+                  }}
+                >
+                  <Card className={`p-6 glass-card h-full relative overflow-hidden group transition-all ${c.border}`}>
+                    <div className={`text-xs font-semibold tracking-widest mb-3 ${c.text}`}>PASO {s.n}</div>
+                    <div className={`font-display text-7xl font-bold absolute -right-2 -top-2 transition-colors opacity-10 group-hover:opacity-25 ${c.text}`}>
+                      {i + 1}
+                    </div>
+                    <h3 className="font-semibold text-lg mb-2 relative">{s.title}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed relative">{s.desc}</p>
+                  </Card>
+                </motion.div>
               );
             })}
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -379,34 +421,54 @@ const Index = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: { staggerChildren: 0.2 }
+              }
+            }}
+            className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
             {services.map((s, i) => {
               const Icon = s.icon;
               const c = pickAccent(i + 1);
               return (
-                <Card key={s.title} className={`p-7 glass-card hover:-translate-y-1 transition-all relative ${s.popular ? "border-primary/60 shadow-glow" : c.border}`}>
-                  {s.popular && (
-                    <span className="absolute -top-3 right-6 bg-gradient-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full">
-                      Más popular
-                    </span>
-                  )}
-                  <div className={`w-12 h-12 rounded-xl ${c.bg} ${c.text} grid place-items-center mb-5`}>
-                    <Icon className="w-6 h-6" />
-                  </div>
-                  <div className={`text-xs font-semibold uppercase tracking-wider mb-2 ${c.text}`}>{s.tag}</div>
-                  <h3 className="font-display text-2xl font-bold mb-3">{s.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed mb-5">{s.desc}</p>
-                  <ul className="space-y-2 mb-2">
-                    {s.items.map((it) => (
-                      <li key={it} className="flex items-center gap-2 text-sm">
-                        <Check className={`w-4 h-4 shrink-0 ${c.text}`} /> {it}
-                      </li>
-                    ))}
-                  </ul>
-                </Card>
+                <motion.div
+                  key={s.title}
+                  variants={{
+                    hidden: { opacity: 0, y: 30 },
+                    visible: { opacity: 1, y: 0 }
+                  }}
+                >
+                  <Card className={`p-7 glass-card h-full hover:-translate-y-1 transition-all relative ${s.popular ? "border-primary/60 shadow-glow" : c.border}`}>
+                    {s.popular && (
+                      <span className="absolute -top-3 right-6 bg-gradient-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full">
+                        Más popular
+                      </span>
+                    )}
+                    <div className={`w-12 h-12 rounded-xl ${c.bg} ${c.text} grid place-items-center mb-5`}>
+                      <Icon className="w-6 h-6" />
+                    </div>
+                    <div className={`text-xs font-semibold uppercase tracking-wider mb-2 ${c.text}`}>{s.tag}</div>
+                    <h3 className="font-display text-2xl font-bold mb-3">{s.title}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed mb-5">{s.desc}</p>
+                    <ul className="space-y-2 mb-2">
+                      {s.items.map((it) => (
+                        <li key={it} className="flex items-center gap-2 text-sm">
+                          <Check className={`w-4 h-4 shrink-0 ${c.text}`} /> {it}
+                        </li>
+                      ))}
+                    </ul>
+                  </Card>
+                </motion.div>
               );
             })}
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -423,29 +485,49 @@ const Index = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: { staggerChildren: 0.1 }
+              }
+            }}
+            className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
             {results.map((r, i) => {
               const Icon = r.icon;
               const c = pickAccent(i);
               const stat = parseStat(r.value);
               return (
-                <Card key={r.title} className={`p-7 glass-card transition-all ${c.border}`}>
-                  <div className="flex items-start justify-between mb-4">
-                    <AnimatedStat
-                      stat={{ ...stat, label: "" }}
-                      className={`font-display text-5xl font-bold ${c.text}`}
-                    />
-                    <span className={`w-11 h-11 rounded-xl ${c.bg} ${c.text} grid place-items-center`}>
-                      <Icon className="w-5 h-5" />
-                    </span>
-                  </div>
-                  <div className="text-xs text-muted-foreground uppercase tracking-wider mb-3">{r.label}</div>
-                  <h3 className="font-semibold text-lg mb-2">{r.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{r.desc}</p>
-                </Card>
+                <motion.div
+                  key={r.title}
+                  variants={{
+                    hidden: { opacity: 0, scale: 0.9 },
+                    visible: { opacity: 1, scale: 1 }
+                  }}
+                >
+                  <Card className={`p-7 glass-card h-full transition-all ${c.border}`}>
+                    <div className="flex items-start justify-between mb-4">
+                      <AnimatedStat
+                        stat={{ ...stat, label: "" }}
+                        className={`font-display text-5xl font-bold ${c.text}`}
+                      />
+                      <span className={`w-11 h-11 rounded-xl ${c.bg} ${c.text} grid place-items-center`}>
+                        <Icon className="w-5 h-5" />
+                      </span>
+                    </div>
+                    <div className="text-xs text-muted-foreground uppercase tracking-wider mb-3">{r.label}</div>
+                    <h3 className="font-semibold text-lg mb-2">{r.title}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{r.desc}</p>
+                  </Card>
+                </motion.div>
               );
             })}
-          </div>
+          </motion.div>
 
           <div className="mt-10 text-center">
             <span className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-primary/10 border border-primary/30 text-primary font-semibold">
@@ -468,36 +550,63 @@ const Index = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: { staggerChildren: 0.1 }
+              }
+            }}
+            className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"
+          >
             {industries.map((ind, i) => {
               const Icon = ind.icon;
               const c = pickAccent(i);
               return (
-                <Card key={ind.title} className={`p-6 glass-card hover:-translate-y-1 transition-all ${c.border}`}>
-                  <div className={`w-11 h-11 rounded-xl ${c.bg} ${c.text} grid place-items-center mb-4`}>
-                    <Icon className="w-5 h-5" />
-                  </div>
-                  <h3 className="font-display text-xl font-bold mb-2">{ind.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed mb-4">{ind.desc}</p>
-                  <div className="flex flex-wrap gap-2">
-                    {ind.tags.map((t) => (
-                      <span key={t} className="text-xs px-2.5 py-1 rounded-md bg-secondary text-muted-foreground">{t}</span>
-                    ))}
-                  </div>
-                </Card>
+                <motion.div
+                  key={ind.title}
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    visible: { opacity: 1, y: 0 }
+                  }}
+                >
+                  <Card className={`p-6 glass-card h-full hover:-translate-y-1 transition-all ${c.border}`}>
+                    <div className={`w-11 h-11 rounded-xl ${c.bg} ${c.text} grid place-items-center mb-4`}>
+                      <Icon className="w-5 h-5" />
+                    </div>
+                    <h3 className="font-display text-xl font-bold mb-2">{ind.title}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed mb-4">{ind.desc}</p>
+                    <div className="flex flex-wrap gap-2">
+                      {ind.tags.map((t) => (
+                        <span key={t} className="text-xs px-2.5 py-1 rounded-md bg-secondary text-muted-foreground">{t}</span>
+                      ))}
+                    </div>
+                  </Card>
+                </motion.div>
               );
             })}
-            <Card className="p-6 glass-card border-dashed border-primary/40 flex flex-col justify-center items-start bg-primary/5">
-              <div className="w-11 h-11 rounded-xl bg-primary/20 text-primary grid place-items-center mb-4">
-                <Plus className="w-5 h-5" />
-              </div>
-              <h3 className="font-display text-xl font-bold mb-2">¿Tu industria no está aquí?</h3>
-              <p className="text-sm text-muted-foreground mb-4">Trabajamos con cualquier empresa que maneje datos operativos. Contáctanos para una consulta personalizada.</p>
-              <a href="#contacto" className="text-primary text-sm font-semibold inline-flex items-center gap-1 hover:gap-2 transition-all">
-                Contáctanos <ArrowRight className="w-4 h-4" />
-              </a>
-            </Card>
-          </div>
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, scale: 0.95 },
+                visible: { opacity: 1, scale: 1 }
+              }}
+            >
+              <Card className="p-6 glass-card h-full border-dashed border-primary/40 flex flex-col justify-center items-start bg-primary/5">
+                <div className="w-11 h-11 rounded-xl bg-primary/20 text-primary grid place-items-center mb-4">
+                  <Plus className="w-5 h-5" />
+                </div>
+                <h3 className="font-display text-xl font-bold mb-2">¿Tu industria no está aquí?</h3>
+                <p className="text-sm text-muted-foreground mb-4">Trabajamos con cualquier empresa que maneje datos operativos. Contáctanos para una consulta personalizada.</p>
+                <a href="#contacto" className="text-primary text-sm font-semibold inline-flex items-center gap-1 hover:gap-2 transition-all">
+                  Contáctanos <ArrowRight className="w-4 h-4" />
+                </a>
+              </Card>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
 
@@ -514,24 +623,44 @@ const Index = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: { staggerChildren: 0.2 }
+              }
+            }}
+            className="grid md:grid-cols-3 gap-6"
+          >
             {testimonials.map((t) => (
-              <Card key={t.name} className="p-7 glass-card hover:border-primary/60 hover:-translate-y-1 hover:shadow-glow transition-all flex flex-col group">
-                <div className="text-primary text-4xl font-display leading-none mb-3">"</div>
-                <p className="text-foreground/90 leading-relaxed flex-1">{t.quote}</p>
-                <div className="flex items-center gap-3 mt-6 pt-6 border-t border-border/60">
-                  <div className="w-11 h-11 rounded-full bg-gradient-primary grid place-items-center text-primary-foreground font-bold text-sm">
-                    {t.initials}
+              <motion.div
+                key={t.name}
+                variants={{
+                  hidden: { opacity: 0, scale: 0.95 },
+                  visible: { opacity: 1, scale: 1 }
+                }}
+              >
+                <Card className="p-7 glass-card h-full hover:border-primary/60 hover:-translate-y-1 hover:shadow-glow transition-all flex flex-col group">
+                  <div className="text-primary text-4xl font-display leading-none mb-3">"</div>
+                  <p className="text-foreground/90 leading-relaxed flex-1">{t.quote}</p>
+                  <div className="flex items-center gap-3 mt-6 pt-6 border-t border-border/60">
+                    <div className="w-11 h-11 rounded-full bg-gradient-primary grid place-items-center text-primary-foreground font-bold text-sm">
+                      {t.initials}
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-semibold text-sm">{t.name}</div>
+                      <div className="text-xs text-muted-foreground">{t.role}</div>
+                    </div>
+                    <span className="text-xs px-2 py-1 rounded-md bg-primary/10 text-primary">{t.sector}</span>
                   </div>
-                  <div className="flex-1">
-                    <div className="font-semibold text-sm">{t.name}</div>
-                    <div className="text-xs text-muted-foreground">{t.role}</div>
-                  </div>
-                  <span className="text-xs px-2 py-1 rounded-md bg-primary/10 text-primary">{t.sector}</span>
-                </div>
-              </Card>
+                </Card>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -548,31 +677,51 @@ const Index = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6 mb-12">
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: { staggerChildren: 0.2 }
+              }
+            }}
+            className="grid md:grid-cols-3 gap-6 mb-12"
+          >
             {team.map((m) => (
-              <Card key={m.name} className="p-7 glass-card text-center hover:border-primary/60 hover:-translate-y-1 hover:shadow-glow transition-all group">
-                {m.photo ? (
-                  <img
-                    src={m.photo}
-                    alt={`Foto de ${m.name}`}
-                    className="w-20 h-20 rounded-full object-cover mx-auto mb-4 shadow-glow ring-2 ring-primary/40"
-                  />
-                ) : (
-                  <div className="w-20 h-20 rounded-full bg-gradient-primary grid place-items-center text-primary-foreground font-bold text-xl mx-auto mb-4 shadow-glow">
-                    {m.initials}
+              <motion.div
+                key={m.name}
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  visible: { opacity: 1, y: 0 }
+                }}
+              >
+                <Card className="p-7 glass-card h-full text-center hover:border-primary/60 hover:-translate-y-1 hover:shadow-glow transition-all group">
+                  {m.photo ? (
+                    <img
+                      src={m.photo}
+                      alt={`Foto de ${m.name}`}
+                      className="w-20 h-20 rounded-full object-cover mx-auto mb-4 shadow-glow ring-2 ring-primary/40"
+                    />
+                  ) : (
+                    <div className="w-20 h-20 rounded-full bg-gradient-primary grid place-items-center text-primary-foreground font-bold text-xl mx-auto mb-4 shadow-glow">
+                      {m.initials}
+                    </div>
+                  )}
+                  <h3 className="font-display text-xl font-bold">{m.name}</h3>
+                  <div className="text-primary text-sm font-medium mt-1">{m.role}</div>
+                  <p className="text-sm text-muted-foreground mt-3 leading-relaxed">{m.desc}</p>
+                  <div className="flex flex-wrap justify-center gap-2 mt-4">
+                    {m.tags.map((t) => (
+                      <span key={t} className="text-xs px-2.5 py-1 rounded-md bg-secondary text-muted-foreground">{t}</span>
+                    ))}
                   </div>
-                )}
-                <h3 className="font-display text-xl font-bold">{m.name}</h3>
-                <div className="text-primary text-sm font-medium mt-1">{m.role}</div>
-                <p className="text-sm text-muted-foreground mt-3 leading-relaxed">{m.desc}</p>
-                <div className="flex flex-wrap justify-center gap-2 mt-4">
-                  {m.tags.map((t) => (
-                    <span key={t} className="text-xs px-2.5 py-1 rounded-md bg-secondary text-muted-foreground">{t}</span>
-                  ))}
-                </div>
-              </Card>
+                </Card>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
 
           <Card className="p-10 glass-card text-center max-w-3xl mx-auto bg-gradient-to-br from-primary/10 to-accent/5 border-primary/20">
             <h3 className="font-display text-2xl font-bold mb-3">Nuestra Misión</h3>
@@ -596,26 +745,46 @@ const Index = () => {
             </p>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-3">
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: { staggerChildren: 0.2 }
+              }
+            }}
+            className="grid gap-6 md:grid-cols-3"
+          >
             {blogPreview.map((post, i) => {
               const a = pickAccent(i);
               return (
-                <Link key={post.slug} to={`/blog/${post.slug}`} className="group">
-                  <Card className={`p-6 h-full glass-card border border-border/60 transition-all duration-300 hover:-translate-y-1 hover:shadow-glow ${a.border}`}>
-                    <div className="flex items-center justify-between text-xs text-muted-foreground mb-3">
-                      <span className={`px-2 py-0.5 rounded-full ${a.bg} ${a.text} font-medium`}>{post.category}</span>
-                      <span>{post.readingTime}</span>
-                    </div>
-                    <h3 className="font-display text-lg font-bold leading-snug group-hover:text-primary transition-colors">{post.title}</h3>
-                    <p className="text-sm text-muted-foreground mt-3 leading-relaxed">{post.excerpt}</p>
-                    <span className="inline-flex items-center gap-1 mt-5 text-primary text-sm font-medium">
-                      Leer artículo <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
-                    </span>
-                  </Card>
-                </Link>
+                <motion.div
+                  key={post.slug}
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    visible: { opacity: 1, y: 0 }
+                  }}
+                >
+                  <Link to={`/blog/${post.slug}`} className="group block h-full">
+                    <Card className={`p-6 h-full glass-card border border-border/60 transition-all duration-300 hover:-translate-y-1 hover:shadow-glow ${a.border}`}>
+                      <div className="flex items-center justify-between text-xs text-muted-foreground mb-3">
+                        <span className={`px-2 py-0.5 rounded-full ${a.bg} ${a.text} font-medium`}>{post.category}</span>
+                        <span>{post.readingTime}</span>
+                      </div>
+                      <h3 className="font-display text-lg font-bold leading-snug group-hover:text-primary transition-colors">{post.title}</h3>
+                      <p className="text-sm text-muted-foreground mt-3 leading-relaxed">{post.excerpt}</p>
+                      <span className="inline-flex items-center gap-1 mt-5 text-primary text-sm font-medium">
+                        Leer artículo <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+                      </span>
+                    </Card>
+                  </Link>
+                </motion.div>
               );
             })}
-          </div>
+          </motion.div>
 
           <div className="text-center mt-10">
             <Button variant="outline" size="lg" asChild>
