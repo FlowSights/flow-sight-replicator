@@ -393,7 +393,7 @@ const Index = () => {
               Así funciona <span className="text-gradient">FlowSights</span>
             </h2>
             <p className="text-muted-foreground mt-4 text-lg">
-              Un proceso claro y estructurado para transformar tus datos en ventajas competitivas.
+              Un proceso simple y probado: en pocas semanas pasas de datos desordenados a decisiones que mueven tu negocio.
             </p>
           </div>
 
