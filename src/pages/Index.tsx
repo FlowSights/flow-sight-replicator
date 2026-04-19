@@ -926,15 +926,15 @@ const Index = () => {
               Descubre lo que tus datos están <span className="text-gradient">diciendo</span>
             </h2>
             <p className="text-muted-foreground mt-4 text-lg">
-              Solicita tu diagnóstico gratuito y en 48 horas te diremos exactamente qué oportunidades de mejora existen en tu operación.
+              Solicita tu diagnóstico gratuito. En menos de 48 horas te mostramos dónde se está fugando dinero en tu operación y cómo recuperarlo.
             </p>
 
             <ul className="mt-8 space-y-3">
               {[
-                "Diagnóstico inicial completamente gratuito",
+                "Diagnóstico 100% gratuito y sin compromiso",
                 "Respuesta en menos de 24 horas",
-                "Sin compromiso ni contratos",
-                "Consulta personalizada para tu industria",
+                "Recomendaciones específicas para tu industria",
+                "Sin contratos largos ni letra pequeña",
               ].map((b) => (
                 <li key={b} className="flex items-center gap-3">
                   <span className="w-6 h-6 rounded-full bg-primary/20 text-primary grid place-items-center shrink-0">
@@ -974,8 +974,8 @@ const Index = () => {
               </div>
             ) : (
               <>
-                <h3 className="font-display text-2xl font-bold">Solicitar diagnóstico gratuito</h3>
-                <p className="text-sm text-muted-foreground mt-2">Completa el formulario y te contactamos en menos de 24 horas.</p>
+                <h3 className="font-display text-2xl font-bold">Analiza mi negocio gratis</h3>
+                <p className="text-sm text-muted-foreground mt-2">Cuéntanos un poco de tu empresa y te respondemos en menos de 24 horas.</p>
 
                 <form onSubmit={handleSubmit} className="mt-6 space-y-4">
                   <div>
@@ -991,11 +991,11 @@ const Index = () => {
                     <Input id="company" required value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} className="mt-1.5" placeholder="Nombre de tu empresa" />
                   </div>
                   <div>
-                    <Label htmlFor="message">Mensaje</Label>
-                    <Textarea id="message" rows={4} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} className="mt-1.5" placeholder="Cuéntanos brevemente tu situación..." />
+                    <Label htmlFor="message">¿Qué te gustaría mejorar?</Label>
+                    <Textarea id="message" rows={4} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} className="mt-1.5" placeholder="Ej: Quiero entender por qué mis reportes no cuadran y reducir mermas de inventario." />
                   </div>
                   <Button type="submit" variant="hero" size="lg" className="w-full" disabled={submitting}>
-                    {submitting ? "Enviando..." : <>Solicitar diagnóstico gratuito <ArrowRight className="ml-1" /></>}
+                    {submitting ? "Enviando..." : <>Quiero mi diagnóstico gratis <ArrowRight className="ml-1" /></>}
                   </Button>
                   <p className="text-xs text-muted-foreground text-center">
                     Al enviar este formulario aceptas nuestra <Link to="/privacidad" className="text-primary hover:underline">política de privacidad</Link>.
