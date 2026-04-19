@@ -5,10 +5,9 @@ const corsHeaders = {
 };
 
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/resend";
-// Sandbox de Resend: solo puede enviar a la cuenta dueña del API key.
-// Una vez verifiques flowsights.it.com en resend.com/domains, cambia esto a "contacto@flowsights.it.com"
-// y el `from` a "FlowSights <contacto@flowsights.it.com>".
-const TO_EMAIL = "spineda2014.123@gmail.com";
+// Dominio flowsights.it.com verificado en Resend.
+const TO_EMAIL = "contacto@flowsights.it.com";
+const FROM_EMAIL = "FlowSights <contacto@flowsights.it.com>";
 
 interface ContactPayload {
   name: string;
@@ -79,7 +78,7 @@ Deno.serve(async (req) => {
         "X-Connection-Api-Key": RESEND_API_KEY,
       },
       body: JSON.stringify({
-        from: "FlowSights <onboarding@resend.dev>",
+        from: FROM_EMAIL,
         to: [TO_EMAIL],
         reply_to: email,
         subject: `Nueva solicitud de ${name} (${company})`,
