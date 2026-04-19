@@ -37,7 +37,13 @@ export const ToolsMarquee = () => {
             return (
               <div
                 key={`${t.name}-${i}`}
-                className="inline-flex items-center gap-3 px-6 py-3 rounded-full border border-border/70 bg-background/80 backdrop-blur shadow-sm hover:border-primary/50 hover:shadow-glow transition-all"
+                className="inline-flex items-center gap-3 px-6 py-3 rounded-full border border-border/40 shadow-sm hover:border-primary/50 hover:shadow-glow transition-all"
+                style={{
+                  background: "rgba(255, 255, 255, 0.05)",
+                  backdropFilter: "blur(32px) saturate(250%) brightness(1.15)",
+                  WebkitBackdropFilter: "blur(32px) saturate(250%) brightness(1.15)",
+                  border: "1px solid rgba(255, 255, 255, 0.15)",
+                }}
               >
                 <Icon className="w-5 h-5 text-primary" />
                 <span className="font-semibold text-sm">{t.name}</span>

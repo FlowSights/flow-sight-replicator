@@ -25,6 +25,7 @@ import stevenPhoto from "@/assets/team-steven.jpg";
 import marcosPhoto from "@/assets/team-marcos.png";
 import oscarPhoto from "@/assets/team-oscar.png";
 import { useState } from "react";
+import { useScrolled } from "@/hooks/useScrolled";
 import { Link } from "react-router-dom";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { supabase } from "@/integrations/supabase/client";
@@ -86,6 +87,7 @@ const pickAccent = (i: number) => accentPalette[i % accentPalette.length];
 const Index = () => {
   const { toast } = useToast();
   const [form, setForm] = useState({ name: "", email: "", company: "", message: "" });
+  const scrolled = useScrolled(80);
 
   const navLinks = [
     { label: "Cómo funciona", href: "#proceso" },
@@ -212,12 +214,77 @@ const Index = () => {
 
   return (
     <div className="min-h-screen overflow-x-hidden">
-      {/* NAVBAR */}
-      <header className="fixed top-0 inset-x-0 z-50 backdrop-blur-xl bg-background/70 border-b border-border/50">
-        <nav className="container flex items-center justify-between h-20">
+      {/* NAVBAR — Dynamic Translucent Notch
+           Strategy: the header is always fixed + full-width (left-0 right-0).
+           We animate margin-inline to "eat" from both sides simultaneously,
+           which creates the symmetric pill-collapse effect.
+           border-radius transitions from 0 → 9999px to morph into a pill. */}
+      <header
+        className="fixed z-50 left-0 right-0"
+        style={{
+          // Vertical position: slides up slightly when collapsed
+          top: scrolled ? "1rem" : "0px",
+          // Symmetric inward collapse via margin — both sides shrink equally
+          marginInline: scrolled ? "clamp(2rem, 18vw, 22rem)" : "0px",
+          // Pill morph
+          borderRadius: scrolled ? "9999px" : "0px",
+          // Glass surface
+          background: scrolled
+            ? "hsl(var(--background) / 0.55)"
+            : "hsl(var(--background) / 0.55)",
+          backdropFilter: "blur(28px) saturate(220%) brightness(1.04)",
+          WebkitBackdropFilter: "blur(28px) saturate(220%) brightness(1.04)",
+          border: scrolled ? "1px solid hsl(var(--border) / 0.40)" : "none",
+          borderBottom: scrolled ? "none" : "1px solid hsl(var(--border) / 0.35)",
+          boxShadow: scrolled
+            ? "0 8px 40px -6px hsl(var(--primary) / 0.15), 0 2px 16px -4px hsl(220 30% 10% / 0.14)"
+            : "none",
+          // Single unified transition — all props share the same spring curve
+          transition: [
+            "top 680ms cubic-bezier(0.34, 1.15, 0.64, 1)",
+            "margin-inline 680ms cubic-bezier(0.34, 1.15, 0.64, 1)",
+            "border-radius 680ms cubic-bezier(0.34, 1.15, 0.64, 1)",
+            "background 500ms ease",
+            "box-shadow 500ms ease",
+            "border-color 500ms ease",
+          ].join(", "),
+        }}
+      >
+        <nav
+          className="flex items-center justify-between"
+          style={{
+            height: scrolled ? "3.5rem" : "5rem",
+            paddingInline: scrolled ? "1.5rem" : "2rem",
+            transition: [
+              "height 680ms cubic-bezier(0.34, 1.15, 0.64, 1)",
+              "padding 680ms cubic-bezier(0.34, 1.15, 0.64, 1)",
+            ].join(", "),
+            // Keep content centered within the pill when collapsed
+            maxWidth: scrolled ? undefined : "1400px",
+            marginInline: scrolled ? undefined : "auto",
+          }}
+        >
           <Link to="/" className="flex items-center gap-2.5 font-display font-bold text-xl md:text-2xl hover:opacity-90 transition-opacity">
-            <img src={logo} alt="FlowSights logo" width={48} height={48} className="w-12 h-12 object-contain" />
-            <span>FlowSights</span>
+            <img
+              src={logo}
+              alt="FlowSights logo"
+              width={48}
+              height={48}
+              style={{
+                width: scrolled ? "2rem" : "3rem",
+                height: scrolled ? "2rem" : "3rem",
+                transition: "width 680ms cubic-bezier(0.34, 1.15, 0.64, 1), height 680ms cubic-bezier(0.34, 1.15, 0.64, 1)",
+              }}
+              className="object-contain"
+            />
+            <span
+              style={{
+                fontSize: scrolled ? "1rem" : undefined,
+                transition: "font-size 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+              }}
+            >
+              FlowSights
+            </span>
           </Link>
           <div className="flex items-center gap-2">
             <ThemeToggle />
@@ -228,7 +295,7 @@ const Index = () => {
                   <span className="hidden sm:inline">Menú</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 bg-background/95 backdrop-blur-xl">
+              <DropdownMenuContent align="end" className="w-56">
                 {navLinks.map((l) => (
                   <DropdownMenuItem key={l.href} asChild>
                     {l.href.startsWith("/") ? (

@@ -68,12 +68,17 @@ export const AIChatbot = () => {
       const reply = (data as { reply?: string })?.reply ??
         "Disculpa, tuve un problema. ¿Puedes intentar de nuevo o contactarnos por WhatsApp?";
 
+      // Simular que el bot está pensando antes de mostrar la respuesta
+      await new Promise((resolve) => setTimeout(resolve, 800 + Math.random() * 400));
+
       setMessages((prev) => [
         ...prev,
         { id: `a-${Date.now()}`, role: "assistant", content: reply },
       ]);
     } catch (err) {
       console.error(err);
+      // Simular que el bot está pensando antes de mostrar el error
+      await new Promise((resolve) => setTimeout(resolve, 600 + Math.random() * 300));
       setMessages((prev) => [
         ...prev,
         {
@@ -127,9 +132,17 @@ export const AIChatbot = () => {
 
       {/* Ventana del chat */}
       {open && (
-        <div className="fixed inset-0 sm:inset-auto sm:bottom-6 sm:right-6 z-50 sm:w-[380px] sm:max-w-[calc(100vw-3rem)] sm:h-[600px] sm:max-h-[calc(100vh-3rem)] bg-card border border-border/60 sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom-4 duration-300">
+        <div className="fixed inset-0 sm:inset-auto sm:bottom-6 sm:right-6 z-50 sm:w-[380px] sm:max-w-[calc(100vw-3rem)] sm:h-[600px] sm:max-h-[calc(100vh-3rem)] border border-white/30 sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom-4 duration-300" style={{
+          background: "rgba(255, 255, 255, 0.08)",
+          backdropFilter: "blur(40px) saturate(250%) brightness(1.1)",
+          WebkitBackdropFilter: "blur(40px) saturate(250%) brightness(1.1)",
+        }}>
           {/* Header */}
-          <div className="bg-gradient-to-r from-primary to-primary/80 px-4 py-3 flex items-center justify-between text-primary-foreground">
+          <div className="px-4 py-3 flex items-center justify-between text-primary-foreground border-b border-white/10" style={{
+            background: "transparent",
+            backdropFilter: "blur(20px) saturate(200%)",
+            WebkitBackdropFilter: "blur(20px) saturate(200%)",
+          }}>
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-full bg-white/20 grid place-items-center backdrop-blur-sm">
                 <Sparkles className="w-4 h-4" />
@@ -157,7 +170,10 @@ export const AIChatbot = () => {
           {/* Mensajes */}
           <div
             ref={scrollRef}
-            className="flex-1 overflow-y-auto p-4 space-y-3 bg-background/50"
+            className="flex-1 overflow-y-auto p-4 space-y-3"
+            style={{
+              background: "transparent",
+            }}
           >
             {messages.map((m) => (
               <div
@@ -178,11 +194,15 @@ export const AIChatbot = () => {
 
             {loading && (
               <div className="flex justify-start">
-                <div className="bg-card border border-border/60 rounded-2xl rounded-bl-sm px-4 py-3 text-sm">
-                  <div className="flex items-center gap-1">
-                    <span className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce [animation-delay:-0.3s]" />
-                    <span className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce [animation-delay:-0.15s]" />
-                    <span className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce" />
+                <div className="rounded-2xl rounded-bl-sm px-4 py-3 text-sm border border-border/40" style={{
+                  background: "hsl(var(--card) / 0.60)",
+                  backdropFilter: "blur(12px) saturate(180%)",
+                  WebkitBackdropFilter: "blur(12px) saturate(180%)",
+                }}>
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 bg-primary rounded-full animate-bounce [animation-delay:-0.3s]" />
+                    <span className="w-2.5 h-2.5 bg-primary rounded-full animate-bounce [animation-delay:-0.15s]" />
+                    <span className="w-2.5 h-2.5 bg-primary rounded-full animate-bounce" />
                   </div>
                 </div>
               </div>
@@ -219,7 +239,11 @@ export const AIChatbot = () => {
           </a>
 
           {/* Input */}
-          <div className="border-t border-border/60 p-3 bg-card flex items-center gap-2">
+          <div className="border-t border-white/10 p-3 flex items-center gap-2" style={{
+            background: "rgba(255, 255, 255, 0.03)",
+            backdropFilter: "blur(10px)",
+            WebkitBackdropFilter: "blur(10px)",
+          }}>
             <Input
               ref={inputRef}
               value={input}
