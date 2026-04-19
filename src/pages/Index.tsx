@@ -643,10 +643,10 @@ const Index = () => {
           <div className="text-center max-w-2xl mx-auto mb-16">
             <span className="text-sm font-semibold text-primary uppercase tracking-wider">Clientes</span>
             <h2 className="font-display text-4xl md:text-5xl font-bold mt-3">
-              Lo que dicen nuestros <span className="text-gradient">clientes</span>
+              Empresas que ya están <span className="text-gradient">ganando con sus datos</span>
             </h2>
             <p className="text-muted-foreground mt-4 text-lg">
-              Empresas reales que transformaron sus operaciones con FlowSights.
+              Casos reales de PyMEs que dejaron de adivinar y empezaron a decidir con información clara.
             </p>
           </div>
 
