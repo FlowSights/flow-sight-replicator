@@ -1,11 +1,11 @@
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import heroDashboard from "@/assets/hero-dashboard.png";
 
 export const ExplodedLaptop = () => {
   // Animation variants for a clean, professional entry
-  const laptopVariants = {
+  const laptopVariants: Variants = {
     hidden: { 
       opacity: 0, 
       scale: 0.8,
@@ -22,7 +22,7 @@ export const ExplodedLaptop = () => {
     }
   };
 
-  const cardLeftVariants = {
+  const cardLeftVariants: Variants = {
     hidden: { opacity: 0, x: -100, scale: 0.9 },
     visible: { 
       opacity: 1, 
@@ -38,7 +38,7 @@ export const ExplodedLaptop = () => {
     }
   };
 
-  const cardRightVariants = {
+  const cardRightVariants: Variants = {
     hidden: { opacity: 0, x: 100, scale: 0.9 },
     visible: { 
       opacity: 1, 
