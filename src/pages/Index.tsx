@@ -700,7 +700,7 @@ const Index = () => {
               Quiénes <span className="text-gradient">Somos</span>
             </h2>
             <p className="text-muted-foreground mt-4 text-lg">
-              Somos un equipo apasionado por transformar datos en decisiones inteligentes. Creada en Costa Rica, FlowSights nace de la experiencia y visión de profesionales comprometidos con la excelencia operativa.
+              Un equipo costarricense con experiencia real en operaciones, ventas e inventarios. Hablamos tu idioma, no el de los técnicos: te ayudamos a tomar mejores decisiones, no a entender un software.
             </p>
           </div>
 
