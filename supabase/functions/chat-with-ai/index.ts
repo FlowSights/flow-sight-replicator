@@ -56,8 +56,8 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const GROQ_API_KEY = Deno.env.get("GROQ_API_KEY");
-    if (!GROQ_API_KEY) throw new Error("GROQ_API_KEY is not configured");
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
     const body = (await req.json()) as Partial<ChatPayload>;
     const messages = Array.isArray(body.messages) ? body.messages : [];
@@ -77,32 +77,40 @@ Deno.serve(async (req) => {
       })),
     ];
 
-    const groqUrl = "https://api.groq.com/openai/v1/chat/completions";
-
-    const resp = await fetch(groqUrl, {
+    const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${GROQ_API_KEY}`,
+        "Authorization": `Bearer ${LOVABLE_API_KEY}`,
       },
       body: JSON.stringify({
-        model: "llama-3.3-70b-versatile",
+        model: "google/gemini-3-flash-preview",
         messages: chatMessages,
-        temperature: 0.7,
-        max_tokens: 400,
-        top_p: 0.9,
       }),
     });
 
-    const data = await resp.json();
     if (!resp.ok) {
-      console.error("Groq error", resp.status, data);
+      if (resp.status === 429) {
+        return new Response(
+          JSON.stringify({ error: "Demasiadas solicitudes, intenta en un momento." }),
+          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        );
+      }
+      if (resp.status === 402) {
+        return new Response(
+          JSON.stringify({ error: "Se agotaron los créditos de IA." }),
+          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        );
+      }
+      const errText = await resp.text();
+      console.error("AI gateway error", resp.status, errText);
       return new Response(
-        JSON.stringify({ error: "Error al procesar la solicitud", details: data }),
+        JSON.stringify({ error: "Error al procesar la solicitud" }),
         { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
 
+    const data = await resp.json();
     const reply =
       data?.choices?.[0]?.message?.content ??
       "Lo siento, no pude procesar tu mensaje. ¿Podrías reformularlo?";
