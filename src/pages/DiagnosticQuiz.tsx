@@ -140,6 +140,7 @@ export default function DiagnosticQuiz() {
   const [name, setName] = useState("");
   const [email, setEmailInput] = useState("");
   const [results, setResults] = useState<any>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const handleStartQuiz = () => {
     setStage("quiz");
@@ -170,9 +171,62 @@ export default function DiagnosticQuiz() {
     }
   };
 
-  const handleSubmitEmail = () => {
-    if (!name.trim() || !email.trim()) return;
-    showResults(name);
+  const handleSubmitEmail = async () => {
+    if (!name.trim() || !email.trim() || submitting) return;
+    setSubmitting(true);
+
+    // Compute results first so we can email them
+    let total = 0;
+    answers.forEach((a, q) => (total += QUESTIONS[q].opts[a].s));
+    const riskPct = Math.round((total / (QUESTIONS.length * 4)) * 100);
+    const health = 100 - riskPct;
+    const rev = QUESTIONS[4].opts[answers[4]].rev || 30000;
+    const leak = riskPct <= 30 ? 0.04 : riskPct <= 50 ? 0.09 : riskPct <= 70 ? 0.16 : 0.23;
+    const mo = Math.round(rev * leak);
+    const yr = mo * 12;
+
+    let profile: Profile;
+    if (health >= 75) profile = PROFILES.excellent;
+    else if (health >= 50) profile = PROFILES.good;
+    else if (health >= 30) profile = PROFILES.warning;
+    else profile = PROFILES.critical;
+
+    try {
+      const { error } = await supabase.functions.invoke("send-diagnostic-email", {
+        body: {
+          name: name.trim(),
+          email: email.trim(),
+          health,
+          riskPct,
+          profileTitle: profile.title,
+          profileSub: profile.sub,
+          monthlyLeak: mo,
+          yearlyLeak: yr,
+          findings: [
+            answers[0] >= 2 && { t: "Fragmentación de datos crítica", d: "Datos en múltiples sistemas sin sincronización." },
+            answers[3] >= 2 && { t: "Costo de trabajo manual elevado", d: "Horas semanales en tareas que deberían ser automáticas." },
+            answers[1] >= 2 && { t: "Reportes no confiables", d: "Decisiones tomadas sobre bases falsas." },
+            answers[2] >= 2 && { t: "Visión desalineada entre áreas", d: "Equipos trabajando con datos distintos." },
+            riskPct > 50 && { t: "Oportunidades sin capturar", d: "Entre 10% y 23% del ingreso se pierde en ineficiencias." },
+          ].filter(Boolean),
+          answers: QUESTIONS.map((q, i) => ({
+            question: q.text,
+            answer: q.opts[answers[i]].t,
+          })),
+        },
+      });
+      if (error) throw error;
+    } catch (err) {
+      console.error("Failed to send diagnostic email", err);
+      toast({
+        title: "No se pudo enviar la notificación",
+        description: "Mostraremos tus resultados igualmente.",
+        variant: "destructive",
+      });
+    } finally {
+      setSubmitting(false);
+      showResults(name);
+    }
   };
 
   const showResults = (userName: string) => {
