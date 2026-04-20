@@ -249,6 +249,10 @@ const Index = () => {
             "box-shadow 500ms ease",
             "border-color 500ms ease",
           ].join(", "),
+          // When collapsed into pill, clip overflowing content so it can't
+          // sit on top of (or under) the logo's click target outside the pill.
+          overflow: scrolled ? "hidden" : "visible",
+          isolation: "isolate",
         }}
       >
         <nav
@@ -265,7 +269,7 @@ const Index = () => {
             marginInline: scrolled ? undefined : "auto",
           }}
         >
-          <Link to="/" className="flex items-center gap-2.5 font-display font-bold text-xl md:text-2xl hover:opacity-90 transition-opacity relative z-10 pointer-events-auto">
+          <Link to="/" aria-label="FlowSights — ir al inicio" className="flex items-center gap-2.5 font-display font-bold text-xl md:text-2xl hover:opacity-90 transition-opacity relative z-20 pointer-events-auto shrink-0 cursor-pointer">
             <img
               src={logo}
               alt="FlowSights logo"
