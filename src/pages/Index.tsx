@@ -31,7 +31,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { supabase } from "@/integrations/supabase/client";
 import { useCountUp } from "@/hooks/useCountUp";
 import { ToolsMarquee } from "@/components/ToolsMarquee";
-import { AIChatbot } from "@/components/AIChatbot";
+
 import { ExplodedLaptop } from "@/components/ExplodedLaptop";
 import {
   DropdownMenu,
@@ -265,7 +265,7 @@ const Index = () => {
             marginInline: scrolled ? undefined : "auto",
           }}
         >
-          <Link to="/" className="flex items-center gap-2.5 font-display font-bold text-xl md:text-2xl hover:opacity-90 transition-opacity">
+          <Link to="/" className="flex items-center gap-2.5 font-display font-bold text-xl md:text-2xl hover:opacity-90 transition-opacity relative z-10 pointer-events-auto">
             <img
               src={logo}
               alt="FlowSights logo"
@@ -1157,8 +1157,7 @@ const Index = () => {
         </div>
       </footer>
 
-      {/* AI Chatbot flotante */}
-      <AIChatbot />
+
     </div>
   );
 };

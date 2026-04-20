@@ -1,4 +1,5 @@
 import { Link, useParams, Navigate } from "react-router-dom";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowLeft, ArrowRight, Calendar, Clock, Mail, MessageCircle } from "lucide-react";
@@ -29,6 +30,11 @@ const BlogPost = () => {
   const { slug } = useParams();
   const post = blogPosts.find((p) => p.slug === slug);
   if (!post) return <Navigate to="/blog" replace />;
+
+  // Scroll al inicio cuando se carga o cambia el artículo
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [slug]);
 
   const others = blogPosts.filter((p) => p.slug !== slug).slice(0, 2);
 
