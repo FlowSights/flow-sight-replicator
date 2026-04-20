@@ -76,7 +76,7 @@ const Blog = () => {
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                     {post.free ? (
-                      <span className="absolute top-3 left-3 text-[11px] font-bold px-2 py-1 rounded-full bg-emerald-500 text-white shadow-lg">GRATIS</span>
+                      <span className="absolute top-3 left-3 text-[11px] font-bold px-2 py-1 rounded-full bg-lime text-background shadow-lg">GRATIS</span>
                     ) : (
                       <span className="absolute top-3 left-3 text-[11px] font-bold px-2 py-1 rounded-full bg-primary/95 text-primary-foreground shadow-lg inline-flex items-center gap-1">
                         <Lock className="w-3 h-3" /> {locked ? "REGISTRO" : "MIEMBRO"}
