@@ -42,14 +42,16 @@ const Auth = () => {
 
   const handleGoogle = async () => {
     setLoading(true);
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin + redirectTo,
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: window.location.origin + redirectTo,
+      },
     });
-    if (result.error) {
-      toast({ title: "Error con Google", description: String(result.error.message ?? result.error), variant: "destructive" });
+    if (error) {
+      toast({ title: "Error con Google", description: error.message, variant: "destructive" });
       setLoading(false);
     }
-    // If redirected, browser navigates away
   };
 
   const handleEmail = async (e: React.FormEvent) => {
