@@ -593,12 +593,12 @@ export default function DiagnosticQuiz() {
                   >
                     <Button
                       onClick={handleSubmitEmail}
-                      disabled={!name.trim() || !email.trim()}
+                      disabled={!name.trim() || !email.trim() || submitting}
                       size="lg"
                       variant="hero"
                       className="w-full"
                     >
-                      Ver mi diagnóstico <ArrowRight className="ml-2 h-4 w-4" />
+                      {submitting ? "Enviando..." : "Ver mi diagnóstico"} <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </motion.div>
 
