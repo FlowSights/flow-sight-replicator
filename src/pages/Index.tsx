@@ -31,6 +31,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { supabase } from "@/integrations/supabase/client";
 import { useCountUp } from "@/hooks/useCountUp";
 import { ToolsMarquee } from "@/components/ToolsMarquee";
+import SEO from "@/components/SEO";
 
 import { ExplodedLaptop } from "@/components/ExplodedLaptop";
 import {
@@ -215,6 +216,47 @@ const Index = () => {
 
   return (
     <div className="min-h-screen overflow-x-hidden">
+      <SEO 
+        title="Expertos en Inteligencia Operativa y Datos para PyMEs"
+        description="Transformamos tus datos de Excel, POS y WhatsApp en decisiones que generan dinero. Limpieza de datos, dashboards y optimización de procesos."
+      />
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "ProfessionalService",
+          "name": "FlowSights",
+          "image": "https://storage.googleapis.com/gpt-engineer-file-uploads/7GdJHUgbeBP6D1AL2fFEaPtiTyj2/social-images/social-1776391379720-ChatGPT_Image_16_abr_2026,_19_47_07.webp",
+          "@id": "https://flowsights.it.com",
+          "url": "https://flowsights.it.com",
+          "telephone": "",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "",
+            "addressLocality": "San José",
+            "addressCountry": "CR"
+          },
+          "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": 9.9281,
+            "longitude": -84.0907
+          },
+          "openingHoursSpecification": {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday"
+            ],
+            "opens": "08:00",
+            "closes": "18:00"
+          },
+          "sameAs": [
+            "https://www.instagram.com/flowsights_cr/"
+          ]
+        })}
+      </script>
       {/* NAVBAR — Dynamic Translucent Notch
            Strategy: the header is always fixed + full-width (left-0 right-0).
            We animate margin-inline to "eat" from both sides simultaneously,

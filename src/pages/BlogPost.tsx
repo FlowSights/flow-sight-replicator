@@ -8,6 +8,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { blogPosts } from "@/data/blog";
 import { useAuth } from "@/contexts/AuthContext";
 import { BlogComments } from "@/components/blog/BlogComments";
+import SEO from "@/components/SEO";
 
 const WHATSAPP_URL = "https://wa.me/message/FVHDA5OZHN66P1";
 const EMAIL_URL = "mailto:contacto@flowsights.it.com";
@@ -45,6 +46,35 @@ const BlogPost = () => {
 
   return (
     <div className="min-h-screen">
+      <SEO 
+        title={post.title}
+        description={post.excerpt}
+        image={post.image}
+        url={`/blog/${post.slug}`}
+        article={true}
+      />
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BlogPosting",
+          "headline": post.title,
+          "image": post.image,
+          "author": {
+            "@type": "Organization",
+            "name": "FlowSights"
+          },
+          "publisher": {
+            "@type": "Organization",
+            "name": "FlowSights",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://flowsights.it.com/favicon.png"
+            }
+          },
+          "datePublished": "2026-04-21", // Idealmente usar la fecha real del post
+          "description": post.excerpt
+        })}
+      </script>
       <header className="fixed top-0 inset-x-0 z-50 backdrop-blur-xl bg-background/70 border-b border-border/50">
         <nav className="container flex items-center justify-between h-20">
           <Link 

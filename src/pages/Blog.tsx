@@ -6,6 +6,7 @@ import logo from "@/assets/logo.png";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { blogPosts } from "@/data/blog";
 import { useAuth } from "@/contexts/AuthContext";
+import SEO from "@/components/SEO";
 
 const accents = [
   "hover:border-[hsl(var(--accent-violet)/0.6)] hover:shadow-[0_10px_40px_-10px_hsl(var(--accent-violet)/0.4)]",
@@ -17,6 +18,11 @@ const Blog = () => {
   const { user, signOut } = useAuth();
   return (
     <div className="min-h-screen">
+      <SEO 
+        title="Blog de Inteligencia Operativa" 
+        description="Artículos prácticos sobre cómo usar tus datos para vender más y gastar menos. Consejos sobre Excel, Dashboards e IA para PyMEs."
+        url="/blog"
+      />
       <header className="fixed top-0 inset-x-0 z-50 backdrop-blur-xl bg-background/70 border-b border-border/50">
         <nav className="container flex items-center justify-between h-20">
           <Link 
