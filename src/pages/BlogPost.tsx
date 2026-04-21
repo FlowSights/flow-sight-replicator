@@ -2,7 +2,7 @@ import { Link, useParams, Navigate } from "react-router-dom";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ArrowLeft, ArrowRight, Calendar, Clock, Mail, MessageCircle, Lock, ExternalLink, BookOpen } from "lucide-react";
+import { ArrowLeft, ArrowRight, Calendar, Clock, Mail, MessageCircle, ExternalLink, BookOpen } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { blogPosts } from "@/data/blog";
@@ -41,7 +41,7 @@ const BlogPost = () => {
   if (!post) return <Navigate to="/blog" replace />;
 
   const others = blogPosts.filter((p) => p.slug !== slug).slice(0, 2);
-  const locked = !post.free && !user && !authLoading;
+  const locked = false; // Contenido siempre gratuito por requerimiento
 
   return (
     <div className="min-h-screen">
