@@ -21,7 +21,7 @@ import { Instagram } from "@/components/icons/Instagram";
 import { LinkedIn } from "@/components/icons/LinkedIn";
 import heroDashboard from "@/assets/hero-dashboard.png";
 import logo from "@/assets/logo.png";
-import arenalVolcano from "@/assets/arenal-volcano.webp";
+import beachBackground from "@/assets/beach-background.webp";
 import stevenPhoto from "@/assets/team-steven.jpg";
 import marcosPhoto from "@/assets/team-marcos.png";
 import oscarPhoto from "@/assets/team-oscar.png";
@@ -372,7 +372,7 @@ const Index = () => {
         <div 
           className="absolute inset-0 z-0 pointer-events-none"
           style={{
-            backgroundImage: `url(${arenalVolcano})`,
+            backgroundImage: `url(${beachBackground})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             opacity: 0.25,
