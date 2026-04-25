@@ -211,24 +211,30 @@ const FlowsightAdsLanding: React.FC = () => {
         </div>
 
         <div className="flex justify-center items-center gap-8 mb-8">
-          {/* Meta Logo (Official Infinity Symbol) */}
-          <svg className="h-8 w-12 text-[#0668E1]" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M16.845 6.002c-1.325 0-2.486.586-3.245 1.492-.76-.906-1.92-1.492-3.245-1.492-2.396 0-4.346 1.914-4.346 4.266 0 2.352 1.95 4.266 4.346 4.266 1.325 0 2.486-.586 3.245-1.492.76.906 1.92 1.492 3.245 1.492 2.396 0 4.346-1.914 4.346-4.266 0-2.352-1.95-4.266-4.346-4.266zm0 7.032c-1.536 0-2.787-1.241-2.787-2.766s1.251-2.766 2.787-2.766 2.787 1.241 2.787 2.766-1.251 2.766-2.787 2.766zm-6.49 0c-1.536 0-2.787-1.241-2.787-2.766s1.251-2.766 2.787-2.766 2.787 1.241 2.787 2.766-1.251 2.766-2.787 2.766z"/>
-          </svg>
-          {/* Google Ads Logo (Clean Triangle Version) */}
-          <svg className="h-8 w-8" viewBox="0 0 24 24">
-            <path fill="#FBBC05" d="M15.5 1.1l-9 15.6c-.2.4-.1.9.3 1.1l5.3 3.1c.4.2.9.1 1.1-.3l9-15.6c.2-.4.1-.9-.3-1.1l-5.3-3.1c-.4-.2-.9-.1-1.1.3z"/>
-            <path fill="#4285F4" d="M5.5 12.1l-3.1 5.3c-.2.4-.1.9.3 1.1l5.3 3.1c.4.2.9.1 1.1-.3l3.1-5.3c.2-.4.1-.9-.3-1.1l-5.3-3.1c-.4-.2-.9-.1-1.1.3z"/>
-            <circle fill="#34A853" cx="12.5" cy="17.6" r="3.5"/>
-          </svg>
+          {/* Meta Logo */}
+          <img 
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Meta_Platforms_Inc._logo.svg/1280px-Meta_Platforms_Inc._logo.svg.png" 
+            alt="Meta" 
+            className="h-6 w-auto object-contain"
+          />
+          {/* Google Ads Logo */}
+          <img 
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Google_Ads_logo.svg/1024px-Google_Ads_logo.svg.png" 
+            alt="Google Ads" 
+            className="h-8 w-auto object-contain"
+          />
           {/* TikTok Logo */}
-          <svg className="h-8 w-8 text-black dark:text-white" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.06-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/>
-          </svg>
+          <img 
+            src="https://upload.wikimedia.org/wikipedia/en/thumb/a/a9/TikTok_logo.svg/1200px-TikTok_logo.svg.png" 
+            alt="TikTok" 
+            className="h-8 w-auto object-contain dark:invert"
+          />
           {/* LinkedIn Logo */}
-          <svg className="h-8 w-8 text-[#0A66C2]" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-          </svg>
+          <img 
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/LinkedIn_Logo.svg/1200px-LinkedIn_Logo.svg.png" 
+            alt="LinkedIn" 
+            className="h-6 w-auto object-contain"
+          />
         </div>
 
         <div className="glass-card backdrop-blur-xl bg-white/90 dark:bg-gray-900/90 rounded-2xl shadow-2xl p-8 border border-white/20 dark:border-gray-800">
