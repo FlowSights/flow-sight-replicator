@@ -101,6 +101,7 @@ const Index = () => {
     { label: "Industrias", href: "#industrias" },
     { label: "Quiénes somos", href: "#equipo" },
     { label: "FAQ", href: "#faq" },
+    { label: "Flowsight Ads", href: "/flowsight-ads" },
     { label: "Blog", href: "/blog" },
     { label: "Contacto", href: "#contacto" },
   ];
@@ -343,6 +344,17 @@ const Index = () => {
             </span>
           </Link>
           <div className="flex items-center gap-2">
+            <Button 
+              asChild 
+              variant="outline" 
+              size="sm" 
+              className="hidden md:flex gap-2 rounded-full px-4"
+            >
+              <Link to="/flowsight-ads" className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4" />
+                <span>Flowsight Ads</span>
+              </Link>
+            </Button>
             <ThemeToggle />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -1075,9 +1087,17 @@ const Index = () => {
               ))}
             </ul>
 
-            <a href="mailto:contacto@flowsights.it.com" className="inline-flex items-center gap-2 mt-8 text-primary font-medium hover:underline">
-              <Mail className="w-4 h-4" /> contacto@flowsights.it.com
-            </a>
+            <div className="flex flex-col gap-3 mt-8">
+              <a href="mailto:contacto@flowsights.it.com" className="inline-flex items-center gap-2 text-primary font-medium hover:underline">
+                <Mail className="w-4 h-4" /> contacto@flowsights.it.com
+              </a>
+              <Button asChild variant="hero" size="lg" className="w-fit">
+                <Link to="/flowsight-ads" className="flex items-center gap-2">
+                  <Sparkles className="w-5 h-5" />
+                  Crear anuncios con IA
+                </Link>
+              </Button>
+            </div>
           </div>
 
           <Card className="p-8 glass-card shadow-elevated">

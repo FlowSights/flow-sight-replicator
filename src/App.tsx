@@ -14,6 +14,7 @@ import Blog from "./pages/Blog.tsx";
 import BlogPost from "./pages/BlogPost.tsx";
 import DiagnosticQuiz from "./pages/DiagnosticQuiz.tsx";
 import Auth from "./pages/Auth.tsx";
+import FlowsightAds from "./pages/FlowsightAds.tsx";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +34,7 @@ const App = () => (
                 <Route path="/privacidad" element={<Privacy />} />
                 <Route path="/diagnostico" element={<DiagnosticQuiz />} />
                 <Route path="/auth" element={<Auth />} />
+                <Route path="/flowsight-ads" element={<FlowsightAds />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
