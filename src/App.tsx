@@ -14,11 +14,33 @@ import Blog from "./pages/Blog.tsx";
 import BlogPost from "./pages/BlogPost.tsx";
 import DiagnosticQuiz from "./pages/DiagnosticQuiz.tsx";
 import Auth from "./pages/Auth.tsx";
-import FlowsightAds from "./pages/FlowsightAds.tsx";
+import FlowsightAdsLanding from "./pages/FlowsightAdsLanding";
+import FlowsightAdsDashboard from "./pages/FlowsightAdsDashboard";
+import { supabase } from "./lib/supabaseClient";
+import { useEffect, useState } from "react";
 
 const queryClient = new QueryClient();
 
-const App = () => (
+const App = () => {
+  const [session, setSession] = useState<any>(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setSession(session);
+      }
+    );
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, []);
+
+  return (
   <QueryClientProvider client={queryClient}>
     <HelmetProvider>
       <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
@@ -34,7 +56,8 @@ const App = () => (
                 <Route path="/privacidad" element={<Privacy />} />
                 <Route path="/diagnostico" element={<DiagnosticQuiz />} />
                 <Route path="/auth" element={<Auth />} />
-                <Route path="/flowsight-ads" element={<FlowsightAds />} />
+                <Route path="/flowsight-ads" element={<FlowsightAdsLanding />} />
+                <Route path="/flowsight-ads/dashboard" element={<FlowsightAdsDashboard />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
@@ -46,6 +69,7 @@ const App = () => (
       </ThemeProvider>
     </HelmetProvider>
   </QueryClientProvider>
-);
+  );
+};
 
 export default App;
