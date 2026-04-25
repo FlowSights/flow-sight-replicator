@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
-import { Sparkles, Mail, Lock, User, Phone, MapPin, ArrowRight, Eye, EyeOff, Info } from 'lucide-react';
+import { Sparkles, Mail, Lock, User, Phone, MapPin, ArrowRight, Eye, EyeOff, Info, Chrome, Facebook as FacebookIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -73,6 +73,43 @@ const FlowsightAdsLanding: React.FC = () => {
         description: error.message || "No se pudo iniciar sesión.",
       });
     } finally {
+      setLoading(false);
+    }
+  };
+
+
+  const handleLoginWithGoogle = async () => {
+    setMessage('');
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/flowsight-ads/dashboard`,
+        },
+      });
+      if (error) throw error;
+    } catch (error: any) {
+      setMessageType('error');
+      setMessage(error.message || 'Error al iniciar sesión con Google');
+      setLoading(false);
+    }
+  };
+
+  const handleLoginWithFacebook = async () => {
+    setMessage('');
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'facebook',
+        options: {
+          redirectTo: `${window.location.origin}/flowsight-ads/dashboard`,
+        },
+      });
+      if (error) throw error;
+    } catch (error: any) {
+      setMessageType('error');
+      setMessage(error.message || 'Error al iniciar sesión con Facebook');
       setLoading(false);
     }
   };

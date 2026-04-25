@@ -16,6 +16,7 @@ import DiagnosticQuiz from "./pages/DiagnosticQuiz.tsx";
 import Auth from "./pages/Auth.tsx";
 import FlowsightAdsLanding from "./pages/FlowsightAdsLanding";
 import FlowsightAdsDashboard from "./pages/FlowsightAdsDashboard";
+import ResetPassword from "./pages/ResetPassword";
 import { supabase } from "./lib/supabaseClient";
 import { useEffect, useState } from "react";
 
@@ -58,6 +59,7 @@ const App = () => {
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/flowsight-ads" element={<FlowsightAdsLanding />} />
                 <Route path="/flowsight-ads/dashboard" element={<FlowsightAdsDashboard />} />
+                <Route path="/auth/callback" element={<ResetPassword />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

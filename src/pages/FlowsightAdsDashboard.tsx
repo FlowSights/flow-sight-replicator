@@ -1,458 +1,399 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/lib/supabaseClient';
-import { Sparkles, Download, LogOut, Plus, ExternalLink, ArrowRight } from 'lucide-react';
+import { supabase } from '../lib/supabaseClient';
+import { Sparkles, ArrowRight, Plus, Download, Share2, Trash2, Loader, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { PlatformPreview } from '@/components/PlatformPreview';
-import { downloadCampaignPackage, openPlatformEditor } from '@/lib/campaignExporter';
+import { Card } from '@/components/ui/card';
+import { motion, AnimatePresence } from 'framer-motion';
+import { jsPDF } from 'jspdf';
 
 interface Campaign {
   id: string;
-  platform: 'meta' | 'google' | 'tiktok' | 'linkedin';
-  objective: string;
-  toneOfVoice: string;
-  targetAudience: string;
-  product: string;
-  adCopies: string[];
-  generatedImages: string[];
-  budgetRecommendation: {
-    min: number;
-    recommended: number;
-    max: number;
-  };
+  name: string;
+  platform: 'google' | 'meta' | 'tiktok' | 'linkedin';
+  type: 'search' | 'visual';
+  createdAt: string;
+  ads: Ad[];
+}
+
+interface Ad {
+  id: string;
+  headline: string;
+  description: string;
+  cta: string;
+  imageUrl?: string;
+  budget?: { min: number; recommended: number; max: number };
 }
 
 const FlowsightAdsDashboard: React.FC = () => {
-  const navigate = useNavigate();
   const [user, setUser] = useState<any>(null);
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null);
-  const [isCreating, setIsCreating] = useState(false);
-  const [formData, setFormData] = useState({
-    platform: 'meta' as const,
-    objective: 'sales',
-    toneOfVoice: 'professional',
-    targetAudience: '',
+  const [isLoading, setIsLoading] = useState(true);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generatingMessage, setGeneratingMessage] = useState('');
+  const [showNewCampaignForm, setShowNewCampaignForm] = useState(false);
+  const [newCampaignData, setNewCampaignData] = useState({
+    name: '',
+    platform: 'meta' as 'google' | 'meta' | 'tiktok' | 'linkedin',
     product: '',
+    audience: '',
+    tone: 'professional',
   });
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const checkUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
+    checkAuth();
+  }, []);
+
+  const checkAuth = async () => {
+    try {
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      if (!currentUser) {
         navigate('/flowsight-ads');
-      } else {
-        setUser(user);
+        return;
       }
-    };
-
-    checkUser();
-
-    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!session) {
-        navigate('/flowsight-ads');
-      } else {
-        setUser(session.user);
-      }
-    });
-
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
-  }, [navigate]);
-
-  const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      console.error('Error al cerrar sesión:', error.message);
-    } else {
+      setUser(currentUser);
+      setIsLoading(false);
+    } catch (error) {
       navigate('/flowsight-ads');
     }
   };
 
-  const generateCampaign = async () => {
-    if (!formData.product || !formData.targetAudience) {
+  const generateAIContent = async () => {
+    if (!newCampaignData.name || !newCampaignData.product || !newCampaignData.audience) {
       alert('Por favor completa todos los campos');
       return;
     }
 
+    setIsGenerating(true);
+    const messages = [
+      'Analizando tu audiencia...',
+      'Generando copys persuasivos...',
+      'Creando variantes de anuncios...',
+      'Optimizando para conversión...',
+      '¡Listo! Tus anuncios están listos',
+    ];
+
+    let messageIndex = 0;
+    const messageInterval = setInterval(() => {
+      if (messageIndex < messages.length) {
+        setGeneratingMessage(messages[messageIndex]);
+        messageIndex++;
+      }
+    }, 800);
+
+    await new Promise(resolve => setTimeout(resolve, 4000));
+    clearInterval(messageInterval);
+
+    const isGoogleAds = newCampaignData.platform === 'google';
     const newCampaign: Campaign = {
       id: Date.now().toString(),
-      platform: formData.platform,
-      objective: formData.objective,
-      toneOfVoice: formData.toneOfVoice,
-      targetAudience: formData.targetAudience,
-      product: formData.product,
-      adCopies: [
-        `Descubre ${formData.product} - La solución perfecta para ${formData.targetAudience}`,
-        `${formData.product}: Transforma tu negocio hoy`,
-        `¿Buscas ${formData.product}? Aquí está la respuesta`,
-      ],
-      generatedImages: [
-        'https://via.placeholder.com/1200x628?text=Ad+1',
-        'https://via.placeholder.com/1200x628?text=Ad+2',
-        'https://via.placeholder.com/1200x628?text=Ad+3',
-      ],
-      budgetRecommendation: {
-        min: 100,
-        recommended: 500,
-        max: 2000,
-      },
+      name: newCampaignData.name,
+      platform: newCampaignData.platform,
+      type: isGoogleAds ? 'search' : 'visual',
+      createdAt: new Date().toISOString(),
+      ads: isGoogleAds
+        ? [
+            {
+              id: '1',
+              headline: `${newCampaignData.product} - Solución #1`,
+              description: `Descubre cómo ${newCampaignData.product} transforma la vida de ${newCampaignData.audience}. Resultados comprobados.`,
+              cta: 'Conocer más',
+              budget: { min: 500, recommended: 1500, max: 5000 },
+            },
+            {
+              id: '2',
+              headline: `${newCampaignData.product} - Oferta Especial`,
+              description: `${newCampaignData.audience} confían en nosotros. Acceso exclusivo con descuento limitado.`,
+              cta: 'Aprovechar oferta',
+              budget: { min: 500, recommended: 1500, max: 5000 },
+            },
+            {
+              id: '3',
+              headline: `${newCampaignData.product} - Prueba Gratis`,
+              description: `Prueba ${newCampaignData.product} sin riesgo. Garantía de satisfacción para ${newCampaignData.audience}.`,
+              cta: 'Probar ahora',
+              budget: { min: 500, recommended: 1500, max: 5000 },
+            },
+          ]
+        : [
+            {
+              id: '1',
+              headline: `${newCampaignData.product} - Variante 1`,
+              description: `Transforma tu ${newCampaignData.audience} con ${newCampaignData.product}. ¡Únete a miles de usuarios satisfechos!`,
+              cta: 'Descubre más',
+              imageUrl: 'https://via.placeholder.com/1200x628/10b981/ffffff?text=Anuncio+1',
+              budget: { min: 300, recommended: 1000, max: 3000 },
+            },
+            {
+              id: '2',
+              headline: `${newCampaignData.product} - Variante 2`,
+              description: `Solución perfecta para ${newCampaignData.audience}. Resultados en 30 días o tu dinero de vuelta.`,
+              cta: 'Comenzar ahora',
+              imageUrl: 'https://via.placeholder.com/1200x628/14b8a6/ffffff?text=Anuncio+2',
+              budget: { min: 300, recommended: 1000, max: 3000 },
+            },
+            {
+              id: '3',
+              headline: `${newCampaignData.product} - Variante 3`,
+              description: `${newCampaignData.audience} merece lo mejor. ${newCampaignData.product} es la respuesta que buscabas.`,
+              cta: 'Explorar',
+              imageUrl: 'https://via.placeholder.com/1200x628/0d9488/ffffff?text=Anuncio+3',
+              budget: { min: 300, recommended: 1000, max: 3000 },
+            },
+          ],
     };
 
     setCampaigns([...campaigns, newCampaign]);
     setSelectedCampaign(newCampaign);
-    setIsCreating(false);
-    setFormData({
-      platform: 'meta',
-      objective: 'sales',
-      toneOfVoice: 'professional',
-      targetAudience: '',
-      product: '',
+    setShowNewCampaignForm(false);
+    setNewCampaignData({ name: '', platform: 'meta', product: '', audience: '', tone: 'professional' });
+    setIsGenerating(false);
+    setGeneratingMessage('');
+  };
+
+  const downloadCampaignPDF = (campaign: Campaign) => {
+    const doc = new jsPDF();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    let yPosition = 10;
+
+    doc.setFontSize(20);
+    doc.text(`Campaña: ${campaign.name}`, 10, yPosition);
+    yPosition += 10;
+
+    doc.setFontSize(12);
+    doc.text(`Plataforma: ${campaign.platform.toUpperCase()}`, 10, yPosition);
+    yPosition += 5;
+    doc.text(`Tipo: ${campaign.type === 'search' ? 'Búsqueda (Google Ads)' : 'Visual (Social Media)'}`, 10, yPosition);
+    yPosition += 10;
+
+    campaign.ads.forEach((ad, index) => {
+      if (yPosition > pageHeight - 30) {
+        doc.addPage();
+        yPosition = 10;
+      }
+
+      doc.setFontSize(14);
+      doc.text(`Anuncio ${index + 1}`, 10, yPosition);
+      yPosition += 7;
+
+      doc.setFontSize(11);
+      doc.setTextColor(0, 107, 148);
+      doc.text(`Titular: ${ad.headline}`, 10, yPosition);
+      yPosition += 5;
+
+      doc.setTextColor(0, 0, 0);
+      doc.text(`Descripción: ${ad.description}`, 10, yPosition, { maxWidth: 190 });
+      yPosition += 10;
+
+      doc.text(`CTA: ${ad.cta}`, 10, yPosition);
+      yPosition += 5;
+
+      if (ad.budget) {
+        doc.text(`Presupuesto Mínimo: $${ad.budget.min}`, 10, yPosition);
+        yPosition += 4;
+        doc.text(`Presupuesto Recomendado: $${ad.budget.recommended}`, 10, yPosition);
+        yPosition += 4;
+        doc.text(`Presupuesto Máximo: $${ad.budget.max}`, 10, yPosition);
+        yPosition += 8;
+      }
+
+      doc.setDrawColor(200, 200, 200);
+      doc.line(10, yPosition, pageWidth - 10, yPosition);
+      yPosition += 5;
     });
+
+    doc.save(`${campaign.name}.pdf`);
   };
 
-  const handleDownloadCampaign = (campaign: Campaign) => {
-    downloadCampaignPackage(campaign);
+  const openPlatformEditor = (platform: string) => {
+    const urls: { [key: string]: string } = {
+      google: 'https://ads.google.com/home/',
+      meta: 'https://business.facebook.com/ads/manager/',
+      tiktok: 'https://ads.tiktok.com/',
+      linkedin: 'https://www.linkedin.com/campaign/launch/',
+    };
+    window.open(urls[platform], '_blank');
   };
 
-  const handlePublishToPlatform = (platform: 'meta' | 'google' | 'tiktok' | 'linkedin') => {
-    openPlatformEditor(platform);
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate('/flowsight-ads');
   };
 
-  if (!user) {
+  if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-500 to-teal-600 text-white">
-        Cargando...
+      <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-emerald-100 dark:from-emerald-950 dark:via-teal-950 dark:to-emerald-900 flex items-center justify-center">
+        <div className="text-center">
+          <Loader className="w-12 h-12 text-emerald-600 animate-spin mx-auto mb-4" />
+          <p className="text-gray-600 dark:text-gray-300">Cargando dashboard...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50 p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-emerald-100 dark:from-emerald-950 dark:via-teal-950 dark:to-emerald-900 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-3">
-            <Sparkles className="w-8 h-8 text-emerald-600" />
-            <h1 className="text-3xl font-bold font-display text-emerald-900">Flowsight Ads</h1>
-          </div>
-          <div className="flex items-center gap-3">
-            <Button 
-              variant="ghost" 
-              onClick={() => navigate('/')}
-              className="hidden md:flex items-center gap-2 text-emerald-700 hover:text-emerald-800 hover:bg-emerald-100/50 rounded-full mr-2"
-            >
-              <ArrowRight className="w-4 h-4 rotate-180" />
-              Volver a la web
-            </Button>
-            <span className="text-sm text-gray-600">{user.email}</span>
-            <Button variant="outline" size="sm" onClick={handleLogout} className="gap-2">
-              <LogOut className="w-4 h-4" />
-              Cerrar Sesión
-            </Button>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Sidebar - Campaigns List */}
-          <div className="lg:col-span-1">
-            <Card className="p-6 glass-card">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold text-emerald-900">Tus Campañas</h2>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => setIsCreating(!isCreating)}
-                  className="gap-2"
-                >
-                  <Plus className="w-4 h-4" />
-                  Nueva
-                </Button>
+        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-lg">
+                <Sparkles className="w-6 h-6 text-white" />
               </div>
+              <div>
+                <h1 className="text-3xl font-bold font-display text-emerald-900 dark:text-emerald-100">Flowsight Ads</h1>
+                <p className="text-sm text-emerald-700 dark:text-emerald-300">Bienvenido, {user?.email}</p>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={() => navigate('/')}>
+                <ArrowRight className="w-4 h-4 rotate-180 mr-2" />
+                Volver
+              </Button>
+              <Button variant="outline" onClick={handleLogout}>
+                <LogOut className="w-4 h-4 mr-2" />
+                Cerrar Sesión
+              </Button>
+            </div>
+          </div>
+        </motion.div>
 
-              {campaigns.length === 0 && !isCreating && (
-                <p className="text-sm text-gray-600 py-4">
-                  Aún no tienes campañas. ¡Crea una nueva!
-                </p>
-              )}
+        <div className="grid lg:grid-cols-3 gap-6">
+          {/* Sidebar - Campañas */}
+          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="lg:col-span-1">
+            <Card className="p-6 glass-card">
+              <h2 className="text-xl font-bold mb-4">Mis Campañas</h2>
+              <Button onClick={() => setShowNewCampaignForm(!showNewCampaignForm)} variant="hero" className="w-full mb-4">
+                <Plus className="w-4 h-4 mr-2" />
+                Nueva Campaña
+              </Button>
 
+              <AnimatePresence>
+                {showNewCampaignForm && (
+                  <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="mb-6 p-4 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg space-y-4">
+                    <div>
+                      <Label>Nombre de Campaña</Label>
+                      <Input value={newCampaignData.name} onChange={(e) => setNewCampaignData({ ...newCampaignData, name: e.target.value })} placeholder="Ej: Verano 2024" className="mt-1" />
+                    </div>
+                    <div>
+                      <Label>Plataforma</Label>
+                      <select value={newCampaignData.platform} onChange={(e) => setNewCampaignData({ ...newCampaignData, platform: e.target.value as any })} className="w-full mt-1 p-2 border rounded-lg bg-white dark:bg-gray-800">
+                        <option value="google">Google Ads (Búsqueda)</option>
+                        <option value="meta">Meta (Facebook/Instagram)</option>
+                        <option value="tiktok">TikTok</option>
+                        <option value="linkedin">LinkedIn</option>
+                      </select>
+                    </div>
+                    <div>
+                      <Label>Producto/Servicio</Label>
+                      <Input value={newCampaignData.product} onChange={(e) => setNewCampaignData({ ...newCampaignData, product: e.target.value })} placeholder="Ej: Consultoría de datos" className="mt-1" />
+                    </div>
+                    <div>
+                      <Label>Audiencia Objetivo</Label>
+                      <Input value={newCampaignData.audience} onChange={(e) => setNewCampaignData({ ...newCampaignData, audience: e.target.value })} placeholder="Ej: Empresarios de 25-45 años" className="mt-1" />
+                    </div>
+                    <Button onClick={generateAIContent} variant="hero" className="w-full" disabled={isGenerating}>
+                      {isGenerating ? 'Generando...' : 'Generar con IA'}
+                    </Button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Loading Screen */}
+              <AnimatePresence>
+                {isGenerating && (
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                    <motion.div initial={{ scale: 0.8 }} animate={{ scale: 1 }} className="bg-white dark:bg-gray-900 rounded-2xl p-12 text-center max-w-md">
+                      <motion.div animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity }} className="mb-6">
+                        <Sparkles className="w-12 h-12 text-emerald-600 mx-auto" />
+                      </motion.div>
+                      <h3 className="text-xl font-bold mb-2">Generando Anuncios con IA</h3>
+                      <motion.p key={generatingMessage} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-gray-600 dark:text-gray-300">
+                        {generatingMessage}
+                      </motion.p>
+                    </motion.div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Campañas List */}
               <div className="space-y-2">
                 {campaigns.map((campaign) => (
-                  <button
-                    key={campaign.id}
-                    onClick={() => setSelectedCampaign(campaign)}
-                    className={`w-full text-left p-3 rounded-lg transition-colors ${
-                      selectedCampaign?.id === campaign.id
-                        ? 'bg-emerald-100 text-emerald-900'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
-                  >
-                    <div className="font-medium text-sm">{campaign.product}</div>
-                    <div className="text-xs opacity-75">{campaign.platform.toUpperCase()}</div>
-                  </button>
+                  <motion.button key={campaign.id} whileHover={{ x: 4 }} onClick={() => setSelectedCampaign(campaign)} className={`w-full text-left p-3 rounded-lg transition-all ${selectedCampaign?.id === campaign.id ? 'bg-emerald-100 dark:bg-emerald-900/30 border-l-4 border-emerald-600' : 'hover:bg-gray-100 dark:hover:bg-gray-800'}`}>
+                    <p className="font-semibold text-sm">{campaign.name}</p>
+                    <p className="text-xs text-gray-500">{campaign.platform.toUpperCase()} • {campaign.ads.length} anuncios</p>
+                  </motion.button>
                 ))}
               </div>
             </Card>
-          </div>
+          </motion.div>
 
           {/* Main Content */}
-          <div className="lg:col-span-2">
-            {isCreating ? (
-              <Card className="p-8 glass-card">
-                <h2 className="text-2xl font-bold font-display text-emerald-900 mb-6">
-                  Crear Nueva Campaña
-                </h2>
-
-                <form className="space-y-6">
-                  <div>
-                    <Label htmlFor="product">Producto o Servicio *</Label>
-                    <Input
-                      id="product"
-                      placeholder="Ej: Plataforma de Automatización"
-                      value={formData.product}
-                      onChange={(e) => setFormData({ ...formData, product: e.target.value })}
-                      className="mt-2"
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="audience">Audiencia Objetivo *</Label>
-                    <Input
-                      id="audience"
-                      placeholder="Ej: Empresarios y directores de operaciones"
-                      value={formData.targetAudience}
-                      onChange={(e) =>
-                        setFormData({ ...formData, targetAudience: e.target.value })
-                      }
-                      className="mt-2"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="platform">Plataforma</Label>
-                      <Select value={formData.platform} onValueChange={(value: any) => setFormData({ ...formData, platform: value })}>
-                        <SelectTrigger className="mt-2">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="meta">Meta (Facebook/Instagram)</SelectItem>
-                          <SelectItem value="google">Google Ads</SelectItem>
-                          <SelectItem value="tiktok">TikTok</SelectItem>
-                          <SelectItem value="linkedin">LinkedIn</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="objective">Objetivo</Label>
-                      <Select value={formData.objective} onValueChange={(value) => setFormData({ ...formData, objective: value })}>
-                        <SelectTrigger className="mt-2">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="sales">Ventas</SelectItem>
-                          <SelectItem value="leads">Leads</SelectItem>
-                          <SelectItem value="traffic">Tráfico</SelectItem>
-                          <SelectItem value="awareness">Reconocimiento</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="tone">Tono de Voz</Label>
-                    <Select value={formData.toneOfVoice} onValueChange={(value) => setFormData({ ...formData, toneOfVoice: value })}>
-                      <SelectTrigger className="mt-2">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="professional">Profesional</SelectItem>
-                        <SelectItem value="casual">Casual</SelectItem>
-                        <SelectItem value="humorous">Humorístico</SelectItem>
-                        <SelectItem value="urgent">Urgente</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="flex gap-3">
-                    <Button
-                      type="button"
-                      variant="hero"
-                      onClick={generateCampaign}
-                      className="flex-1 gap-2"
-                    >
-                      <Sparkles className="w-4 h-4" />
-                      Generar Campaña con IA
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => setIsCreating(false)}
-                      className="flex-1"
-                    >
-                      Cancelar
-                    </Button>
-                  </div>
-                </form>
-              </Card>
-            ) : selectedCampaign ? (
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="lg:col-span-2">
+            {selectedCampaign ? (
               <Card className="p-8 glass-card">
                 <div className="mb-6">
-                  <h2 className="text-2xl font-bold font-display text-emerald-900 mb-2">
-                    {selectedCampaign.product}
-                  </h2>
-                  <div className="flex gap-2 flex-wrap">
-                    <span className="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-medium">
+                  <h2 className="text-2xl font-bold mb-2">{selectedCampaign.name}</h2>
+                  <div className="flex gap-4 items-center">
+                    <span className="px-3 py-1 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 rounded-full text-sm font-semibold">
                       {selectedCampaign.platform.toUpperCase()}
                     </span>
-                    <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
-                      {selectedCampaign.objective}
-                    </span>
+                    <span className="text-sm text-gray-500">{selectedCampaign.ads.length} anuncios generados</span>
                   </div>
                 </div>
 
-                {/* Platform Preview Section */}
-                <div className="mb-8">
-                  <h3 className="text-lg font-semibold text-emerald-900 mb-4">
-                    Vista Previa en {selectedCampaign.platform.toUpperCase()}
-                  </h3>
-                  <div className="flex justify-center p-6 bg-gray-50 rounded-lg border border-gray-200">
-                    <PlatformPreview
-                      platform={selectedCampaign.platform}
-                      headline={selectedCampaign.adCopies[0]}
-                      description={selectedCampaign.adCopies[0]}
-                      cta="Conocer más"
-                      imageUrl={selectedCampaign.generatedImages[0]}
-                    />
-                  </div>
+                {/* Anuncios */}
+                <div className="space-y-6 mb-8">
+                  {selectedCampaign.ads.map((ad) => (
+                    <motion.div key={ad.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="p-6 border border-gray-200 dark:border-gray-700 rounded-lg">
+                      <h3 className="font-bold text-lg mb-2">{ad.headline}</h3>
+                      <p className="text-gray-600 dark:text-gray-300 mb-4">{ad.description}</p>
+                      <div className="flex items-center justify-between">
+                        <span className="px-4 py-2 bg-emerald-600 text-white rounded-lg font-semibold">{ad.cta}</span>
+                        {ad.budget && (
+                          <div className="text-sm text-gray-500">
+                            <p>Presupuesto: ${ad.budget.min} - ${ad.budget.max}</p>
+                          </div>
+                        )}
+                      </div>
+                    </motion.div>
+                  ))}
                 </div>
 
-                {/* Ad Copies */}
-                <div className="mb-8">
-                  <h3 className="text-lg font-semibold text-emerald-900 mb-4">Variantes de Anuncios</h3>
-                  <div className="space-y-3">
-                    {selectedCampaign.adCopies.map((copy, idx) => (
-                      <div key={idx} className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                        <p className="text-sm text-gray-700">{copy}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Budget Recommendation */}
-                <div className="mb-8">
-                  <h3 className="text-lg font-semibold text-emerald-900 mb-4">
-                    Recomendación de Presupuesto
-                  </h3>
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="p-4 bg-orange-50 rounded-lg border border-orange-200">
-                      <div className="text-xs text-orange-600 font-medium mb-1">Mínimo</div>
-                      <div className="text-2xl font-bold text-orange-700">
-                        ${selectedCampaign.budgetRecommendation.min}
-                      </div>
-                    </div>
-                    <div className="p-4 bg-emerald-50 rounded-lg border border-emerald-200">
-                      <div className="text-xs text-emerald-600 font-medium mb-1">Recomendado</div>
-                      <div className="text-2xl font-bold text-emerald-700">
-                        ${selectedCampaign.budgetRecommendation.recommended}
-                      </div>
-                    </div>
-                    <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-                      <div className="text-xs text-green-600 font-medium mb-1">Máximo</div>
-                      <div className="text-2xl font-bold text-green-700">
-                        ${selectedCampaign.budgetRecommendation.max}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="space-y-3">
-                  <Button
-                    variant="hero"
-                    className="w-full gap-2"
-                    onClick={() => handleDownloadCampaign(selectedCampaign)}
-                  >
-                    <Download className="w-4 h-4" />
-                    Descargar Paquete Completo
+                {/* Acciones */}
+                <div className="flex gap-3 flex-wrap">
+                  <Button onClick={() => downloadCampaignPDF(selectedCampaign)} variant="outline">
+                    <Download className="w-4 h-4 mr-2" />
+                    Descargar PDF
                   </Button>
-
-                  <div className="grid grid-cols-2 gap-2">
-                    {selectedCampaign.platform === 'meta' && (
-                      <Button
-                        variant="outline"
-                        className="gap-2"
-                        onClick={() => handlePublishToPlatform('meta')}
-                      >
-                        <ExternalLink className="w-4 h-4" />
-                        Abrir Meta Ads
-                      </Button>
-                    )}
-                    {selectedCampaign.platform === 'google' && (
-                      <Button
-                        variant="outline"
-                        className="gap-2"
-                        onClick={() => handlePublishToPlatform('google')}
-                      >
-                        <ExternalLink className="w-4 h-4" />
-                        Abrir Google Ads
-                      </Button>
-                    )}
-                    {selectedCampaign.platform === 'tiktok' && (
-                      <Button
-                        variant="outline"
-                        className="gap-2"
-                        onClick={() => handlePublishToPlatform('tiktok')}
-                      >
-                        <ExternalLink className="w-4 h-4" />
-                        Abrir TikTok Ads
-                      </Button>
-                    )}
-                    {selectedCampaign.platform === 'linkedin' && (
-                      <Button
-                        variant="outline"
-                        className="gap-2"
-                        onClick={() => handlePublishToPlatform('linkedin')}
-                      >
-                        <ExternalLink className="w-4 h-4" />
-                        Abrir LinkedIn Ads
-                      </Button>
-                    )}
-                  </div>
+                  <Button onClick={() => openPlatformEditor(selectedCampaign.platform)} variant="hero">
+                    <Share2 className="w-4 h-4 mr-2" />
+                    Publicar en {selectedCampaign.platform.charAt(0).toUpperCase() + selectedCampaign.platform.slice(1)}
+                  </Button>
+                  <Button onClick={() => { setCampaigns(campaigns.filter(c => c.id !== selectedCampaign.id)); setSelectedCampaign(null); }} variant="destructive">
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Eliminar
+                  </Button>
                 </div>
               </Card>
             ) : (
-              <Card className="p-8 glass-card text-center">
-                <Sparkles className="w-16 h-16 text-emerald-300 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-emerald-900 mb-2">
-                  Comienza a crear campañas
-                </h3>
-                <p className="text-gray-600 mb-6">
-                  Selecciona una campaña existente o crea una nueva para empezar
-                </p>
-                <Button
-                  variant="hero"
-                  onClick={() => setIsCreating(true)}
-                  className="gap-2"
-                >
-                  <Plus className="w-4 h-4" />
-                  Crear Primera Campaña
+              <Card className="p-12 glass-card text-center">
+                <Sparkles className="w-16 h-16 text-emerald-600 mx-auto mb-4 opacity-50" />
+                <h3 className="text-xl font-bold mb-2">Crea tu primera campaña</h3>
+                <p className="text-gray-600 dark:text-gray-300 mb-6">Selecciona una campaña o crea una nueva para comenzar a generar anuncios con IA</p>
+                <Button onClick={() => setShowNewCampaignForm(true)} variant="hero">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Nueva Campaña
                 </Button>
               </Card>
             )}
-          </div>
+          </motion.div>
         </div>
       </div>
     </div>
