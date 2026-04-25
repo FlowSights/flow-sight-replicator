@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
-import { Sparkles, Mail, Lock, User, Phone, MapPin, ArrowRight, Eye, EyeOff, Info, Chrome, Facebook as FacebookIcon } from 'lucide-react';
+import { Sparkles, Mail, Lock, User, Phone, MapPin, ArrowRight, Eye, EyeOff, Info, Chrome, Facebook as FacebookIcon, Apple } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -110,6 +110,24 @@ const FlowsightAdsLanding: React.FC = () => {
     } catch (error: any) {
       setMessageType('error');
       setMessage(error.message || 'Error al iniciar sesión con Facebook');
+      setLoading(false);
+    }
+  };
+
+  const handleLoginWithApple = async () => {
+    setMessage('');
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'apple',
+        options: {
+          redirectTo: `${window.location.origin}/flowsight-ads/dashboard`,
+        },
+      });
+      if (error) throw error;
+    } catch (error: any) {
+      setMessageType('error');
+      setMessage(error.message || 'Error al iniciar sesión con Apple');
       setLoading(false);
     }
   };
@@ -274,6 +292,20 @@ const FlowsightAdsLanding: React.FC = () => {
                   <Button type="submit" variant="hero" className="w-full mt-6" disabled={loading}>{loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}</Button>
                   <div className="text-center pt-4">
                     <button type="button" onClick={() => setIsResetMode(true)} className="text-sm text-emerald-600 dark:text-emerald-400 hover:underline font-medium">¿Olvidaste tu contraseña?</button>
+                  </div>
+                  
+                  <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                    <p className="text-center text-sm text-gray-600 dark:text-gray-400 mb-4">O inicia sesión con</p>
+                    <div className="grid grid-cols-2 gap-3">
+                      <Button onClick={handleLoginWithGoogle} variant="outline" className="w-full" disabled={loading}>
+                        <Chrome className="w-4 h-4 mr-2" />
+                        Google
+                      </Button>
+                      <Button onClick={handleLoginWithApple} variant="outline" className="w-full" disabled={loading}>
+                        <Apple className="w-4 h-4 mr-2" />
+                        Apple
+                      </Button>
+                    </div>
                   </div>
                 </form>
               ) : (

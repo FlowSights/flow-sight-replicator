@@ -41,6 +41,39 @@ export type Database = {
         }
         Relationships: []
       }
+      ads_campaigns: {
+        Row: {
+          id: string
+          user_id: string
+          name: string
+          platform: string
+          type: string
+          ads: any
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          name: string
+          platform: string
+          type: string
+          ads?: any
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          name?: string
+          platform?: string
+          type?: string
+          ads?: any
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null

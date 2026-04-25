@@ -23,8 +23,19 @@ const ResetPassword: React.FC = () => {
     const type = searchParams.get('type');
     if (type === 'recovery') {
       setIsResetting(true);
+    } else {
+      // Si no hay tipo 'recovery', podría ser un callback de OAuth
+      // En ese caso, Supabase maneja automáticamente la sesión
+      // y redirigimos al dashboard
+      const checkSession = async () => {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          navigate('/flowsight-ads/dashboard', { replace: true });
+        }
+      };
+      checkSession();
     }
-  }, [searchParams]);
+  }, [searchParams, navigate]);
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
