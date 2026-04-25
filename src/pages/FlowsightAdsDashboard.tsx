@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import { motion, AnimatePresence } from 'framer-motion';
 import { jsPDF } from 'jspdf';
+import { useToast } from "@/hooks/use-toast";
 
 interface Campaign {
   id: string;
@@ -43,6 +44,7 @@ const FlowsightAdsDashboard: React.FC = () => {
     tone: 'professional',
   });
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   useEffect(() => {
     checkAuth();
@@ -56,15 +58,43 @@ const FlowsightAdsDashboard: React.FC = () => {
         return;
       }
       setUser(currentUser);
-      setIsLoading(false);
+      fetchCampaigns(currentUser.id);
     } catch (error) {
       navigate('/flowsight-ads');
     }
   };
 
+  const fetchCampaigns = async (userId: string) => {
+    setIsLoading(true);
+    const { data, error } = await supabase
+      .from('ads_campaigns')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching campaigns:', error);
+    } else {
+      const formattedCampaigns: Campaign[] = data.map(c => ({
+        id: c.id,
+        name: c.name,
+        platform: c.platform as any,
+        type: c.type as any,
+        createdAt: c.created_at,
+        ads: c.ads as Ad[]
+      }));
+      setCampaigns(formattedCampaigns);
+    }
+    setIsLoading(false);
+  };
+
   const generateAIContent = async () => {
     if (!newCampaignData.name || !newCampaignData.product || !newCampaignData.audience) {
-      alert('Por favor completa todos los campos');
+      toast({
+        title: "Campos incompletos",
+        description: "Por favor completa todos los campos requeridos.",
+        variant: "destructive"
+      });
       return;
     }
 
@@ -89,70 +119,118 @@ const FlowsightAdsDashboard: React.FC = () => {
     clearInterval(messageInterval);
 
     const isGoogleAds = newCampaignData.platform === 'google';
-    const newCampaign: Campaign = {
-      id: Date.now().toString(),
-      name: newCampaignData.name,
-      platform: newCampaignData.platform,
-      type: isGoogleAds ? 'search' : 'visual',
-      createdAt: new Date().toISOString(),
-      ads: isGoogleAds
-        ? [
-            {
-              id: '1',
-              headline: `${newCampaignData.product} - Solución #1`,
-              description: `Descubre cómo ${newCampaignData.product} transforma la vida de ${newCampaignData.audience}. Resultados comprobados.`,
-              cta: 'Conocer más',
-              budget: { min: 500, recommended: 1500, max: 5000 },
-            },
-            {
-              id: '2',
-              headline: `${newCampaignData.product} - Oferta Especial`,
-              description: `${newCampaignData.audience} confían en nosotros. Acceso exclusivo con descuento limitado.`,
-              cta: 'Aprovechar oferta',
-              budget: { min: 500, recommended: 1500, max: 5000 },
-            },
-            {
-              id: '3',
-              headline: `${newCampaignData.product} - Prueba Gratis`,
-              description: `Prueba ${newCampaignData.product} sin riesgo. Garantía de satisfacción para ${newCampaignData.audience}.`,
-              cta: 'Probar ahora',
-              budget: { min: 500, recommended: 1500, max: 5000 },
-            },
-          ]
-        : [
-            {
-              id: '1',
-              headline: `${newCampaignData.product} - Variante 1`,
-              description: `Transforma tu ${newCampaignData.audience} con ${newCampaignData.product}. ¡Únete a miles de usuarios satisfechos!`,
-              cta: 'Descubre más',
-              imageUrl: 'https://via.placeholder.com/1200x628/10b981/ffffff?text=Anuncio+1',
-              budget: { min: 300, recommended: 1000, max: 3000 },
-            },
-            {
-              id: '2',
-              headline: `${newCampaignData.product} - Variante 2`,
-              description: `Solución perfecta para ${newCampaignData.audience}. Resultados en 30 días o tu dinero de vuelta.`,
-              cta: 'Comenzar ahora',
-              imageUrl: 'https://via.placeholder.com/1200x628/14b8a6/ffffff?text=Anuncio+2',
-              budget: { min: 300, recommended: 1000, max: 3000 },
-            },
-            {
-              id: '3',
-              headline: `${newCampaignData.product} - Variante 3`,
-              description: `${newCampaignData.audience} merece lo mejor. ${newCampaignData.product} es la respuesta que buscabas.`,
-              cta: 'Explorar',
-              imageUrl: 'https://via.placeholder.com/1200x628/0d9488/ffffff?text=Anuncio+3',
-              budget: { min: 300, recommended: 1000, max: 3000 },
-            },
-          ],
-    };
+    const ads: Ad[] = isGoogleAds
+      ? [
+          {
+            id: '1',
+            headline: `${newCampaignData.product} - Solución #1`,
+            description: `Descubre cómo ${newCampaignData.product} transforma la vida de ${newCampaignData.audience}. Resultados comprobados.`,
+            cta: 'Conocer más',
+            budget: { min: 500, recommended: 1500, max: 5000 },
+          },
+          {
+            id: '2',
+            headline: `${newCampaignData.product} - Oferta Especial`,
+            description: `${newCampaignData.audience} confían en nosotros. Acceso exclusivo con descuento limitado.`,
+            cta: 'Aprovechar oferta',
+            budget: { min: 500, recommended: 1500, max: 5000 },
+          },
+          {
+            id: '3',
+            headline: `${newCampaignData.product} - Prueba Gratis`,
+            description: `Prueba ${newCampaignData.product} sin riesgo. Garantía de satisfacción para ${newCampaignData.audience}.`,
+            cta: 'Probar ahora',
+            budget: { min: 500, recommended: 1500, max: 5000 },
+          },
+        ]
+      : [
+          {
+            id: '1',
+            headline: `${newCampaignData.product} - Variante 1`,
+            description: `Transforma tu ${newCampaignData.audience} con ${newCampaignData.product}. ¡Únete a miles de usuarios satisfechos!`,
+            cta: 'Descubre más',
+            imageUrl: 'https://via.placeholder.com/1200x628/10b981/ffffff?text=Anuncio+1',
+            budget: { min: 300, recommended: 1000, max: 3000 },
+          },
+          {
+            id: '2',
+            headline: `${newCampaignData.product} - Variante 2`,
+            description: `Solución perfecta para ${newCampaignData.audience}. Resultados en 30 días o tu dinero de vuelta.`,
+            cta: 'Comenzar ahora',
+            imageUrl: 'https://via.placeholder.com/1200x628/14b8a6/ffffff?text=Anuncio+2',
+            budget: { min: 300, recommended: 1000, max: 3000 },
+          },
+          {
+            id: '3',
+            headline: `${newCampaignData.product} - Variante 3`,
+            description: `${newCampaignData.audience} merece lo mejor. ${newCampaignData.product} es la respuesta que buscabas.`,
+            cta: 'Explorar',
+            imageUrl: 'https://via.placeholder.com/1200x628/0d9488/ffffff?text=Anuncio+3',
+            budget: { min: 300, recommended: 1000, max: 3000 },
+          },
+        ];
 
-    setCampaigns([...campaigns, newCampaign]);
-    setSelectedCampaign(newCampaign);
+    const { data, error } = await supabase
+      .from('ads_campaigns')
+      .insert({
+        user_id: user.id,
+        name: newCampaignData.name,
+        platform: newCampaignData.platform,
+        type: isGoogleAds ? 'search' : 'visual',
+        ads: ads
+      })
+      .select()
+      .single();
+
+    if (error) {
+      toast({
+        title: "Error al guardar",
+        description: "No se pudo guardar la campaña en la base de datos.",
+        variant: "destructive"
+      });
+    } else {
+      const newCampaign: Campaign = {
+        id: data.id,
+        name: data.name,
+        platform: data.platform as any,
+        type: data.type as any,
+        createdAt: data.created_at,
+        ads: data.ads as Ad[]
+      };
+      setCampaigns([newCampaign, ...campaigns]);
+      setSelectedCampaign(newCampaign);
+      toast({
+        title: "Campaña generada",
+        description: "Tu campaña ha sido creada y guardada exitosamente.",
+      });
+    }
+
     setShowNewCampaignForm(false);
     setNewCampaignData({ name: '', platform: 'meta', product: '', audience: '', tone: 'professional' });
     setIsGenerating(false);
     setGeneratingMessage('');
+  };
+
+  const deleteCampaign = async (id: string) => {
+    const { error } = await supabase
+      .from('ads_campaigns')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: "No se pudo eliminar la campaña.",
+        variant: "destructive"
+      });
+    } else {
+      setCampaigns(campaigns.filter(c => c.id !== id));
+      if (selectedCampaign?.id === id) setSelectedCampaign(null);
+      toast({
+        title: "Eliminada",
+        description: "La campaña ha sido eliminada.",
+      });
+    }
   };
 
   const downloadCampaignPDF = (campaign: Campaign) => {
@@ -376,7 +454,7 @@ const FlowsightAdsDashboard: React.FC = () => {
                     <Share2 className="w-4 h-4 mr-2" />
                     Publicar en {selectedCampaign.platform.charAt(0).toUpperCase() + selectedCampaign.platform.slice(1)}
                   </Button>
-                  <Button onClick={() => { setCampaigns(campaigns.filter(c => c.id !== selectedCampaign.id)); setSelectedCampaign(null); }} variant="destructive">
+                  <Button onClick={() => deleteCampaign(selectedCampaign.id)} variant="destructive">
                     <Trash2 className="w-4 h-4 mr-2" />
                     Eliminar
                   </Button>
