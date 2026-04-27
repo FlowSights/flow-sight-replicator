@@ -1,1029 +1,445 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabaseClient';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
-import { ArrowLeft, Sparkles, LogOut, Zap, Target, Image as ImageIcon, BarChart3, Upload, X, Check, Download, ExternalLink, Maximize2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Slider } from '@/components/ui/slider';
+import { 
+  ArrowLeft, Sparkles, LogOut, Zap, Target, 
+  Image as ImageIcon, BarChart3, Upload, X, 
+  Check, Download, ExternalLink, Maximize2, 
+  ChevronLeft, ChevronRight, MapPin, Users, 
+  TrendingUp, ShieldCheck, Star
+} from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MetaPreview, TikTokPreview, LinkedInPreview, GoogleAdsPreview } from '@/components/PlatformPreviewsNative';
 import jsPDF from 'jspdf';
-
-type CampaignType = 'campaigns' | 'ads' | null;
-type ImageMode = 'own' | 'reference' | 'ai' | null;
-
-interface UploadedImage {
-  id: string;
-  url: string;
-  file: File;
-  selected: boolean;
-}
 
 interface GeneratedAd {
   headline: string;
   description: string;
   cta: string;
-  imageUrl?: string;
+  imageUrl: string;
+  platform: 'google' | 'meta' | 'tiktok' | 'linkedin';
+  type: 'Offer' | 'Emotional' | 'Urgency';
+  score: number;
 }
 
 interface CampaignConfig {
-  name: string;
-  description: string;
-  audience: string;
-  budget: number;
-  keywords: string;
-  negativeKeywords: string;
-  interests: string;
+  promote: string;
   location: string;
-  estimatedReach: number;
-  targetPopulation: number;
+  idealCustomer: string;
+  budget: number;
 }
 
 const FlowsightAdsDashboard: React.FC = () => {
   const navigate = useNavigate();
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [campaignType, setCampaignType] = useState<CampaignType>(null);
-  const [imageMode, setImageMode] = useState<ImageMode>(null);
+  const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  const [loadingMessage, setLoadingMessage] = useState('');
-  const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
+  const [loadingStep, setLoadingStep] = useState(0);
   const [generatedAds, setGeneratedAds] = useState<GeneratedAd[]>([]);
-  const [showPreview, setShowPreview] = useState(false);
+  const [showResults, setShowResults] = useState(false);
   const [selectedPlatform, setSelectedPlatform] = useState<'meta' | 'tiktok' | 'linkedin' | 'google'>('meta');
-  const [currentAdIndex, setCurrentAdIndex] = useState(0);
-  const [fullScreenPreview, setFullScreenPreview] = useState(false);
   
   const [config, setConfig] = useState<CampaignConfig>({
-    name: '',
-    description: '',
-    audience: '',
-    budget: 100,
-    keywords: '',
-    negativeKeywords: '',
-    interests: '',
+    promote: '',
     location: '',
-    estimatedReach: 5000,
-    targetPopulation: 50000,
+    idealCustomer: '',
+    budget: 100,
   });
+
+  const loadingMessages = [
+    'Analizando tu negocio...',
+    'Creando tus textos publicitarios...',
+    'Diseñando tus visuales...',
+    'Preparando tu kit de campaña...'
+  ];
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate('/flowsight-ads');
   };
 
-  const handleSelectCampaignType = (type: CampaignType) => {
-    setCampaignType(type);
-  };
-
-  const handleSelectImageMode = (mode: ImageMode) => {
-    setImageMode(mode);
-  };
-
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files) return;
-
-    Array.from(files).forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const newImage: UploadedImage = {
-          id: Math.random().toString(36).substr(2, 9),
-          url: event.target?.result as string,
-          file: file,
-          selected: false,
-        };
-        setUploadedImages([...uploadedImages, newImage]);
-      };
-      reader.readAsDataURL(file);
-    });
-  };
-
-  const toggleImageSelection = (id: string) => {
-    setUploadedImages(
-      uploadedImages.map((img) =>
-        img.id === id ? { ...img, selected: !img.selected } : img
-      )
-    );
-  };
-
-  const removeImage = (id: string) => {
-    setUploadedImages(uploadedImages.filter((img) => img.id !== id));
-  };
-
-  const handleGenerateContent = async (type: 'campaigns' | 'ads') => {
+  const handleGenerate = async () => {
     setIsLoading(true);
+    setLoadingStep(0);
     
-    const messages = [
-      'Analizando tu audiencia...',
-      'Generando copys persuasivos...',
-      'Optimizando imágenes...',
-      'Calculando presupuestos...',
-      'Validando configuración...',
-      '¡Casi listo!',
-    ];
-
-    for (let i = 0; i < messages.length; i++) {
-      await new Promise(resolve => setTimeout(resolve, 800));
-      setLoadingMessage(messages[i]);
+    // Simulate loading steps
+    for (let i = 0; i < loadingMessages.length; i++) {
+      setLoadingStep(i);
+      await new Promise(resolve => setTimeout(resolve, 1500));
     }
 
     const ads: GeneratedAd[] = [
       {
-        headline: config.name || 'Transforma tu negocio',
-        description: config.description || 'Crea campañas de publicidad con IA en minutos.',
-        cta: 'Comenzar ahora',
-        imageUrl: uploadedImages[0]?.url || 'https://via.placeholder.com/1200x628/10b981/ffffff?text=Anuncio+1',
+        type: 'Offer',
+        headline: `¡Oferta Especial en ${config.promote}!`,
+        description: `Descubre por qué somos los mejores en ${config.location}. ¡Aprovecha nuestra promoción exclusiva para nuevos clientes!`,
+        cta: 'Obtener Oferta',
+        imageUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop',
+        platform: 'google',
+        score: 92
       },
       {
-        headline: 'Anuncios que convierten',
-        description: config.description || 'Nuestra IA analiza tu audiencia y crea anuncios personalizados.',
-        cta: 'Ver más',
-        imageUrl: uploadedImages[1]?.url || 'https://via.placeholder.com/1200x628/14b8a6/ffffff?text=Anuncio+2',
+        type: 'Emotional',
+        headline: `Tu bienestar en ${config.promote} es nuestra prioridad`,
+        description: `Entendemos lo que buscas. En ${config.location} estamos listos para ayudarte a lograr tus metas con un servicio humano y profesional.`,
+        cta: 'Saber Más',
+        imageUrl: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&auto=format&fit=crop',
+        platform: 'meta',
+        score: 88
       },
       {
-        headline: 'Publicidad inteligente',
-        description: 'Optimiza automáticamente tus campañas. Menos tiempo, más resultados.',
-        cta: 'Probar gratis',
-        imageUrl: uploadedImages[2]?.url || 'https://via.placeholder.com/1200x628/0d9488/ffffff?text=Anuncio+3',
-      },
+        type: 'Urgency',
+        headline: `¡Últimos cupos para ${config.promote}!`,
+        description: `No te quedes fuera. La demanda en ${config.location} está creciendo. Reserva tu lugar hoy mismo y transforma tu realidad.`,
+        cta: 'Reservar Ahora',
+        imageUrl: 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=800&auto=format&fit=crop',
+        platform: 'tiktok',
+        score: 95
+      }
     ];
 
     setGeneratedAds(ads);
-    setShowPreview(true);
-    setCurrentAdIndex(0);
+    setShowResults(true);
     setIsLoading(false);
   };
 
   const generatePDF = () => {
     const doc = new jsPDF('p', 'mm', 'a4');
     const pageWidth = doc.internal.pageSize.getWidth();
-    const pageHeight = doc.internal.pageSize.getHeight();
-    let yPosition = 20;
-
-    // Header con branding
+    
+    // Header
     doc.setFillColor(16, 185, 129);
     doc.rect(0, 0, pageWidth, 40, 'F');
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(24);
-    doc.text('Flowsight Ads', 20, 25);
+    doc.text('Flowsight Ads - Campaign Kit', 20, 25);
     doc.setFontSize(10);
-    doc.text('Estrategia de Publicidad Premium', 20, 32);
+    doc.text('Tu campaña profesional lista para publicar', 20, 32);
 
-    // Reset color
+    // Content
     doc.setTextColor(0, 0, 0);
-    yPosition = 50;
+    let y = 55;
+    
+    doc.setFontSize(16);
+    doc.text('Resumen de Estrategia', 20, y);
+    y += 10;
+    
+    doc.setFontSize(11);
+    doc.text(`Negocio: ${config.promote}`, 20, y); y += 7;
+    doc.text(`Ubicación: ${config.location}`, 20, y); y += 7;
+    doc.text(`Cliente Ideal: ${config.idealCustomer}`, 20, y); y += 7;
+    doc.text(`Presupuesto Sugerido: $${config.budget}/mes`, 20, y); y += 15;
 
-    // Título
-    doc.setFontSize(18);
-    doc.text(`Campaña: ${config.name}`, 20, yPosition);
-    yPosition += 15;
-
-    // Información de campaña
-    doc.setFontSize(12);
-    doc.setFont(undefined, 'bold');
-    doc.text('Información de la Campaña', 20, yPosition);
-    yPosition += 8;
-
-    doc.setFont(undefined, 'normal');
-    doc.setFontSize(10);
-    const campaignInfo = [
-      `Plataforma: ${selectedPlatform.toUpperCase()}`,
-      `Presupuesto: $${config.budget}`,
-      `Alcance Estimado: ${config.estimatedReach.toLocaleString()} personas`,
-      `Población Objetivo: ${config.targetPopulation.toLocaleString()} personas`,
-      `Ubicación: ${config.location || 'Global'}`,
-      `Intereses: ${config.interests || 'No especificados'}`,
-    ];
-
-    campaignInfo.forEach((info) => {
-      doc.text(info, 25, yPosition);
-      yPosition += 6;
+    generatedAds.forEach((ad, index) => {
+      if (y > 240) { doc.addPage(); y = 20; }
+      doc.setFontSize(14);
+      doc.text(`Variación ${index + 1}: ${ad.type}`, 20, y);
+      y += 8;
+      doc.setFontSize(10);
+      doc.text(`Título: ${ad.headline}`, 25, y); y += 6;
+      const descLines = doc.splitTextToSize(`Descripción: ${ad.description}`, pageWidth - 50);
+      doc.text(descLines, 25, y); y += (descLines.length * 5) + 2;
+      doc.text(`Llamada a la acción: ${ad.cta}`, 25, y); y += 12;
     });
 
-    yPosition += 5;
-
-    // Descripción
-    doc.setFont(undefined, 'bold');
-    doc.setFontSize(12);
-    doc.text('Descripción del Producto/Servicio', 20, yPosition);
-    yPosition += 8;
-
-    doc.setFont(undefined, 'normal');
-    doc.setFontSize(10);
-    const descriptionLines = doc.splitTextToSize(config.description, pageWidth - 40);
-    doc.text(descriptionLines, 25, yPosition);
-    yPosition += descriptionLines.length * 6 + 5;
-
-    // Anuncio actual
-    doc.setFont(undefined, 'bold');
-    doc.setFontSize(12);
-    doc.text(`Anuncio ${currentAdIndex + 1} de ${generatedAds.length}`, 20, yPosition);
-    yPosition += 8;
-
-    doc.setFont(undefined, 'normal');
-    doc.setFontSize(10);
-    doc.text(`Headline: ${generatedAds[currentAdIndex].headline}`, 25, yPosition);
-    yPosition += 6;
-    
-    const descLines = doc.splitTextToSize(`Descripción: ${generatedAds[currentAdIndex].description}`, pageWidth - 40);
-    doc.text(descLines, 25, yPosition);
-    yPosition += descLines.length * 6 + 3;
-
-    doc.text(`CTA: ${generatedAds[currentAdIndex].cta}`, 25, yPosition);
-    yPosition += 10;
-
-    // Instrucciones por plataforma
-    doc.addPage();
-    doc.setFontSize(16);
-    doc.setFont(undefined, 'bold');
-    doc.text('Instrucciones de Publicación', 20, 20);
-
-    yPosition = 35;
-    doc.setFontSize(12);
-    doc.setFont(undefined, 'bold');
-
-    if (selectedPlatform === 'meta') {
-      doc.text('Meta Ads Manager (Facebook/Instagram)', 20, yPosition);
-      yPosition += 8;
-      doc.setFont(undefined, 'normal');
-      doc.setFontSize(10);
-      const metaInstructions = [
-        '1. Accede a facebook.com/ads/manager',
-        '2. Haz clic en "Crear" en la esquina superior izquierda',
-        '3. Selecciona tu objetivo de campaña',
-        '4. Configura tu audiencia según los datos proporcionados',
-        '5. Copia el headline y descripción en los campos correspondientes',
-        '6. Carga la imagen generada en la sección de creativos',
-        '7. Establece el presupuesto diario: $' + (config.budget / 30).toFixed(2),
-        '8. Revisa y publica tu anuncio',
-      ];
-      metaInstructions.forEach((instruction) => {
-        doc.text(instruction, 25, yPosition);
-        yPosition += 6;
-      });
-    } else if (selectedPlatform === 'google') {
-      doc.text('Google Ads', 20, yPosition);
-      yPosition += 8;
-      doc.setFont(undefined, 'normal');
-      doc.setFontSize(10);
-      const googleInstructions = [
-        '1. Accede a ads.google.com',
-        '2. Haz clic en "+ Campaña"',
-        '3. Selecciona "Búsqueda" como tipo de campaña',
-        '4. Configura tu presupuesto: $' + config.budget,
-        '5. Añade palabras clave: ' + (config.keywords || 'Relacionadas con tu negocio'),
-        '6. Crea un grupo de anuncios',
-        '7. Copia el headline y descripción',
-        '8. Establece tu URL de destino y publica',
-      ];
-      googleInstructions.forEach((instruction) => {
-        doc.text(instruction, 25, yPosition);
-        yPosition += 6;
-      });
-    } else if (selectedPlatform === 'tiktok') {
-      doc.text('TikTok Ads Manager', 20, yPosition);
-      yPosition += 8;
-      doc.setFont(undefined, 'normal');
-      doc.setFontSize(10);
-      const tiktokInstructions = [
-        '1. Accede a ads.tiktok.com',
-        '2. Haz clic en "Crear campaña"',
-        '3. Selecciona tu objetivo de marketing',
-        '4. Configura tu presupuesto: $' + config.budget,
-        '5. Define tu audiencia objetivo',
-        '6. Crea un grupo de anuncios',
-        '7. Carga tu video o imagen vertical',
-        '8. Añade el headline y descripción',
-        '9. Revisa y lanza tu campaña',
-      ];
-      tiktokInstructions.forEach((instruction) => {
-        doc.text(instruction, 25, yPosition);
-        yPosition += 6;
-      });
-    } else if (selectedPlatform === 'linkedin') {
-      doc.text('LinkedIn Campaign Manager', 20, yPosition);
-      yPosition += 8;
-      doc.setFont(undefined, 'normal');
-      doc.setFontSize(10);
-      const linkedinInstructions = [
-        '1. Accede a linkedin.com/campaignmanager',
-        '2. Haz clic en "Crear campaña"',
-        '3. Selecciona tu objetivo',
-        '4. Configura tu presupuesto: $' + config.budget,
-        '5. Define audiencia profesional',
-        '6. Crea tu anuncio patrocinado',
-        '7. Carga la imagen de alta calidad',
-        '8. Añade headline y descripción',
-        '9. Publica tu campaña',
-      ];
-      linkedinInstructions.forEach((instruction) => {
-        doc.text(instruction, 25, yPosition);
-        yPosition += 6;
-      });
-    }
-
-    // Footer
-    doc.setFontSize(8);
-    doc.setTextColor(128, 128, 128);
-    doc.text('Generado por Flowsight Ads - Publicidad Inteligente con IA', 20, pageHeight - 10);
-
-    doc.save(`${config.name || 'Campaña'}-Flowsight-Ads.pdf`);
-  };
-
-  const openPublishLink = () => {
-    const links: Record<string, string> = {
-      meta: 'https://business.facebook.com/latest/home',
-      google: 'https://ads.google.com',
-      tiktok: 'https://ads.tiktok.com',
-      linkedin: 'https://www.linkedin.com/campaignmanager',
-    };
-    window.open(links[selectedPlatform], '_blank');
+    doc.save('Flowsight-Campaign-Kit.pdf');
   };
 
   if (isLoading) {
     return (
-      <div className="fixed inset-0 bg-gradient-to-br from-emerald-50 via-teal-50 to-emerald-100 dark:from-emerald-950 dark:via-teal-950 dark:to-emerald-900 flex items-center justify-center z-50">
-        <motion.div 
-          className="text-center"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-          <motion.div
-            className="w-24 h-24 mx-auto mb-8 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-full flex items-center justify-center shadow-2xl"
-            animate={{ rotate: 360 }}
-            transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-          >
-            <Sparkles className="w-12 h-12 text-white" />
-          </motion.div>
-          <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            Generando tu contenido premium
-          </h2>
-          <motion.p
-            className="text-xl text-gray-600 dark:text-gray-400 h-8"
-            key={loadingMessage}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.5 }}
-          >
-            {loadingMessage}
-          </motion.p>
-          <div className="mt-12 flex justify-center gap-2">
-            {[...Array(5)].map((_, i) => (
+      <div className="min-h-screen bg-white dark:bg-gray-950 flex flex-col items-center justify-center p-6">
+        <div className="w-full max-w-md text-center">
+          <div className="relative w-24 h-24 mx-auto mb-8">
+            <div className="absolute inset-0 border-4 border-emerald-100 dark:border-emerald-900/30 rounded-full"></div>
+            <motion.div 
+              className="absolute inset-0 border-4 border-emerald-500 rounded-full border-t-transparent"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+            />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Sparkles className="w-8 h-8 text-emerald-500" />
+            </div>
+          </div>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={loadingStep}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="space-y-4"
+            >
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                {loadingMessages[loadingStep]}
+              </h2>
+              <div className="flex justify-center gap-1">
+                {[0, 1, 2, 3].map((i) => (
+                  <div 
+                    key={i} 
+                    className={`h-1.5 w-8 rounded-full transition-colors duration-500 ${
+                      i <= loadingStep ? 'bg-emerald-500' : 'bg-gray-200 dark:bg-gray-800'
+                    }`}
+                  />
+                ))}
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </div>
+    );
+  }
+
+  if (showResults) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+        <header className="sticky top-0 z-40 backdrop-blur-xl bg-white/80 dark:bg-gray-900/80 border-b border-gray-200 dark:border-gray-800">
+          <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <button onClick={() => setShowResults(false)} className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-emerald-600 transition-colors">
+              <ArrowLeft className="w-5 h-5" />
+              Editar datos
+            </button>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Tus anuncios están listos</h2>
+            <Button onClick={generatePDF} className="bg-emerald-600 hover:bg-emerald-700 text-white gap-2">
+              <Download className="w-4 h-4" />
+              Descargar Campaign Kit
+            </Button>
+          </div>
+        </header>
+
+        <main className="max-w-7xl mx-auto px-6 py-12">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {generatedAds.map((ad, idx) => (
               <motion.div
-                key={i}
-                className="w-3 h-3 bg-emerald-500 rounded-full"
-                animate={{ scale: [1, 1.3, 1] }}
-                transition={{ duration: 0.8, repeat: Infinity, delay: i * 0.15 }}
-              />
+                key={idx}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.2 }}
+              >
+                <Card className="overflow-hidden border-none shadow-xl bg-white dark:bg-gray-900 rounded-3xl">
+                  <div className="p-4 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center">
+                    <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 dark:bg-emerald-900/30 px-3 py-1 rounded-full">
+                      {ad.type === 'Offer' ? 'Oferta' : ad.type === 'Emotional' ? 'Emocional' : 'Urgencia'}
+                    </span>
+                    <div className="flex items-center gap-1 text-amber-500">
+                      <Star className="w-4 h-4 fill-current" />
+                      <span className="text-sm font-bold">{ad.score}/100</span>
+                    </div>
+                  </div>
+                  
+                  <div className="aspect-video relative overflow-hidden">
+                    <img src={ad.imageUrl} alt="Ad" className="w-full h-full object-cover" />
+                    <div className="absolute top-3 right-3 bg-white/90 backdrop-blur px-2 py-1 rounded text-[10px] font-bold shadow-sm">
+                      {ad.platform.toUpperCase()} PREVIEW
+                    </div>
+                  </div>
+
+                  <div className="p-6 space-y-4">
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white leading-tight">
+                      {ad.headline}
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                      {ad.description}
+                    </p>
+                    <Button className="w-full bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white hover:bg-emerald-600 hover:text-white transition-all rounded-xl py-6 font-bold">
+                      {ad.cta}
+                    </Button>
+                    <div className="pt-4 border-t border-gray-100 dark:border-gray-800">
+                      <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
+                        <ShieldCheck className="w-4 h-4" />
+                        <span className="text-xs font-medium">Alta probabilidad de generar clics</span>
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              </motion.div>
             ))}
           </div>
-        </motion.div>
-      </div>
-    );
-  }
-
-  if (fullScreenPreview && generatedAds.length > 0) {
-    return (
-      <div className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4">
-        <button
-          onClick={() => setFullScreenPreview(false)}
-          className="absolute top-6 right-6 text-white hover:text-gray-300 transition-colors"
-        >
-          <X className="w-8 h-8" />
-        </button>
-
-        <div className="w-full max-w-4xl">
-          <div className="mb-6">
-            {selectedPlatform === 'meta' && (
-              <MetaPreview {...generatedAds[currentAdIndex]} platform="meta" />
-            )}
-            {selectedPlatform === 'tiktok' && (
-              <TikTokPreview {...generatedAds[currentAdIndex]} platform="tiktok" />
-            )}
-            {selectedPlatform === 'linkedin' && (
-              <LinkedInPreview {...generatedAds[currentAdIndex]} platform="linkedin" />
-            )}
-            {campaignType === 'campaigns' && (
-              <GoogleAdsPreview {...generatedAds[currentAdIndex]} platform="google" />
-            )}
-          </div>
-
-          <div className="flex justify-between items-center text-white">
-            <button
-              onClick={() => setCurrentAdIndex(Math.max(0, currentAdIndex - 1))}
-              disabled={currentAdIndex === 0}
-              className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 rounded-lg disabled:opacity-50"
-            >
-              <ChevronLeft className="w-5 h-5" />
-              Anterior
-            </button>
-            <span>{currentAdIndex + 1} / {generatedAds.length}</span>
-            <button
-              onClick={() => setCurrentAdIndex(Math.min(generatedAds.length - 1, currentAdIndex + 1))}
-              disabled={currentAdIndex === generatedAds.length - 1}
-              className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 rounded-lg disabled:opacity-50"
-            >
-              Siguiente
-              <ChevronRight className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (!campaignType) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-emerald-100 dark:from-emerald-950 dark:via-teal-950 dark:to-emerald-900">
-        <header className="sticky top-0 z-40 backdrop-blur-xl bg-white/80 dark:bg-gray-900/80 border-b border-white/20 dark:border-gray-800">
-          <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <button
-              onClick={() => navigate('/flowsight-ads')}
-              className="flex items-center gap-2 text-emerald-700 dark:text-emerald-300 hover:text-emerald-800 px-4 py-2 rounded-full transition-all"
-            >
-              <ArrowLeft className="w-5 h-5" />
-              Volver
-            </button>
-            <Button
-              onClick={handleLogout}
-              variant="ghost"
-              className="flex items-center gap-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
-            >
-              <LogOut className="w-5 h-5" />
-              Cerrar Sesión
-            </Button>
-          </div>
-        </header>
-
-        <div className="max-w-7xl mx-auto px-6 py-12 md:py-20">
-          <div className="text-center mb-12 md:mb-16">
-            <h1 className="text-4xl md:text-6xl font-bold font-display bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-400 dark:to-teal-400 bg-clip-text text-transparent mb-4 leading-tight py-2">
-              ¿Qué deseas crear?
-            </h1>
-            <p className="text-xl text-gray-600 dark:text-gray-400">
-              Elige entre campañas de búsqueda o anuncios visuales
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => handleSelectCampaignType('campaigns')}
-              className="cursor-pointer"
-            >
-              <Card className="glass-card backdrop-blur-xl bg-white/90 dark:bg-gray-900/90 border-2 border-white/20 dark:border-gray-800 hover:border-blue-500/50 p-8 rounded-3xl transition-all shadow-lg hover:shadow-2xl">
-                <div className="p-4 bg-gradient-to-br from-blue-100 to-blue-50 dark:from-blue-900/30 dark:to-blue-800/20 rounded-2xl w-fit mb-6">
-                  <BarChart3 className="w-8 h-8 text-blue-600 dark:text-blue-400" />
-                </div>
-                <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-3">
-                  Campañas Google Ads
-                </h2>
-                <p className="text-gray-600 dark:text-gray-400 mb-6">
-                  Crea campañas de búsqueda con textos optimizados, palabras clave y presupuestos inteligentes.
-                </p>
-                <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300 mb-8">
-                  <li className="flex items-center gap-2">
-                    <Zap className="w-4 h-4 text-blue-500" />
-                    Textos persuasivos
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Target className="w-4 h-4 text-blue-500" />
-                    Palabras clave optimizadas
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <BarChart3 className="w-4 h-4 text-blue-500" />
-                    Presupuesto automático
-                  </li>
-                </ul>
-                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg">
-                  Crear Campaña
-                </Button>
-              </Card>
-            </motion.div>
-
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => handleSelectCampaignType('ads')}
-              className="cursor-pointer"
-            >
-              <Card className="glass-card backdrop-blur-xl bg-white/90 dark:bg-gray-900/90 border-2 border-white/20 dark:border-gray-800 hover:border-emerald-500/50 p-8 rounded-3xl transition-all shadow-lg hover:shadow-2xl">
-                <div className="p-4 bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/30 dark:to-teal-900/30 rounded-2xl w-fit mb-6">
-                  <ImageIcon className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
-                </div>
-                <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-3">
-                  Anuncios Visuales
-                </h2>
-                <p className="text-gray-600 dark:text-gray-400 mb-6">
-                  Crea anuncios visuales para Meta, TikTok y LinkedIn con imágenes generadas por IA.
-                </p>
-                <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300 mb-8">
-                  <li className="flex items-center gap-2">
-                    <ImageIcon className="w-4 h-4 text-emerald-500" />
-                    Imágenes optimizadas
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Target className="w-4 h-4 text-emerald-500" />
-                    3 plataformas
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-emerald-500" />
-                    Generación IA
-                  </li>
-                </ul>
-                <Button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-lg">
-                  Crear Anuncio
-                </Button>
-              </Card>
-            </motion.div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (!imageMode && campaignType === 'ads') {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-emerald-100 dark:from-emerald-950 dark:via-teal-950 dark:to-emerald-900">
-        <header className="sticky top-0 z-40 backdrop-blur-xl bg-white/80 dark:bg-gray-900/80 border-b border-white/20 dark:border-gray-800">
-          <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <button
-              onClick={() => setCampaignType(null)}
-              className="flex items-center gap-2 text-emerald-700 dark:text-emerald-300 hover:text-emerald-800 px-4 py-2 rounded-full transition-all"
-            >
-              <ArrowLeft className="w-5 h-5" />
-              Atrás
-            </button>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-              Elige tu estrategia de imágenes
-            </h2>
-            <Button
-              onClick={handleLogout}
-              variant="ghost"
-              className="flex items-center gap-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
-            >
-              <LogOut className="w-5 h-5" />
-            </Button>
-          </div>
-        </header>
-
-        <div className="max-w-7xl mx-auto px-6 py-20">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => handleSelectImageMode('own')}
-              className="cursor-pointer"
-            >
-              <Card className="glass-card backdrop-blur-xl bg-white/90 dark:bg-gray-900/90 border-2 border-white/20 dark:border-gray-800 hover:border-purple-500/50 p-8 rounded-3xl transition-all shadow-lg hover:shadow-2xl h-full flex flex-col">
-                <div className="p-4 bg-gradient-to-br from-purple-100 to-purple-50 dark:from-purple-900/30 dark:to-purple-800/20 rounded-2xl w-fit mb-6">
-                  <Upload className="w-8 h-8 text-purple-600 dark:text-purple-400" />
-                </div>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
-                  Usa tus imágenes
-                </h2>
-                <p className="text-gray-600 dark:text-gray-400 mb-6 flex-grow">
-                  Carga tus propias imágenes de productos o servicios. Perfectas para mantener tu identidad visual.
-                </p>
-                <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-lg">
-                  Continuar
-                </Button>
-              </Card>
-            </motion.div>
-
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => handleSelectImageMode('reference')}
-              className="cursor-pointer"
-            >
-              <Card className="glass-card backdrop-blur-xl bg-white/90 dark:bg-gray-900/90 border-2 border-white/20 dark:border-gray-800 hover:border-orange-500/50 p-8 rounded-3xl transition-all shadow-lg hover:shadow-2xl h-full flex flex-col">
-                <div className="p-4 bg-gradient-to-br from-orange-100 to-orange-50 dark:from-orange-900/30 dark:to-orange-800/20 rounded-2xl w-fit mb-6">
-                  <Sparkles className="w-8 h-8 text-orange-600 dark:text-orange-400" />
-                </div>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
-                  IA como referencia
-                </h2>
-                <p className="text-gray-600 dark:text-gray-400 mb-6 flex-grow">
-                  Carga imágenes como referencia y deja que la IA las optimice y genere variaciones.
-                </p>
-                <Button className="w-full bg-orange-600 hover:bg-orange-700 text-white py-3 rounded-lg">
-                  Continuar
-                </Button>
-              </Card>
-            </motion.div>
-
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => handleSelectImageMode('ai')}
-              className="cursor-pointer"
-            >
-              <Card className="glass-card backdrop-blur-xl bg-white/90 dark:bg-gray-900/90 border-2 border-white/20 dark:border-gray-800 hover:border-pink-500/50 p-8 rounded-3xl transition-all shadow-lg hover:shadow-2xl h-full flex flex-col">
-                <div className="p-4 bg-gradient-to-br from-pink-100 to-pink-50 dark:from-pink-900/30 dark:to-pink-800/20 rounded-2xl w-fit mb-6">
-                  <Zap className="w-8 h-8 text-pink-600 dark:text-pink-400" />
-                </div>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
-                  100% IA
-                </h2>
-                <p className="text-gray-600 dark:text-gray-400 mb-6 flex-grow">
-                  Deja que la IA genere imágenes completamente nuevas basadas en tu descripción.
-                </p>
-                <Button className="w-full bg-pink-600 hover:bg-pink-700 text-white py-3 rounded-lg">
-                  Continuar
-                </Button>
-              </Card>
-            </motion.div>
-          </div>
-        </div>
+        </main>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-emerald-100 dark:from-emerald-950 dark:via-teal-950 dark:to-emerald-900">
-      <header className="sticky top-0 z-40 backdrop-blur-xl bg-white/80 dark:bg-gray-900/80 border-b border-white/20 dark:border-gray-800">
+    <div className="min-h-screen bg-white dark:bg-gray-950">
+      <header className="sticky top-0 z-40 backdrop-blur-xl bg-white/80 dark:bg-gray-900/80 border-b border-gray-100 dark:border-gray-800">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-          <button
-            onClick={() => {
-              if (campaignType === 'ads' && imageMode) {
-                setImageMode(null);
-              } else {
-                setCampaignType(null);
-              }
-            }}
-            className="flex items-center gap-2 text-emerald-700 dark:text-emerald-300 hover:text-emerald-800 px-4 py-2 rounded-full transition-all"
-          >
+          <button onClick={() => navigate('/flowsight-ads')} className="flex items-center gap-2 text-gray-500 hover:text-emerald-600 transition-colors">
             <ArrowLeft className="w-5 h-5" />
-            Atrás
+            Volver
           </button>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-            {campaignType === 'campaigns' ? 'Nueva Campaña Google Ads' : 'Nuevo Anuncio Visual'}
-          </h2>
-          <Button
-            onClick={handleLogout}
-            variant="ghost"
-            className="flex items-center gap-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
-          >
-            <LogOut className="w-5 h-5" />
-          </Button>
+          <div className="flex items-center gap-4">
+            <div className="hidden md:flex items-center gap-2">
+              {[1, 2, 3, 4].map((s) => (
+                <div key={s} className={`h-1.5 w-8 rounded-full ${s <= step ? 'bg-emerald-500' : 'bg-gray-200 dark:bg-gray-800'}`} />
+              ))}
+            </div>
+            <Button onClick={handleLogout} variant="ghost" className="text-gray-400 hover:text-red-500">
+              <LogOut className="w-5 h-5" />
+            </Button>
+          </div>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-6 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
-            <Card className="glass-card backdrop-blur-xl bg-white/90 dark:bg-gray-900/90 border border-white/20 dark:border-gray-800 p-8 rounded-3xl">
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-                Configuración Premium
-              </h3>
-              
-              <div className="space-y-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Nombre de la {campaignType === 'campaigns' ? 'Campaña' : 'Anuncio'}
-                  </label>
-                  <Input 
-                    value={config.name}
-                    onChange={(e) => setConfig({...config, name: e.target.value})}
-                    placeholder="Ej: Campaña Verano 2026"
-                    className="rounded-lg"
-                  />
+      <main className="max-w-2xl mx-auto px-6 py-12 md:py-24">
+        <AnimatePresence mode="wait">
+          {step === 1 && (
+            <motion.div key="step1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-8">
+              <div className="space-y-2">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 text-xs font-bold uppercase tracking-wider">
+                  Paso 1 de 4
                 </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Descripción del Producto/Servicio
-                  </label>
-                  <Textarea 
-                    value={config.description}
-                    onChange={(e) => setConfig({...config, description: e.target.value})}
-                    placeholder="Describe qué vendes y por qué es especial..."
-                    className="rounded-lg min-h-24"
-                  />
+                <h1 className="text-4xl font-bold text-gray-900 dark:text-white">¿Qué deseas promocionar?</h1>
+                <p className="text-gray-500 dark:text-gray-400">Dinos el nombre de tu negocio o el servicio específico.</p>
+              </div>
+              <div className="space-y-4">
+                <Input 
+                  value={config.promote}
+                  onChange={(e) => setConfig({...config, promote: e.target.value})}
+                  placeholder="Ej: Clínica Dental, Restaurante, Software de Ventas..."
+                  className="text-lg py-8 px-6 rounded-2xl border-gray-200 dark:border-gray-800 focus:ring-emerald-500"
+                />
+                <div className="flex flex-wrap gap-2">
+                  {['Inmobiliaria', 'Hotel', 'Servicio de Limpieza', 'Gimnasio'].map(tag => (
+                    <button 
+                      key={tag}
+                      onClick={() => setConfig({...config, promote: tag})}
+                      className="px-4 py-2 rounded-full bg-gray-50 dark:bg-gray-900 text-sm text-gray-600 dark:text-gray-400 hover:bg-emerald-50 hover:text-emerald-600 transition-colors"
+                    >
+                      {tag}
+                    </button>
+                  ))}
                 </div>
+              </div>
+              <Button 
+                disabled={!config.promote}
+                onClick={() => setStep(2)}
+                className="w-full py-8 text-lg bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl shadow-lg shadow-emerald-500/20"
+              >
+                Continuar
+              </Button>
+            </motion.div>
+          )}
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Audiencia Objetivo
-                  </label>
-                  <Input 
-                    value={config.audience}
-                    onChange={(e) => setConfig({...config, audience: e.target.value})}
-                    placeholder="Ej: Mujeres 25-45, interesadas en tecnología"
-                    className="rounded-lg"
-                  />
+          {step === 2 && (
+            <motion.div key="step2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-8">
+              <div className="space-y-2">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 text-xs font-bold uppercase tracking-wider">
+                  Paso 2 de 4
                 </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Ubicación Geográfica
-                  </label>
-                  <Input 
-                    value={config.location}
-                    onChange={(e) => setConfig({...config, location: e.target.value})}
-                    placeholder="Ej: Colombia, Bogotá"
-                    className="rounded-lg"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Intereses (Tags)
-                  </label>
-                  <Input 
-                    value={config.interests}
-                    onChange={(e) => setConfig({...config, interests: e.target.value})}
-                    placeholder="Ej: Marketing, Tecnología, Negocios"
-                    className="rounded-lg"
-                  />
-                </div>
-
-                {campaignType === 'campaigns' && (
-                  <>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Palabras Clave
-                      </label>
-                      <Input 
-                        value={config.keywords}
-                        onChange={(e) => setConfig({...config, keywords: e.target.value})}
-                        placeholder="Ej: software marketing, herramientas IA"
-                        className="rounded-lg"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Palabras Clave Negativas
-                      </label>
-                      <Input 
-                        value={config.negativeKeywords}
-                        onChange={(e) => setConfig({...config, negativeKeywords: e.target.value})}
-                        placeholder="Ej: gratis, barato"
-                        className="rounded-lg"
-                      />
-                    </div>
-                  </>
-                )}
-
-                {/* Sliders */}
-                <div className="space-y-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-                  <div>
-                    <div className="flex justify-between items-center mb-3">
-                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Presupuesto Diario
-                      </label>
-                      <span className="text-lg font-bold text-emerald-600 dark:text-emerald-400">
-                        ${config.budget}
-                      </span>
-                    </div>
-                    <input
-                      type="range"
-                      min="10"
-                      max="1000"
-                      step="10"
-                      value={config.budget}
-                      onChange={(e) => {
-                        const budget = parseInt(e.target.value);
-                        setConfig({
-                          ...config,
-                          budget,
-                          estimatedReach: budget * 50,
-                        });
-                      }}
-                      className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
-                    />
-                    <div className="flex justify-between text-xs text-gray-500 mt-2">
-                      <span>$10</span>
-                      <span>$1000</span>
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="flex justify-between items-center mb-3">
-                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Alcance Estimado
-                      </label>
-                      <span className="text-lg font-bold text-teal-600 dark:text-teal-400">
-                        {config.estimatedReach.toLocaleString()}
-                      </span>
-                    </div>
-                    <input
-                      type="range"
-                      min="1000"
-                      max="500000"
-                      step="1000"
-                      value={config.estimatedReach}
-                      onChange={(e) => setConfig({...config, estimatedReach: parseInt(e.target.value)})}
-                      className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-teal-500"
-                    />
-                  </div>
-
-                  <div>
-                    <div className="flex justify-between items-center mb-3">
-                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Población Objetivo
-                      </label>
-                      <span className="text-lg font-bold text-blue-600 dark:text-blue-400">
-                        {config.targetPopulation.toLocaleString()}
-                      </span>
-                    </div>
-                    <input
-                      type="range"
-                      min="10000"
-                      max="5000000"
-                      step="10000"
-                      value={config.targetPopulation}
-                      onChange={(e) => setConfig({...config, targetPopulation: parseInt(e.target.value)})}
-                      className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
-                    />
-                  </div>
-                </div>
-
-                {campaignType === 'ads' && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Imágenes
-                    </label>
-                    <div className="space-y-4">
-                      {imageMode !== 'ai' && (
-                        <>
-                          <button
-                            onClick={() => fileInputRef.current?.click()}
-                            className="w-full border-2 border-dashed border-emerald-300 dark:border-emerald-700 rounded-lg p-6 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-colors"
-                          >
-                            <Upload className="w-6 h-6 mx-auto mb-2 text-emerald-600 dark:text-emerald-400" />
-                            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Carga tus imágenes</p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">
-                              {imageMode === 'reference' ? 'La IA las optimizará' : 'Se usarán tal cual'}
-                            </p>
-                          </button>
-                          <input
-                            ref={fileInputRef}
-                            type="file"
-                            multiple
-                            accept="image/*"
-                            onChange={handleImageUpload}
-                            className="hidden"
-                          />
-                        </>
-                      )}
-                      
-                      {uploadedImages.length > 0 && (
-                        <div className="grid grid-cols-3 gap-2">
-                          <AnimatePresence>
-                            {uploadedImages.map((img) => (
-                              <motion.div
-                                key={img.id}
-                                initial={{ opacity: 0, scale: 0.8 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 0.8 }}
-                                className="relative group"
-                              >
-                                <img
-                                  src={img.url}
-                                  alt="Uploaded"
-                                  className={`w-full h-24 object-cover rounded-lg cursor-pointer transition-all ${
-                                    img.selected ? 'ring-2 ring-emerald-500' : ''
-                                  }`}
-                                  onClick={() => toggleImageSelection(img.id)}
-                                />
-                                {img.selected && (
-                                  <div className="absolute inset-0 bg-emerald-500/20 rounded-lg flex items-center justify-center">
-                                    <Check className="w-6 h-6 text-white" />
-                                  </div>
-                                )}
-                                <button
-                                  onClick={() => removeImage(img.id)}
-                                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                                >
-                                  <X className="w-4 h-4" />
-                                </button>
-                              </motion.div>
-                            ))}
-                          </AnimatePresence>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-
+                <h1 className="text-4xl font-bold text-gray-900 dark:text-white">¿Dónde se encuentra tu negocio?</h1>
+                <p className="text-gray-500 dark:text-gray-400">Esto nos ayuda a segmentar geográficamente tus anuncios.</p>
+              </div>
+              <div className="relative">
+                <MapPin className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 w-6 h-6" />
+                <Input 
+                  value={config.location}
+                  onChange={(e) => setConfig({...config, location: e.target.value})}
+                  placeholder="Ciudad, País o Región"
+                  className="text-lg py-8 pl-16 pr-6 rounded-2xl border-gray-200 dark:border-gray-800 focus:ring-emerald-500"
+                />
+              </div>
+              <div className="flex gap-4">
+                <Button variant="ghost" onClick={() => setStep(1)} className="flex-1 py-8 text-lg rounded-2xl">Atrás</Button>
                 <Button 
-                  onClick={() => handleGenerateContent(campaignType as 'campaigns' | 'ads')}
-                  className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white py-6 text-lg rounded-lg font-semibold"
+                  disabled={!config.location}
+                  onClick={() => setStep(3)}
+                  className="flex-[2] py-8 text-lg bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl shadow-lg shadow-emerald-500/20"
                 >
-                  <Sparkles className="w-5 h-5 mr-2" />
-                  Generar Anuncios Premium
+                  Continuar
                 </Button>
               </div>
-            </Card>
-          </div>
+            </motion.div>
+          )}
 
-          <div>
-            {showPreview && generatedAds.length > 0 ? (
-              <Card className="glass-card backdrop-blur-xl bg-white/90 dark:bg-gray-900/90 border border-white/20 dark:border-gray-800 p-8 rounded-3xl sticky top-24">
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
-                  Vista Previa
-                </h3>
-                
-                {campaignType === 'ads' && (
-                  <div className="grid grid-cols-2 gap-2 mb-6">
-                    {(['meta', 'tiktok', 'linkedin'] as const).map((platform) => (
-                      <button
-                        key={platform}
-                        onClick={() => setSelectedPlatform(platform)}
-                        className={`py-2 px-3 rounded-lg text-sm font-medium transition-all ${
-                          selectedPlatform === platform
-                            ? 'bg-emerald-500 text-white'
-                            : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300'
-                        }`}
-                      >
-                        {platform.charAt(0).toUpperCase() + platform.slice(1)}
-                      </button>
-                    ))}
-                  </div>
-                )}
-
-                <div className="mb-4 overflow-auto max-h-96">
-                  {selectedPlatform === 'meta' && (
-                    <MetaPreview {...generatedAds[currentAdIndex]} platform="meta" />
-                  )}
-                  {selectedPlatform === 'tiktok' && (
-                    <TikTokPreview {...generatedAds[currentAdIndex]} platform="tiktok" />
-                  )}
-                  {selectedPlatform === 'linkedin' && (
-                    <LinkedInPreview {...generatedAds[currentAdIndex]} platform="linkedin" />
-                  )}
-                  {campaignType === 'campaigns' && (
-                    <GoogleAdsPreview {...generatedAds[currentAdIndex]} platform="google" />
-                  )}
+          {step === 3 && (
+            <motion.div key="step3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-8">
+              <div className="space-y-2">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 text-xs font-bold uppercase tracking-wider">
+                  Paso 3 de 4
                 </div>
-
-                <button
-                  onClick={() => setFullScreenPreview(true)}
-                  className="w-full mb-3 flex items-center justify-center gap-2 px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                <h1 className="text-4xl font-bold text-gray-900 dark:text-white">¿Quién es tu cliente ideal?</h1>
+                <p className="text-gray-500 dark:text-gray-400">Describe brevemente a quién quieres llegar.</p>
+              </div>
+              <div className="space-y-4">
+                <Textarea 
+                  value={config.idealCustomer}
+                  onChange={(e) => setConfig({...config, idealCustomer: e.target.value})}
+                  placeholder="Ej: Familias jóvenes, dueños de negocios, turistas, estudiantes..."
+                  className="text-lg py-6 px-6 rounded-2xl border-gray-200 dark:border-gray-800 focus:ring-emerald-500 min-h-[150px]"
+                />
+                <div className="flex flex-wrap gap-2">
+                  {['Familias', 'Turistas', 'Empresarios', 'Estudiantes', 'Propietarios'].map(tag => (
+                    <button 
+                      key={tag}
+                      onClick={() => setConfig({...config, idealCustomer: tag})}
+                      className="px-4 py-2 rounded-full bg-gray-50 dark:bg-gray-900 text-sm text-gray-600 dark:text-gray-400 hover:bg-emerald-50 hover:text-emerald-600 transition-colors"
+                    >
+                      {tag}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="flex gap-4">
+                <Button variant="ghost" onClick={() => setStep(2)} className="flex-1 py-8 text-lg rounded-2xl">Atrás</Button>
+                <Button 
+                  disabled={!config.idealCustomer}
+                  onClick={() => setStep(4)}
+                  className="flex-[2] py-8 text-lg bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl shadow-lg shadow-emerald-500/20"
                 >
-                  <Maximize2 className="w-4 h-4" />
-                  Ver en Grande
-                </button>
+                  Continuar
+                </Button>
+              </div>
+            </motion.div>
+          )}
 
-                <div className="flex gap-2 justify-between items-center mb-4">
-                  <button
-                    onClick={() => setCurrentAdIndex(Math.max(0, currentAdIndex - 1))}
-                    disabled={currentAdIndex === 0}
-                    className="px-3 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg disabled:opacity-50 text-sm"
-                  >
-                    ← Anterior
-                  </button>
-                  <span className="text-sm text-gray-600 dark:text-gray-400">
-                    {currentAdIndex + 1} / {generatedAds.length}
-                  </span>
-                  <button
-                    onClick={() => setCurrentAdIndex(Math.min(generatedAds.length - 1, currentAdIndex + 1))}
-                    disabled={currentAdIndex === generatedAds.length - 1}
-                    className="px-3 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg disabled:opacity-50 text-sm"
-                  >
-                    Siguiente →
-                  </button>
+          {step === 4 && (
+            <motion.div key="step4" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-8">
+              <div className="space-y-2">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 text-xs font-bold uppercase tracking-wider">
+                  Paso 4 de 4
                 </div>
+                <h1 className="text-4xl font-bold text-gray-900 dark:text-white">¿Cuánto deseas invertir?</h1>
+                <p className="text-gray-500 dark:text-gray-400">Selecciona tu presupuesto mensual estimado.</p>
+              </div>
+              
+              <div className="space-y-12 py-8">
+                <div className="text-center">
+                  <span className="text-6xl font-bold text-emerald-600">${config.budget}</span>
+                  <span className="text-xl text-gray-400 ml-2">/ mes</span>
+                </div>
+                <Slider
+                  value={[config.budget]}
+                  onValueChange={(val) => setConfig({...config, budget: val[0]})}
+                  max={2000}
+                  min={50}
+                  step={50}
+                  className="py-4"
+                />
+                <div className="flex justify-between text-sm text-gray-400 font-medium">
+                  <span>$50</span>
+                  <span>$500</span>
+                  <span>$1000</span>
+                  <span>$2000</span>
+                </div>
+              </div>
 
-                <div className="space-y-2">
-                  <Button
-                    onClick={generatePDF}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg flex items-center justify-center gap-2"
-                  >
-                    <Download className="w-4 h-4" />
-                    Descargar PDF
-                  </Button>
-                  <Button
-                    onClick={openPublishLink}
-                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-lg flex items-center justify-center gap-2"
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                    Publicar en {selectedPlatform.toUpperCase()}
-                  </Button>
-                </div>
-              </Card>
-            ) : (
-              <Card className="glass-card backdrop-blur-xl bg-white/90 dark:bg-gray-900/90 border border-white/20 dark:border-gray-800 p-8 rounded-3xl sticky top-24">
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
-                  Vista Previa
-                </h3>
-                <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 min-h-64 flex items-center justify-center text-center">
-                  <p className="text-gray-500 dark:text-gray-400">
-                    La vista previa aparecerá aquí después de generar contenido
-                  </p>
-                </div>
-              </Card>
-            )}
-          </div>
-        </div>
-      </div>
+              <div className="flex gap-4">
+                <Button variant="ghost" onClick={() => setStep(3)} className="flex-1 py-8 text-lg rounded-2xl">Atrás</Button>
+                <Button 
+                  onClick={handleGenerate}
+                  className="flex-[2] py-8 text-lg bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl shadow-lg shadow-emerald-500/20 gap-2"
+                >
+                  <Sparkles className="w-5 h-5" />
+                  Generar Campaña
+                </Button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </main>
     </div>
   );
 };
