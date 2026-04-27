@@ -16,8 +16,8 @@ export const PlatformPreview: React.FC<PlatformPreviewProps> = ({
   imageUrl,
 }) => {
   const logos = {
-    metaSvg: `<svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M30 35C30 35 20 45 20 55C20 65 25 70 35 70C45 70 50 65 50 55C50 45 40 35 30 35Z" fill="#0A66C2" stroke="#0A66C2" stroke-width="2"/><path d="M70 35C70 35 80 45 80 55C80 65 75 70 65 70C55 70 50 65 50 55C50 45 60 35 70 35Z" fill="#0A66C2" stroke="#0A66C2" stroke-width="2"/></svg>`,
-    googleSvg: `<svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="25" cy="60" r="12" fill="#FBBC04"/><path d="M40 30L60 70" stroke="#4285F4" stroke-width="12" stroke-linecap="round"/><path d="M60 30L40 70" stroke="#34A853" stroke-width="12" stroke-linecap="round"/><circle cx="75" cy="60" r="12" fill="#EA4335"/></svg>`,
+    metaSvg: `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z" fill="#0A66C2"/></svg>`,
+    googleSvg: `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="18" r="2" fill="#FBBC04"/><path d="M12 2L22 20H2L12 2Z" fill="#4285F4"/><circle cx="18" cy="18" r="2" fill="#EA4335"/><path d="M12 8L16 15H8L12 8Z" fill="#34A853"/></svg>`,
     meta: "/logos/meta-icon.png",
     google: "/logos/google-ads-icon.png",
     tiktok: "https://upload.wikimedia.org/wikipedia/en/a/a9/TikTok_logo.svg",
@@ -60,7 +60,7 @@ export const PlatformPreview: React.FC<PlatformPreviewProps> = ({
         <div className="bg-white rounded-lg p-6 max-w-2xl mx-auto border border-gray-200 shadow-sm">
           {/* Google Search Ad */}
           <div className="flex items-center gap-2 mb-3">
-            <svg className="h-6 w-auto" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="25" cy="60" r="12" fill="#FBBC04"/><path d="M40 30L60 70" stroke="#4285F4" strokeWidth="12" strokeLinecap="round"/><path d="M60 30L40 70" stroke="#34A853" strokeWidth="12" strokeLinecap="round"/><circle cx="75" cy="60" r="12" fill="#EA4335"/></svg>
+            <svg className="h-6 w-auto" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="18" r="2" fill="#FBBC04"/><path d="M12 2L22 20H2L12 2Z" fill="#4285F4"/><circle cx="18" cy="18" r="2" fill="#EA4335"/><path d="M12 8L16 15H8L12 8Z" fill="#34A853"/></svg>
             <div className="text-[12px] text-[#202124] border border-gray-300 px-1 rounded">Patrocinado</div>
           </div>
           <div className="text-[14px] text-[#202124] mb-1">
