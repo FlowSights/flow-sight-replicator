@@ -25,7 +25,7 @@ const SEO = ({
   const fullDescription = description || defaultDescription;
   const defaultImage = "https://storage.googleapis.com/gpt-engineer-file-uploads/7GdJHUgbeBP6D1AL2fFEaPtiTyj2/social-images/social-1776391379720-ChatGPT_Image_16_abr_2026,_19_47_07.webp";
   const fullImage = image || defaultImage;
-  const siteUrl = "https://flowsights.it";
+  const siteUrl = "https://flowsights.it.com";
   const fullUrl = url ? `${siteUrl}${url}` : siteUrl;
 
   return (

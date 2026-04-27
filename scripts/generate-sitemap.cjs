@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Configuración
-const BASE_URL = 'https://flowsights.it';
+const BASE_URL = 'https://flowsights.it.com';
 const OUTPUT_FILE = path.join(__dirname, '../public/sitemap.xml');
 
 // Rutas estáticas
