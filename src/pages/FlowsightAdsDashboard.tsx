@@ -12,26 +12,12 @@ import {
   Check, Download, ExternalLink, Maximize2, 
   ChevronLeft, ChevronRight, MapPin, Users, 
   TrendingUp, ShieldCheck, Star, Rocket,
-  Globe, MousePointer2, Layout, FileText
-} from 'lucide-center';
+  Globe, MousePointer2, Layout, FileText,
+  Lightbulb, Info, ArrowRight
+} from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MetaPreview, TikTokPreview, LinkedInPreview, GoogleAdsPreview } from '@/components/PlatformPreviewsNative';
 import jsPDF from 'jspdf';
-
-// Nota: lucide-center no existe, corrijo a lucide-react
-import { 
-  ArrowLeft as ArrowLeftIcon, Sparkles as SparklesIcon, LogOut as LogOutIcon, 
-  Zap as ZapIcon, Target as TargetIcon, Image as ImageIconIcon, 
-  BarChart3 as BarChart3Icon, Upload as UploadIcon, X as XIcon, 
-  Check as CheckIcon, Download as DownloadIcon, ExternalLink as ExternalLinkIcon, 
-  Maximize2 as Maximize2Icon, ChevronLeft as ChevronLeftIcon, 
-  ChevronRight as ChevronRightIcon, MapPin as MapPinIcon, 
-  Users as UsersIcon, TrendingUp as TrendingUpIcon, 
-  ShieldCheck as ShieldCheckIcon, Star as StarIcon, 
-  Rocket as RocketIcon, Globe as GlobeIcon, 
-  MousePointer2 as MousePointer2Icon, Layout as LayoutIcon, 
-  FileText as FileTextIcon 
-} from 'lucide-react';
 
 interface GeneratedAd {
   headline: string;
@@ -60,7 +46,6 @@ const FlowsightAdsDashboard: React.FC = () => {
   const [loadingStep, setLoadingStep] = useState(0);
   const [generatedAds, setGeneratedAds] = useState<GeneratedAd[]>([]);
   const [showResults, setShowResults] = useState(false);
-  const [activeTab, setActiveTab] = useState(0);
   
   const [config, setConfig] = useState<CampaignConfig>({
     promote: '',
@@ -105,7 +90,8 @@ const FlowsightAdsDashboard: React.FC = () => {
     const defaultImages = [
       'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop',
       'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1551434678-e076c223a692?w=800&auto=format&fit=crop'
+      'https://images.unsplash.com/photo-1551434678-e076c223a692?w=800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&auto=format&fit=crop'
     ];
 
     const ads: GeneratedAd[] = [
@@ -117,7 +103,7 @@ const FlowsightAdsDashboard: React.FC = () => {
         imageUrl: config.userImage || defaultImages[0],
         platform: 'google',
         score: 94,
-        platformUrl: 'https://ads.google.com'
+        platformUrl: 'https://ads.google.com/aw/campaigns/new'
       },
       {
         type: 'Emotional',
@@ -127,7 +113,7 @@ const FlowsightAdsDashboard: React.FC = () => {
         imageUrl: config.userImage || defaultImages[1],
         platform: 'meta',
         score: 89,
-        platformUrl: 'https://adsmanager.facebook.com'
+        platformUrl: 'https://adsmanager.facebook.com/adsmanager/manage/campaigns'
       },
       {
         type: 'Urgency',
@@ -137,7 +123,17 @@ const FlowsightAdsDashboard: React.FC = () => {
         imageUrl: config.userImage || defaultImages[2],
         platform: 'tiktok',
         score: 97,
-        platformUrl: 'https://ads.tiktok.com'
+        platformUrl: 'https://ads.tiktok.com/i18n/dashboard'
+      },
+      {
+        type: 'Offer',
+        headline: `Impulsa tu éxito con ${config.promote}`,
+        description: `Soluciones profesionales para ${config.idealCustomer} en ${config.location}. Líderes en el sector.`,
+        cta: 'Contactar',
+        imageUrl: config.userImage || defaultImages[3],
+        platform: 'linkedin',
+        score: 92,
+        platformUrl: 'https://www.linkedin.com/campaignmanager/accounts'
       }
     ];
 
@@ -151,10 +147,10 @@ const FlowsightAdsDashboard: React.FC = () => {
     const pageWidth = doc.internal.pageSize.getWidth();
     
     // Header Premium
-    doc.setFillColor(10, 20, 30); // Dark Navy
+    doc.setFillColor(10, 20, 30);
     doc.rect(0, 0, pageWidth, 50, 'F');
     
-    doc.setTextColor(16, 185, 129); // Emerald
+    doc.setTextColor(16, 185, 129);
     doc.setFontSize(28);
     doc.setFont(undefined, 'bold');
     doc.text('FlowSight Ads', 20, 25);
@@ -198,14 +194,14 @@ const FlowsightAdsDashboard: React.FC = () => {
     y += 12;
 
     generatedAds.forEach((ad, index) => {
-      if (y > 230) { doc.addPage(); y = 20; }
+      if (y > 210) { doc.addPage(); y = 20; }
       
       doc.setFillColor(245, 247, 250);
-      doc.rect(20, y, pageWidth - 40, 45, 'F');
+      doc.rect(20, y, pageWidth - 40, 55, 'F');
       
       doc.setTextColor(16, 185, 129);
       doc.setFontSize(12);
-      doc.text(`VARIACIÓN ${index + 1}: ${ad.type.toUpperCase()}`, 25, y + 10);
+      doc.text(`VARIACIÓN ${index + 1}: ${ad.type.toUpperCase()} (${ad.platform.toUpperCase()})`, 25, y + 10);
       
       doc.setTextColor(10, 20, 30);
       doc.setFontSize(11);
@@ -217,9 +213,33 @@ const FlowsightAdsDashboard: React.FC = () => {
       doc.text(descLines, 25, y + 28);
       
       doc.setFont(undefined, 'bold');
-      doc.text(`CTA: ${ad.cta}`, 25, y + 40);
+      doc.text(`CTA: ${ad.cta}`, 25, y + 45);
+      doc.setTextColor(0, 102, 204);
+      doc.text(`Link de Publicación: ${ad.platformUrl}`, 25, y + 50);
       
-      y += 55;
+      y += 65;
+    });
+
+    // Nueva Sección: Guía de Implementación
+    if (y > 200) { doc.addPage(); y = 20; }
+    doc.setTextColor(10, 20, 30);
+    doc.setFontSize(18);
+    doc.setFont(undefined, 'bold');
+    doc.text('3. Guía de Implementación Rápida', 20, y);
+    y += 12;
+    
+    doc.setFontSize(10);
+    doc.setFont(undefined, 'normal');
+    const tips = [
+      '• Configura tu píxel de seguimiento antes de lanzar para medir conversiones.',
+      '• Realiza pruebas A/B entre las variaciones emocional y de urgencia.',
+      '• Revisa el rendimiento después de los primeros 3 días de campaña.',
+      '• Asegúrate de que tu landing page sea coherente con el mensaje del anuncio.'
+    ];
+    
+    tips.forEach(tip => {
+      doc.text(tip, 25, y);
+      y += 7;
     });
 
     // Footer
@@ -249,7 +269,7 @@ const FlowsightAdsDashboard: React.FC = () => {
           >
             <div className="absolute inset-0 bg-emerald-500/20 blur-2xl rounded-full animate-pulse" />
             <div className="relative w-full h-full bg-gradient-to-br from-emerald-400 to-teal-600 rounded-3xl flex items-center justify-center shadow-2xl shadow-emerald-500/40">
-              <RocketIcon className="w-16 h-16 text-white" />
+              <Rocket className="w-16 h-16 text-white" />
             </div>
           </motion.div>
 
@@ -287,13 +307,13 @@ const FlowsightAdsDashboard: React.FC = () => {
         <header className="sticky top-0 z-50 backdrop-blur-2xl bg-white/70 dark:bg-black/70 border-b border-gray-200 dark:border-white/5">
           <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
             <button onClick={() => setShowResults(false)} className="group flex items-center gap-2 text-gray-500 hover:text-emerald-500 transition-all font-medium">
-              <ArrowLeftIcon className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+              <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
               Refinar Estrategia
             </button>
             <div className="flex items-center gap-4">
               <Button onClick={generatePDF} className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-full px-6 shadow-lg shadow-emerald-500/20 gap-2 font-bold">
-                <DownloadIcon className="w-4 h-4" />
-                Descargar Campaign Kit
+                <Download className="w-4 h-4" />
+                Descargar Campaign Kit Premium
               </Button>
             </div>
           </div>
@@ -306,36 +326,36 @@ const FlowsightAdsDashboard: React.FC = () => {
               animate={{ opacity: 1, scale: 1 }}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 text-emerald-500 text-sm font-bold mb-6"
             >
-              <SparklesIcon className="w-4 h-4" />
+              <Sparkles className="w-4 h-4" />
               INTELIGENCIA ARTIFICIAL ACTIVA
             </motion.div>
             <h1 className="text-5xl font-black text-gray-900 dark:text-white mb-4 tracking-tight">
               Tu Campaña de Alto Impacto
             </h1>
             <p className="text-xl text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
-              Hemos diseñado 3 variaciones psicológicas para maximizar tus conversiones en {config.location}.
+              Hemos diseñado 4 variaciones psicológicas para maximizar tus conversiones en {config.location}.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {generatedAds.map((ad, idx) => (
               <motion.div
                 key={idx}
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.15 }}
+                transition={{ delay: idx * 0.1 }}
                 className="space-y-6"
               >
                 <div className="flex items-center justify-between px-2">
                   <div className="flex items-center gap-2">
-                    <div className={`w-3 h-3 rounded-full ${idx === 0 ? 'bg-blue-500' : idx === 1 ? 'bg-purple-500' : 'bg-pink-500'}`} />
-                    <span className="font-bold text-sm uppercase tracking-widest text-gray-400">
-                      {ad.type === 'Offer' ? 'Enfoque Comercial' : ad.type === 'Emotional' ? 'Enfoque Humano' : 'Enfoque Urgencia'}
+                    <div className={`w-3 h-3 rounded-full ${idx === 0 ? 'bg-blue-500' : idx === 1 ? 'bg-purple-500' : idx === 2 ? 'bg-pink-500' : 'bg-emerald-500'}`} />
+                    <span className="font-bold text-[10px] uppercase tracking-widest text-gray-400">
+                      {ad.type === 'Offer' ? 'Comercial' : ad.type === 'Emotional' ? 'Humano' : 'Urgencia'}
                     </span>
                   </div>
                   <div className="flex items-center gap-1 bg-amber-500/10 text-amber-600 px-2 py-1 rounded-lg">
-                    <StarIcon className="w-3 h-3 fill-current" />
-                    <span className="text-xs font-black">{ad.score}% Power</span>
+                    <Star className="w-3 h-3 fill-current" />
+                    <span className="text-[10px] font-black">{ad.score}%</span>
                   </div>
                 </div>
 
@@ -343,26 +363,51 @@ const FlowsightAdsDashboard: React.FC = () => {
                   {ad.platform === 'google' && <GoogleAdsPreview {...ad} />}
                   {ad.platform === 'meta' && <MetaPreview {...ad} />}
                   {ad.platform === 'tiktok' && <TikTokPreview {...ad} />}
+                  {ad.platform === 'linkedin' && <LinkedInPreview {...ad} />}
                 </div>
 
-                <Card className="p-6 bg-white dark:bg-white/5 border-none shadow-xl rounded-3xl space-y-4">
-                  <div className="flex items-center gap-3 text-emerald-500">
-                    <ShieldCheckIcon className="w-5 h-5" />
-                    <span className="text-sm font-bold">Optimizado para {ad.platform.toUpperCase()}</span>
-                  </div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-                    Este anuncio utiliza gatillos mentales de {ad.type.toLowerCase()} para captar la atención de {config.idealCustomer}.
-                  </p>
+                <Card className="p-5 bg-white dark:bg-white/5 border-none shadow-xl rounded-3xl space-y-4">
                   <Button 
                     onClick={() => window.open(ad.platformUrl, '_blank')}
-                    className="w-full py-6 bg-gray-900 dark:bg-white dark:text-black text-white hover:bg-emerald-600 dark:hover:bg-emerald-500 dark:hover:text-white transition-all rounded-2xl font-black gap-2"
+                    className="w-full py-5 bg-gray-900 dark:bg-white dark:text-black text-white hover:bg-emerald-600 dark:hover:bg-emerald-500 dark:hover:text-white transition-all rounded-2xl font-black gap-2 text-sm"
                   >
                     Publicar en {ad.platform.toUpperCase()}
-                    <ExternalLinkIcon className="w-4 h-4" />
+                    <ExternalLink className="w-4 h-4" />
                   </Button>
                 </Card>
               </motion.div>
             ))}
+          </div>
+
+          {/* Sección de Valor Añadido */}
+          <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8">
+            <Card className="p-8 bg-emerald-500/5 border-emerald-500/20 rounded-[32px] space-y-4">
+              <div className="w-12 h-12 bg-emerald-500 rounded-2xl flex items-center justify-center text-white">
+                <Lightbulb className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white">Tip de Optimización</h3>
+              <p className="text-gray-500 dark:text-gray-400 text-sm">
+                Usa la variación de **Urgencia** durante los últimos 3 días de tu promoción para aumentar el CTR en un 40%.
+              </p>
+            </Card>
+            <Card className="p-8 bg-blue-500/5 border-blue-500/20 rounded-[32px] space-y-4">
+              <div className="w-12 h-12 bg-blue-500 rounded-2xl flex items-center justify-center text-white">
+                <Target className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white">Segmentación Sugerida</h3>
+              <p className="text-gray-500 dark:text-gray-400 text-sm">
+                Para {config.idealCustomer}, te recomendamos usar intereses en "Tecnología" y "Negocios" en {config.location}.
+              </p>
+            </Card>
+            <Card className="p-8 bg-purple-500/5 border-purple-500/20 rounded-[32px] space-y-4">
+              <div className="w-12 h-12 bg-purple-500 rounded-2xl flex items-center justify-center text-white">
+                <TrendingUp className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white">ROI Estimado</h3>
+              <p className="text-gray-500 dark:text-gray-400 text-sm">
+                Con un presupuesto de ${config.budget}, podrías alcanzar hasta {(config.budget * 12).toLocaleString()} personas cualificadas.
+              </p>
+            </Card>
           </div>
         </main>
       </div>
@@ -374,7 +419,7 @@ const FlowsightAdsDashboard: React.FC = () => {
       <header className="sticky top-0 z-50 backdrop-blur-2xl bg-white/80 dark:bg-black/80 border-b border-gray-100 dark:border-white/5">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
           <button onClick={() => navigate('/flowsight-ads')} className="group flex items-center gap-2 text-gray-400 hover:text-emerald-500 transition-all font-medium">
-            <ArrowLeftIcon className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
             Salir
           </button>
           <div className="flex items-center gap-6">
@@ -385,7 +430,7 @@ const FlowsightAdsDashboard: React.FC = () => {
             </div>
             <div className="h-8 w-px bg-gray-200 dark:bg-white/10 mx-2" />
             <button onClick={handleLogout} className="text-gray-400 hover:text-red-500 transition-colors">
-              <LogOutIcon className="w-5 h-5" />
+              <LogOut className="w-5 h-5" />
             </button>
           </div>
         </div>
