@@ -1059,19 +1059,6 @@ const FlowsightAdsDashboard: React.FC = () => {
                 ))}
               </div>
 
-              {/* ROI Estimator Section */}
-              <div className="mt-8 mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                  <TrendingUp className="w-6 h-6 text-emerald-500" />
-                  Proyección de Retorno
-                </h2>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {generatedAds.slice(0, 2).map((ad, idx) => (
-                    <ROIEstimator key={idx} budget={config.budget} platform={ad.platform} />
-                  ))}
-                </div>
-              </div>
-
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 {generatedAds.map((ad, index) => (
                   <motion.div 
@@ -1128,6 +1115,20 @@ const FlowsightAdsDashboard: React.FC = () => {
                     </div>
                   </motion.div>
                 ))}
+              </div>
+
+              {/* ROI Estimator Section - After Ads */}
+              <div className="mt-12 pt-8 border-t border-white/10">
+                <h2 className="text-3xl font-black text-gray-900 dark:text-white mb-2 flex items-center gap-3">
+                  <TrendingUp className="w-8 h-8 text-emerald-500" />
+                  Tu Potencial de Ganancias
+                </h2>
+                <p className="text-gray-600 dark:text-gray-400 mb-8 text-lg">Mira cuanto podrias ganar con cada plataforma segun tu presupuesto</p>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {generatedAds.map((ad, idx) => (
+                    <ROIEstimator key={idx} budget={config.budget} platform={ad.platform} />
+                  ))}
+                </div>
               </div>
             </motion.div>
           )}
