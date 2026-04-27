@@ -58,6 +58,52 @@ interface CampaignConfig {
   aiPrompt: string;
 }
 
+// Mapa de seeds de Picsum por categoría de negocio para imágenes relevantes
+const BUSINESS_IMAGE_SEEDS: Record<string, string> = {
+  gimnasio: 'gym',
+  gym: 'gym',
+  fitness: 'gym',
+  deporte: 'sport',
+  restaurante: 'restaurant',
+  comida: 'food',
+  food: 'food',
+  ropa: 'fashion',
+  moda: 'fashion',
+  fashion: 'fashion',
+  tienda: 'store',
+  limpieza: 'cleaning',
+  viaje: 'travel',
+  viajes: 'travel',
+  travel: 'travel',
+  consultoría: 'office',
+  consultoria: 'office',
+  negocio: 'business',
+  tecnología: 'tech',
+  tecnologia: 'tech',
+  tech: 'tech',
+  salud: 'health',
+  belleza: 'beauty',
+  educación: 'education',
+  educacion: 'education',
+};
+
+const getImageSeedForBusiness = (promote: string): string => {
+  const lower = promote.toLowerCase();
+  for (const [keyword, seed] of Object.entries(BUSINESS_IMAGE_SEEDS)) {
+    if (lower.includes(keyword)) return seed;
+  }
+  // Seed determinista basado en el texto para consistencia
+  return promote.replace(/\s+/g, '-').toLowerCase().slice(0, 20) || 'business';
+};
+
+const getReliableImageUrl = (promote: string): string => {
+  const seed = getImageSeedForBusiness(promote);
+  // Picsum Photos: libre, sin API key, sin restricciones de hotlinking
+  const url = `https://picsum.photos/seed/${seed}/1200/630`;
+  console.log('[FlowSightAds] Generated image URL:', url, 'for seed:', seed);
+  return url;
+};
+
 const FlowsightAdsDashboard: React.FC = () => {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -130,11 +176,13 @@ const FlowsightAdsDashboard: React.FC = () => {
       await new Promise(resolve => setTimeout(resolve, 1500));
     }
 
-    // Lógica de IA para imágenes: Usamos Unsplash con parámetros de búsqueda optimizados
-    const searchTerms = encodeURIComponent(`${config.promote} business`);
-    const aiGeneratedImage = `https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&auto=format&fit=crop&q=80&query=${searchTerms}&sig=${Date.now()}`;
+    // Generar imagen con Picsum Photos (libre, sin restricciones, sin API key)
+    const aiGeneratedImage = getReliableImageUrl(config.promote);
+    console.log('[FlowSightAds] AI image URL:', aiGeneratedImage);
+    console.log('[FlowSightAds] User image:', config.userImage ? 'provided (base64/url)' : 'none');
     
     const finalImage = config.userImage || aiGeneratedImage;
+    console.log('[FlowSightAds] Final image to render:', finalImage.startsWith('data:') ? 'base64 image' : finalImage);
 
     const ads: GeneratedAd[] = [
       {
