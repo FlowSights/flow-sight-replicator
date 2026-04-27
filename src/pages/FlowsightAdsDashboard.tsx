@@ -441,7 +441,7 @@ const FlowsightAdsDashboard: React.FC = () => {
         <header className="sticky top-0 z-40 backdrop-blur-xl bg-white/80 dark:bg-gray-900/80 border-b border-white/20 dark:border-gray-800">
           <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
             <button
-              onClick={() => navigate('/flowsight-ads-info')}
+              onClick={() => navigate('/flowsight-ads')}
               className="flex items-center gap-2 text-emerald-700 dark:text-emerald-300 hover:text-emerald-800 px-4 py-2 rounded-full transition-all"
             >
               <ArrowLeft className="w-5 h-5" />

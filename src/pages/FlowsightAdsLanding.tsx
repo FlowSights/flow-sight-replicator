@@ -242,20 +242,15 @@ const FlowsightAdsLanding: React.FC = () => {
           {/* Platform Icons */}
           <div className="flex justify-center items-center gap-8 mb-8">
             <div className="flex flex-col items-center gap-1">
-              <svg className="w-8 h-8" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="32" cy="32" r="30" fill="#0A66C2"/>
-                <path d="M22 32C22 26.4772 26.4772 22 32 22C37.5228 22 42 26.4772 42 32C42 37.5228 37.5228 42 32 42C26.4772 42 22 37.5228 22 32M26 32C26 34.2091 27.7909 36 30 36C32.2091 36 34 34.2091 34 32C34 29.7909 32.2091 28 30 28C27.7909 28 26 29.7909 26 32" stroke="white" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
+              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center shadow-md">
+                <span className="text-white font-bold text-xs">f</span>
+              </div>
               <span className="text-[10px] font-bold text-gray-500 uppercase tracking-tighter">Meta</span>
             </div>
             <div className="flex flex-col items-center gap-1">
-              <svg className="w-8 h-8" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="32" cy="32" r="30" fill="white" stroke="#e8e8e8" strokeWidth="0.5"/>
-                <circle cx="22" cy="42" r="5" fill="#FBBC04"/>
-                <path d="M32 16L44 42H20L32 16Z" fill="#4285F4"/>
-                <circle cx="42" cy="42" r="5" fill="#EA4335"/>
-                <path d="M32 26L40 40H24L32 26Z" fill="#34A853"/>
-              </svg>
+              <div className="w-8 h-8 bg-white border-2 border-gray-300 rounded flex items-center justify-center shadow-md">
+                <span className="text-xs font-bold text-transparent bg-gradient-to-r from-blue-500 via-red-500 to-yellow-500 bg-clip-text">G</span>
+              </div>
               <span className="text-[10px] font-bold text-gray-500 uppercase tracking-tighter">Google Ads</span>
             </div>
             <div className="flex flex-col items-center gap-1">
