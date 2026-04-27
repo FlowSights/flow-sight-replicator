@@ -212,11 +212,19 @@ const FlowsightAdsLanding: React.FC = () => {
 
         <div className="flex justify-center items-center gap-8 mb-8">
           <div className="flex flex-col items-center gap-1">
-            <img src="/logos/meta-icon.png" alt="Meta" className="w-8 h-8 object-contain" />
+            <svg className="w-8 h-8" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M30 35C30 35 20 45 20 55C20 65 25 70 35 70C45 70 50 65 50 55C50 45 40 35 30 35Z" fill="#0A66C2" stroke="#0A66C2" strokeWidth="2"/>
+              <path d="M70 35C70 35 80 45 80 55C80 65 75 70 65 70C55 70 50 65 50 55C50 45 60 35 70 35Z" fill="#0A66C2" stroke="#0A66C2" strokeWidth="2"/>
+            </svg>
             <span className="text-[10px] font-bold text-gray-500 uppercase tracking-tighter">Meta</span>
           </div>
           <div className="flex flex-col items-center gap-1">
-            <img src="/logos/google-ads-icon.png" alt="Google Ads" className="w-8 h-8 object-contain" />
+            <svg className="w-8 h-8" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="25" cy="60" r="12" fill="#FBBC04"/>
+              <path d="M40 30L60 70" stroke="#4285F4" strokeWidth="12" strokeLinecap="round"/>
+              <path d="M60 30L40 70" stroke="#34A853" strokeWidth="12" strokeLinecap="round"/>
+              <circle cx="75" cy="60" r="12" fill="#EA4335"/>
+            </svg>
             <span className="text-[10px] font-bold text-gray-500 uppercase tracking-tighter">Google Ads</span>
           </div>
           <div className="flex flex-col items-center gap-1">

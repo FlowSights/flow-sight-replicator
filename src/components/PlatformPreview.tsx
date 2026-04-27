@@ -16,6 +16,8 @@ export const PlatformPreview: React.FC<PlatformPreviewProps> = ({
   imageUrl,
 }) => {
   const logos = {
+    metaSvg: `<svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M30 35C30 35 20 45 20 55C20 65 25 70 35 70C45 70 50 65 50 55C50 45 40 35 30 35Z" fill="#0A66C2" stroke="#0A66C2" stroke-width="2"/><path d="M70 35C70 35 80 45 80 55C80 65 75 70 65 70C55 70 50 65 50 55C50 45 60 35 70 35Z" fill="#0A66C2" stroke="#0A66C2" stroke-width="2"/></svg>`,
+    googleSvg: `<svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="25" cy="60" r="12" fill="#FBBC04"/><path d="M40 30L60 70" stroke="#4285F4" stroke-width="12" stroke-linecap="round"/><path d="M60 30L40 70" stroke="#34A853" stroke-width="12" stroke-linecap="round"/><circle cx="75" cy="60" r="12" fill="#EA4335"/></svg>`,
     meta: "/logos/meta-icon.png",
     google: "/logos/google-ads-icon.png",
     tiktok: "https://upload.wikimedia.org/wikipedia/en/a/a9/TikTok_logo.svg",
@@ -58,7 +60,7 @@ export const PlatformPreview: React.FC<PlatformPreviewProps> = ({
         <div className="bg-white rounded-lg p-6 max-w-2xl mx-auto border border-gray-200 shadow-sm">
           {/* Google Search Ad */}
           <div className="flex items-center gap-2 mb-3">
-            <img src={logos.google} alt="Google Ads" className="h-6 w-auto" />
+            <svg className="h-6 w-auto" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="25" cy="60" r="12" fill="#FBBC04"/><path d="M40 30L60 70" stroke="#4285F4" strokeWidth="12" strokeLinecap="round"/><path d="M60 30L40 70" stroke="#34A853" strokeWidth="12" strokeLinecap="round"/><circle cx="75" cy="60" r="12" fill="#EA4335"/></svg>
             <div className="text-[12px] text-[#202124] border border-gray-300 px-1 rounded">Patrocinado</div>
           </div>
           <div className="text-[14px] text-[#202124] mb-1">
