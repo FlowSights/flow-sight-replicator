@@ -113,9 +113,14 @@ const FlowsightAdsDashboard: React.FC = () => {
       await new Promise(resolve => setTimeout(resolve, 1500));
     }
 
-    // Lógica de IA para imágenes: Si no hay imagen, generamos una basada en el prompt o el negocio
-    const aiGeneratedImage = `https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&auto=format&fit=crop&q=80&sig=${Math.random()}`;
-    const finalImage = config.userImage || aiGeneratedImage;
+    // Lógica de IA para imágenes: Usamos Unsplash Source con términos de búsqueda dinámicos para mayor relevancia
+    const searchTerms = encodeURIComponent(`${config.promote} ${config.idealCustomer} professional business`);
+    const aiGeneratedImage = `https://source.unsplash.com/featured/1200x630/?${searchTerms}&sig=${Math.random()}`;
+    
+    // Fallback robusto si Unsplash Source falla o para asegurar carga inmediata
+    const fallbackImage = `https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&auto=format&fit=crop&q=80`;
+    
+    const finalImage = config.userImage || aiGeneratedImage || fallbackImage;
 
     const ads: GeneratedAd[] = [
       {

@@ -64,44 +64,44 @@
   }
 
   .dark {
-    --background: 215 55% 9%;
+    --background: 0 0% 2%;
     --foreground: 210 40% 98%;
 
-    --card: 215 50% 12%;
+    --card: 0 0% 4%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 215 50% 12%;
+    --popover: 0 0% 4%;
     --popover-foreground: 210 40% 98%;
 
     --primary: 158 84% 45%;
-    --primary-foreground: 215 55% 9%;
+    --primary-foreground: 0 0% 2%;
 
     --primary-glow: 168 76% 50%;
 
-    --secondary: 215 40% 16%;
+    --secondary: 0 0% 8%;
     --secondary-foreground: 210 40% 98%;
 
-    --muted: 215 35% 17%;
+    --muted: 0 0% 10%;
     --muted-foreground: 215 20% 70%;
 
     --accent: 168 76% 50%;
-    --accent-foreground: 215 55% 9%;
+    --accent-foreground: 0 0% 2%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 215 35% 20%;
-    --input: 215 35% 17%;
+    --border: 0 0% 12%;
+    --input: 0 0% 10%;
     --ring: 158 84% 45%;
 
     --gradient-primary: linear-gradient(135deg, hsl(158 84% 45%), hsl(168 76% 50%));
     --gradient-text: linear-gradient(135deg, hsl(158 84% 55%), hsl(168 76% 60%));
-    --gradient-bg: linear-gradient(180deg, hsl(215 55% 9%), hsl(215 50% 11%));
-    --gradient-hero: radial-gradient(ellipse at top, hsl(215 50% 14%), hsl(215 55% 9%));
+    --gradient-bg: linear-gradient(180deg, hsl(0 0% 2%), hsl(0 0% 4%));
+    --gradient-hero: radial-gradient(ellipse at top, hsl(0 0% 6%), hsl(0 0% 2%));
 
     --shadow-glow: 0 0 60px -10px hsl(158 84% 45% / 0.4);
-    --shadow-card: 0 20px 60px -20px hsl(215 80% 2% / 0.6);
-    --shadow-elevated: 0 30px 80px -20px hsl(215 80% 2% / 0.8);
+    --shadow-card: 0 20px 60px -20px hsl(0 0% 0% / 0.8);
+    --shadow-elevated: 0 30px 80px -20px hsl(0 0% 0% / 0.9);
 
     /* Accent palette (slightly brighter on dark) */
     --accent-violet: 265 85% 70%;
@@ -144,7 +144,7 @@
   .dark body {
     background-image:
       radial-gradient(ellipse 80% 50% at 50% -20%, hsl(158 84% 45% / 0.06), transparent),
-      linear-gradient(180deg, hsl(215 55% 9%), hsl(215 50% 11%));
+      linear-gradient(180deg, hsl(0 0% 2%), hsl(0 0% 4%));
   }
 
   h1, h2, h3, h4 {
