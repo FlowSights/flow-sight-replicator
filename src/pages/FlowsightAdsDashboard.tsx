@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
-import { locations } from '@/data/locations';
+import { searchLocations, worldLocations } from '@/data/worldLocations';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MetaPreview, TikTokPreview, LinkedInPreview, GoogleAdsPreview } from '@/components/PlatformPreviewsNative';
 import { VisualGuideLightbox } from '@/components/VisualGuideLightbox';
@@ -889,31 +889,31 @@ const FlowsightAdsDashboard: React.FC = () => {
                     <MapPinIconLucide className="absolute left-8 top-1/2 -translate-y-1/2 text-emerald-500 w-8 h-8 z-10" />
                     <Popover open={isLocationPopoverOpen} onOpenChange={setIsLocationPopoverOpen}>
                       <PopoverTrigger asChild>
-                        <div className="relative w-full">
-                          <Input 
-                            value={config.location}
-                            onChange={(e) => {
-                              setConfig({...config, location: e.target.value});
-                              setLocationSearch(e.target.value);
-                              if (!isLocationPopoverOpen) setIsLocationPopoverOpen(true);
-                            }}
-                            placeholder="Ciudad, País o 'Todo el mundo'"
-                            className="relative text-2xl py-10 pl-20 pr-8 rounded-3xl border-none bg-white dark:bg-white/5 shadow-2xl focus:ring-2 focus:ring-emerald-500 w-full"
-                          />
-                        </div>
+                        <Input 
+                          value={config.location}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            setConfig({...config, location: value});
+                            setLocationSearch(value);
+                            if (value.length > 0 && !isLocationPopoverOpen) {
+                              setIsLocationPopoverOpen(true);
+                            }
+                          }}
+                          onFocus={() => setIsLocationPopoverOpen(true)}
+                          placeholder="Escribe una ciudad o país..."
+                          className="relative text-2xl py-10 pl-20 pr-8 rounded-3xl border-none bg-white dark:bg-white/5 shadow-2xl focus:ring-2 focus:ring-emerald-500 w-full"
+                        />
                       </PopoverTrigger>
                       <PopoverContent className="p-0 w-[var(--radix-popover-trigger-width)] rounded-3xl border-none shadow-2xl overflow-hidden" align="start">
                         <Command className="dark:bg-[#1a1a1a]">
-                          <CommandList className="max-h-[300px]">
-                            <CommandEmpty className="py-6 text-center text-gray-500">No se encontraron resultados.</CommandEmpty>
-                            <CommandGroup heading="Sugerencias de ubicación">
-                              {locations
-                                .filter(loc => 
-                                  loc.label.toLowerCase().includes(locationSearch.toLowerCase()) || 
-                                  config.location.toLowerCase().includes(loc.label.toLowerCase())
-                                )
-                                .slice(0, 8)
-                                .map((loc) => (
+                          <CommandList className="max-h-[400px]">
+                            {searchLocations(locationSearch).length === 0 ? (
+                              <CommandEmpty className="py-6 text-center text-gray-500 text-sm">
+                                No encontramos "{locationSearch}". Puedes escribir cualquier ciudad o país del mundo.
+                              </CommandEmpty>
+                            ) : (
+                              <CommandGroup>
+                                {searchLocations(locationSearch).map((loc) => (
                                   <CommandItem
                                     key={loc.value}
                                     value={loc.value}
@@ -921,14 +921,15 @@ const FlowsightAdsDashboard: React.FC = () => {
                                       setConfig({...config, location: currentValue});
                                       setIsLocationPopoverOpen(false);
                                     }}
-                                    className="py-4 px-6 cursor-pointer hover:bg-emerald-500/10 aria-selected:bg-emerald-500/10 flex items-center gap-3"
+                                    className="py-3 px-4 cursor-pointer hover:bg-emerald-500/10 aria-selected:bg-emerald-500/10 flex items-center gap-3 text-sm"
                                   >
-                                    <MapPin className={`w-4 h-4 ${loc.type === 'country' ? 'text-emerald-500' : 'text-blue-500'}`} />
-                                    <span className="text-lg font-medium">{loc.label}</span>
+                                    <MapPin className={`w-4 h-4 flex-shrink-0 ${loc.type === 'country' ? 'text-emerald-500' : 'text-blue-500'}`} />
+                                    <span className="font-medium">{loc.label}</span>
                                     <span className="ml-auto text-xs uppercase tracking-widest text-gray-400 font-bold">{loc.type === 'country' ? 'País' : 'Ciudad'}</span>
                                   </CommandItem>
                                 ))}
-                            </CommandGroup>
+                              </CommandGroup>
+                            )}
                           </CommandList>
                         </Command>
                       </PopoverContent>
@@ -1113,12 +1114,14 @@ const FlowsightAdsDashboard: React.FC = () => {
                     initial={{ opacity: 0, y: 20 }} 
                     animate={{ opacity: 1, y: 0 }} 
                     transition={{ delay: index * 0.1 }}
-                    className="group relative cursor-pointer"
-                    onClick={() => setSelectedAdForLightbox(ad)}
+                    className="group relative"
                   >
                     <div className="absolute -inset-2 bg-gradient-to-b from-emerald-500/20 to-transparent rounded-[40px] opacity-0 group-hover:opacity-100 transition-all duration-500 blur-xl" />
-                    <div className="relative transform group-hover:scale-[1.02] transition-all duration-500">
-                      <div className="absolute top-4 right-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div 
+                      className="relative transform group-hover:scale-[1.02] transition-all duration-500 cursor-pointer"
+                      onClick={() => setSelectedAdForLightbox(ad)}
+                    >
+                      <div className="absolute top-4 right-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
                         <div className="bg-white/90 dark:bg-black/90 p-2 rounded-full shadow-xl">
                           <Maximize2 className="w-5 h-5 text-emerald-500" />
                         </div>
@@ -1128,9 +1131,9 @@ const FlowsightAdsDashboard: React.FC = () => {
                       {ad.platform === 'tiktok' && <TikTokPreview {...ad} imageUrl={ad.imageUrl} />}
                       {ad.platform === 'linkedin' && <LinkedInPreview {...ad} imageUrl={ad.imageUrl} />}
                     </div>
-                    <div className="mt-4 space-y-3">
+                    <div className="mt-4 space-y-3 pointer-events-auto">
                       <Button 
-                        onClick={(e) => { e.stopPropagation(); generatePDF(ad.platform); }}
+                        onClick={() => generatePDF(ad.platform)}
                         className="w-full bg-white/5 hover:bg-emerald-500/10 text-gray-400 hover:text-emerald-500 border border-white/5 hover:border-emerald-500/20 py-4 rounded-2xl font-bold gap-2 transition-all"
                       >
                         <Download className="w-4 h-4" /> Kit {ad.platform.toUpperCase()}
@@ -1139,15 +1142,14 @@ const FlowsightAdsDashboard: React.FC = () => {
                       <div className="flex gap-2">
                         <Button 
                           variant="ghost"
-                          onClick={(e) => { e.stopPropagation(); window.open(ad.platformUrl, '_blank'); }}
+                          onClick={() => window.open(ad.platformUrl, '_blank')}
                           className="flex-1 bg-emerald-500/5 hover:bg-emerald-500/20 text-emerald-500 rounded-xl py-2 text-xs font-bold gap-1.5"
                         >
                           <ExternalLink className="w-3 h-3" /> Publicar
                         </Button>
                         <Button 
                           variant="ghost"
-                          onClick={(e) => { 
-                            e.stopPropagation(); 
+                          onClick={() => { 
                             setGuideLightboxPlatform(ad.platform);
                             setIsGuideLightboxOpen(true);
                           }}

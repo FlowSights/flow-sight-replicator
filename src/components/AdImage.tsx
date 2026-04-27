@@ -8,8 +8,8 @@ interface AdImageProps {
 }
 
 const DEFAULT_FALLBACK = "https://picsum.photos/seed/business/1200/630";
-const MAX_RETRIES = 2;
-const RETRY_DELAY_MS = 800;
+const MAX_RETRIES = 1;
+const RETRY_DELAY_MS = 500;
 
 export const AdImage: React.FC<AdImageProps> = ({ src, alt = "Ad", className = "" }) => {
   const [currentSrc, setCurrentSrc] = useState<string>(DEFAULT_FALLBACK);
@@ -48,22 +48,27 @@ export const AdImage: React.FC<AdImageProps> = ({ src, alt = "Ad", className = "
   const handleError = () => {
     console.error('[AdImage] ❌ Failed to load:', currentSrc);
 
-    if (retryCount.current < MAX_RETRIES && src && !currentSrc.includes('picsum.photos')) {
+    // Si es una imagen base64, no reintentar - mostrar como cargada
+    if (src && src.startsWith('data:')) {
+      console.log('[AdImage] Base64 image loaded (may appear blank in some contexts)');
+      setIsLoading(false);
+      setHasError(false);
+      return;
+    }
+
+    // Para URLs de usuario, intentar una sola vez con cache-busting
+    if (retryCount.current < MAX_RETRIES && src) {
       retryCount.current += 1;
       console.log(`[AdImage] Retry ${retryCount.current}/${MAX_RETRIES}...`);
 
       retryTimer.current = setTimeout(() => {
-        // For Picsum: use a different seed as retry variant
-        // For other URLs: append cache-busting param
-        const isPicsum = src.includes('picsum.photos');
-        const retryUrl = isPicsum
-          ? `https://picsum.photos/seed/business-${retryCount.current}/1200/630`
-          : `${src}${src.includes('?') ? '&' : '?'}_r=${Date.now()}`;
+        // Append cache-busting param
+        const retryUrl = `${src}${src.includes('?') ? '&' : '?'}_t=${Date.now()}`;
         console.log('[AdImage] Retrying with:', retryUrl);
         setCurrentSrc(retryUrl);
       }, RETRY_DELAY_MS);
     } else {
-      console.log('[AdImage] Using final fallback after', retryCount.current, 'retries');
+      console.log('[AdImage] Max retries reached, using fallback');
       setHasError(true);
       setCurrentSrc(DEFAULT_FALLBACK);
       setIsLoading(false);
@@ -86,6 +91,7 @@ export const AdImage: React.FC<AdImageProps> = ({ src, alt = "Ad", className = "
         className={`w-full h-full object-cover transition-opacity duration-500 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
         onLoad={handleLoad}
         onError={handleError}
+        style={{ display: isLoading ? 'none' : 'block' }}
       />
 
       {/* Only show icon placeholder if truly nothing loaded */}
