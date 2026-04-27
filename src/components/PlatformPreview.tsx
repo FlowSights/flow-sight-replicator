@@ -16,10 +16,8 @@ export const PlatformPreview: React.FC<PlatformPreviewProps> = ({
   imageUrl,
 }) => {
   const logos = {
-    meta: "https://www.meta.com/favicon.ico",
-    google: "https://www.google.com/favicon.ico",
-    metaSvg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#0A66C2"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/></svg>`,
-    googleSvg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 40" fill="none"><text x="20" y="28" fontSize="20" fontWeight="bold" fill="#4285F4" fontFamily="Arial, sans-serif">Google</text><text x="20" y="38" fontSize="10" fill="#EA4335" fontFamily="Arial, sans-serif">Ads</text></svg>`,
+    meta: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z' fill='%230A66C2'/%3E%3C/svg%3E",
+    google: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60'%3E%3Ctext x='10' y='40' fontSize='32' fontWeight='bold' fill='%234285F4' fontFamily='Arial, sans-serif'%3EGoogle%3C/text%3E%3Ctext x='10' y='56' fontSize='14' fill='%23EA4335' fontFamily='Arial, sans-serif'%3EAds%3C/text%3E%3C/svg%3E",
     tiktok: "https://upload.wikimedia.org/wikipedia/en/a/a9/TikTok_logo.svg",
     linkedin: "https://upload.wikimedia.org/wikipedia/commons/0/01/LinkedIn_Logo.svg",
     facebook_f: "https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png"
@@ -60,7 +58,7 @@ export const PlatformPreview: React.FC<PlatformPreviewProps> = ({
         <div className="bg-white rounded-lg p-6 max-w-2xl mx-auto border border-gray-200 shadow-sm">
           {/* Google Search Ad */}
           <div className="flex items-center gap-2 mb-3">
-            <svg className="h-4 w-auto" viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg"><text x="0" y="20" fontSize="14" fontWeight="bold" fill="#4285F4" fontFamily="Arial, sans-serif">Google</text><text x="0" y="32" fontSize="8" fill="#EA4335" fontFamily="Arial, sans-serif">Ads</text></svg>
+            <img src={logos.google} alt="Google Ads" className="h-5 w-auto" />
             <div className="text-[12px] text-[#202124] border border-gray-300 px-1 rounded">Patrocinado</div>
           </div>
           <div className="text-[14px] text-[#202124] mb-1">
