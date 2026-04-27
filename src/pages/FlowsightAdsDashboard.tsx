@@ -340,10 +340,10 @@ const FlowsightAdsDashboard: React.FC = () => {
               className="w-full max-w-4xl max-h-[90vh] overflow-y-auto custom-scrollbar"
               onClick={(e) => e.stopPropagation()}
             >
-              {selectedAdForLightbox.platform === 'google' && <GoogleAdsPreview {...selectedAdForLightbox} />}
-              {selectedAdForLightbox.platform === 'meta' && <MetaPreview {...selectedAdForLightbox} />}
-              {selectedAdForLightbox.platform === 'tiktok' && <TikTokPreview {...selectedAdForLightbox} />}
-              {selectedAdForLightbox.platform === 'linkedin' && <LinkedInPreview {...selectedAdForLightbox} />}
+              {selectedAdForLightbox.platform === 'google' && <GoogleAdsPreview {...selectedAdForLightbox} imageUrl={selectedAdForLightbox.imageUrl} />}
+              {selectedAdForLightbox.platform === 'meta' && <MetaPreview {...selectedAdForLightbox} imageUrl={selectedAdForLightbox.imageUrl} />}
+              {selectedAdForLightbox.platform === 'tiktok' && <TikTokPreview {...selectedAdForLightbox} imageUrl={selectedAdForLightbox.imageUrl} />}
+              {selectedAdForLightbox.platform === 'linkedin' && <LinkedInPreview {...selectedAdForLightbox} imageUrl={selectedAdForLightbox.imageUrl} />}
               
               <div className="mt-8 flex flex-wrap justify-center gap-4">
                 <Button 
@@ -662,10 +662,18 @@ const FlowsightAdsDashboard: React.FC = () => {
                           <Maximize2 className="w-5 h-5 text-emerald-500" />
                         </div>
                       </div>
-                      {ad.platform === 'google' && <GoogleAdsPreview {...ad} />}
-                      {ad.platform === 'meta' && <MetaPreview {...ad} />}
-                      {ad.platform === 'tiktok' && <TikTokPreview {...ad} />}
-                      {ad.platform === 'linkedin' && <LinkedInPreview {...ad} />}
+                      {ad.platform === 'google' && <GoogleAdsPreview {...ad} imageUrl={ad.imageUrl} />}
+                      {ad.platform === 'meta' && <MetaPreview {...ad} imageUrl={ad.imageUrl} />}
+                      {ad.platform === 'tiktok' && <TikTokPreview {...ad} imageUrl={ad.imageUrl} />}
+                      {ad.platform === 'linkedin' && <LinkedInPreview {...ad} imageUrl={ad.imageUrl} />}
+                    </div>
+                    <div className="mt-4 flex justify-center">
+                      <Button 
+                        onClick={(e) => { e.stopPropagation(); generatePDF(ad.platform); }}
+                        className="w-full bg-white/5 hover:bg-emerald-500/10 text-gray-400 hover:text-emerald-500 border border-white/5 hover:border-emerald-500/20 py-4 rounded-2xl font-bold gap-2 transition-all"
+                      >
+                        <Download className="w-4 h-4" /> Kit {ad.platform.toUpperCase()}
+                      </Button>
                     </div>
                   </motion.div>
                 ))}

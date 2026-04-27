@@ -72,7 +72,7 @@ export const MetaPreview: React.FC<PreviewProps> = ({ headline, description, cta
   );
 };
 
-export const GoogleAdsPreview: React.FC<PreviewProps> = ({ headline, description, cta }) => {
+export const GoogleAdsPreview: React.FC<PreviewProps> = ({ headline, description, cta, imageUrl }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -95,13 +95,21 @@ export const GoogleAdsPreview: React.FC<PreviewProps> = ({ headline, description
           <MoreVertical className="w-3 h-3 text-gray-500 ml-auto" />
         </div>
         
-        <h3 className="text-[20px] text-[#1a0dab] dark:text-[#8ab4f8] hover:underline cursor-pointer leading-tight">
-          {headline}
-        </h3>
-        
-        <p className="text-[14px] text-[#4d5156] dark:text-[#bdc1c6] leading-relaxed">
-          {description}
-        </p>
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <h3 className="text-[20px] text-[#1a0dab] dark:text-[#8ab4f8] hover:underline cursor-pointer leading-tight mb-1">
+              {headline}
+            </h3>
+            <p className="text-[14px] text-[#4d5156] dark:text-[#bdc1c6] leading-relaxed">
+              {description}
+            </p>
+          </div>
+          {imageUrl && (
+            <div className="w-24 h-24 rounded-lg overflow-hidden flex-shrink-0 border border-gray-100 dark:border-gray-800">
+              <img src={imageUrl} alt="Ad" className="w-full h-full object-cover" />
+            </div>
+          )}
+        </div>
 
         <div className="pt-3 flex gap-6">
           <div className="text-[#1a0dab] dark:text-[#8ab4f8] text-[14px] font-medium hover:underline cursor-pointer">
