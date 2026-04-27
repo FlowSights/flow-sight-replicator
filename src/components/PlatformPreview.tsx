@@ -60,7 +60,7 @@ export const PlatformPreview: React.FC<PlatformPreviewProps> = ({
         <div className="bg-white rounded-lg p-6 max-w-2xl mx-auto border border-gray-200 shadow-sm">
           {/* Google Search Ad */}
           <div className="flex items-center gap-2 mb-3">
-            <svg className="h-6 w-auto" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="30" fill="white" stroke="#e8e8e8" stroke-width="0.5"/><circle cx="22" cy="42" r="5" fill="#FBBC04"/><path d="M32 16L44 42H20L32 16Z" fill="#4285F4"/><circle cx="42" cy="42" r="5" fill="#EA4335"/><path d="M32 26L40 40H24L32 26Z" fill="#34A853"/></svg>
+            <img src="/logos/google-ads-logo.png" alt="Google Ads" className="h-6 w-auto object-contain" />
             <div className="text-[12px] text-[#202124] border border-gray-300 px-1 rounded">Patrocinado</div>
           </div>
           <div className="text-[14px] text-[#202124] mb-1">

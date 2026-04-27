@@ -242,14 +242,14 @@ const FlowsightAdsLanding: React.FC = () => {
           {/* Platform Icons */}
           <div className="flex justify-center items-center gap-8 mb-8">
             <div className="flex flex-col items-center gap-1">
-              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center shadow-md">
-                <span className="text-white font-bold text-xs">f</span>
+              <div className="w-8 h-8 flex items-center justify-center">
+                <img src="/logos/meta-icon.png" alt="Meta" className="w-full h-full object-contain" />
               </div>
               <span className="text-[10px] font-bold text-gray-500 uppercase tracking-tighter">Meta</span>
             </div>
             <div className="flex flex-col items-center gap-1">
-              <div className="w-8 h-8 bg-white border-2 border-gray-300 rounded flex items-center justify-center shadow-md">
-                <span className="text-xs font-bold text-transparent bg-gradient-to-r from-blue-500 via-red-500 to-yellow-500 bg-clip-text">G</span>
+              <div className="w-8 h-8 flex items-center justify-center">
+                <img src="/logos/google-ads-icon.png" alt="Google Ads" className="w-full h-full object-contain" />
               </div>
               <span className="text-[10px] font-bold text-gray-500 uppercase tracking-tighter">Google Ads</span>
             </div>
