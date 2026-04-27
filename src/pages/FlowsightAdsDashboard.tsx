@@ -21,6 +21,22 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { MetaPreview, TikTokPreview, LinkedInPreview, GoogleAdsPreview } from '@/components/PlatformPreviewsNative';
 import jsPDF from 'jspdf';
+import { useCountUp } from '@/hooks/useCountUp';
+
+type HeroStat = { value: number; suffix: string; prefix?: string; label: string; decimals?: number };
+
+const AnimatedStat = ({ stat, className = "font-display text-3xl font-bold text-gradient" }: { stat: HeroStat; className?: string }) => {
+  const { value, ref } = useCountUp(stat.value, 1800, stat.decimals ?? 0);
+  const formatted = (stat.decimals ?? 0) > 0 ? value.toFixed(stat.decimals) : Math.round(value).toString();
+  return (
+    <div>
+      <div className={className}>
+        <span ref={ref}>{stat.prefix ?? ""}{formatted}{stat.suffix}</span>
+      </div>
+      {stat.label ? <div className="text-sm text-muted-foreground mt-1">{stat.label}</div> : null}
+    </div>
+  );
+};
 
 interface GeneratedAd {
   headline: string;
