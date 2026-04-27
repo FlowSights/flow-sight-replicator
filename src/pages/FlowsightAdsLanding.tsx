@@ -212,17 +212,11 @@ const FlowsightAdsLanding: React.FC = () => {
 
         <div className="flex justify-center items-center gap-8 mb-8">
           <div className="flex flex-col items-center gap-1">
-            <svg className="w-8 h-8 text-[#0668E1]" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M16.845 6.002c-1.325 0-2.486.586-3.245 1.492-.76-.906-1.92-1.492-3.245-1.492-2.396 0-4.346 1.914-4.346 4.266 0 2.352 1.95 4.266 4.346 4.266 1.325 0 2.486-.586 3.245-1.492.76.906 1.92 1.492 3.245 1.492 2.396 0 4.346-1.914 4.346-4.266 0-2.352-1.95-4.266-4.346-4.266zm0 7.032c-1.536 0-2.787-1.241-2.787-2.766s1.251-2.766 2.787-2.766 2.787 1.241 2.787 2.766-1.251 2.766-2.787 2.766zm-6.49 0c-1.536 0-2.787-1.241-2.787-2.766s1.251-2.766 2.787-2.766 2.787 1.241 2.787 2.766-1.251 2.766-2.787 2.766z"/>
-            </svg>
+            <img src="/logos/meta-logo.png" alt="Meta" className="w-8 h-8 object-contain" />
             <span className="text-[10px] font-bold text-gray-500 uppercase tracking-tighter">Meta</span>
           </div>
           <div className="flex flex-col items-center gap-1">
-            <img 
-              src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iI0ZCQkMwNSIgZD0iTTE1LjUgMS4xbC05IDE1LjZjLS4yLjQtLjEuOS4zIDEuMWw1LjMgMy4xYy40LjIuOS4xIDEuMS0uM2w5LTE1LjZjLjItLjQuMS0uOS0uMy0xLjFsLTUuMy0zLjFjLS40LS4yLS45LS4xLTEuMS4zeiIvPjxwYXRoIGZpbGw9IiM0Mjg1RjQiIGQ9Ik01LjUgMTIuMWwtMy4xIDUuM2MtLjIuNC0uMS45LjMgMS4xbDUuMyAzLjFjLjQuMi45LjEgMS4xLS4zbDMuMS01LjNjLjItLjQuMS0uOS0uMy0xLjFsLTUuMy0zLjFjLS40LS4yLS45LS4xLTEuMS4zeiIvPjxjaXJjbGUgZmlsbD0iIzM0QTg1MyIgY3g9IjEyLjUiIGN5PSIxNy42IiByPSIzLjUiLz48L3N2Zz4=" 
-              alt="Google Ads" 
-              className="w-8 h-8 object-contain"
-            />
+            <img src="/logos/google-ads-logo.png" alt="Google Ads" className="w-8 h-8 object-contain" />
             <span className="text-[10px] font-bold text-gray-500 uppercase tracking-tighter">Google Ads</span>
           </div>
           <div className="flex flex-col items-center gap-1">
