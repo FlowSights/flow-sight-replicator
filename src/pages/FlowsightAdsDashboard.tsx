@@ -15,7 +15,8 @@ import {
   Globe, MousePointer2, Layout, FileText,
   Lightbulb, Info, ArrowRight, MapPin as MapPinIcon,
   Upload as UploadIcon, X as XIcon, Sparkles as SparklesIcon,
-  RefreshCw, Wand2, Search, Activity, Eye, MousePointer
+  RefreshCw, Wand2, Search, Activity, Eye, MousePointer,
+  MapPin as MapPinIconLucide, Upload as UploadIconLucide, X as XIconLucide, Sparkles as SparklesIconLucide
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MetaPreview, TikTokPreview, LinkedInPreview, GoogleAdsPreview } from '@/components/PlatformPreviewsNative';
@@ -404,7 +405,7 @@ const FlowsightAdsDashboard: React.FC = () => {
                   <div className="space-y-6">
                     <div className="relative group">
                       <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-3xl blur opacity-20 group-focus-within:opacity-40 transition duration-1000" />
-                      <SparklesIcon className="absolute left-8 top-1/2 -translate-y-1/2 text-emerald-500 w-8 h-8 z-10" />
+                      <SparklesIconLucide className="absolute left-8 top-1/2 -translate-y-1/2 text-emerald-500 w-8 h-8 z-10" />
                       <Input 
                         value={config.promote}
                         onChange={(e) => setConfig({...config, promote: e.target.value})}
@@ -451,7 +452,7 @@ const FlowsightAdsDashboard: React.FC = () => {
 
                   <div className="relative group">
                     <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-3xl blur opacity-20 group-focus-within:opacity-40 transition duration-1000" />
-                    <MapPinIcon className="absolute left-8 top-1/2 -translate-y-1/2 text-emerald-500 w-8 h-8 z-10" />
+                    <MapPinIconLucide className="absolute left-8 top-1/2 -translate-y-1/2 text-emerald-500 w-8 h-8 z-10" />
                     <Input 
                       value={config.location}
                       onChange={(e) => setConfig({...config, location: e.target.value})}
@@ -507,12 +508,12 @@ const FlowsightAdsDashboard: React.FC = () => {
                               <p className="text-xs text-gray-500">Click para cambiar</p>
                             </div>
                             <button onClick={(e) => { e.stopPropagation(); setConfig({...config, userImage: null}); }} className="p-2 bg-red-500/10 text-red-500 rounded-full hover:bg-red-500 hover:text-white transition-all">
-                              <XIcon className="w-4 h-4" />
+                              <XIconLucide className="w-4 h-4" />
                             </button>
                           </div>
                         ) : (
                           <div className="text-center space-y-2">
-                            <UploadIcon className="w-6 h-6 text-emerald-500 mx-auto" />
+                            <UploadIconLucide className="w-6 h-6 text-emerald-500 mx-auto" />
                             <p className="font-bold text-sm dark:text-white">Sube tu foto</p>
                           </div>
                         )}
@@ -602,7 +603,7 @@ const FlowsightAdsDashboard: React.FC = () => {
                   <div className="flex gap-4">
                     <Button variant="ghost" onClick={() => setStep(3)} className="flex-1 py-10 text-xl font-bold rounded-3xl hover:bg-gray-100 dark:hover:bg-white/5">Atrás</Button>
                     <Button onClick={handleGenerate} className="flex-[2] py-10 text-xl font-black bg-emerald-600 hover:bg-emerald-700 text-white rounded-3xl shadow-2xl shadow-emerald-500/40 gap-3">
-                      <SparklesIcon className="w-6 h-6" /> Generar Campaña Premium
+                      <SparklesIconLucide className="w-6 h-6" /> Generar Campaña Premium
                     </Button>
                   </div>
                 </motion.div>
