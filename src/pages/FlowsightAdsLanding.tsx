@@ -212,17 +212,19 @@ const FlowsightAdsLanding: React.FC = () => {
 
         <div className="flex justify-center items-center gap-8 mb-8">
           <div className="flex flex-col items-center gap-1">
-            <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z" fill="#0A66C2"/>
+            <svg className="w-8 h-8" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="50" cy="50" r="48" fill="#0A66C2"/>
+              <path d="M35 50C35 42 40 35 50 35C60 35 65 42 65 50C65 58 60 65 50 65C40 65 35 58 35 50M40 50C40 55 44 58 50 58C56 58 60 55 60 50C60 45 56 42 50 42C44 42 40 45 40 50" stroke="white" strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
             <span className="text-[10px] font-bold text-gray-500 uppercase tracking-tighter">Meta</span>
           </div>
           <div className="flex flex-col items-center gap-1">
-            <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="6" cy="18" r="2" fill="#FBBC04"/>
-              <path d="M12 2L22 20H2L12 2Z" fill="#4285F4"/>
-              <circle cx="18" cy="18" r="2" fill="#EA4335"/>
-              <path d="M12 8L16 15H8L12 8Z" fill="#34A853"/>
+            <svg className="w-8 h-8" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="50" cy="50" r="48" fill="white" stroke="#f0f0f0" strokeWidth="1"/>
+              <circle cx="30" cy="65" r="8" fill="#FBBC04"/>
+              <path d="M50 25L65 65H35L50 25Z" fill="#4285F4"/>
+              <circle cx="70" cy="65" r="8" fill="#EA4335"/>
+              <path d="M50 40L60 60H40L50 40Z" fill="#34A853"/>
             </svg>
             <span className="text-[10px] font-bold text-gray-500 uppercase tracking-tighter">Google Ads</span>
           </div>
