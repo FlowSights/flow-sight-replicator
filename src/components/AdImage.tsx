@@ -22,14 +22,15 @@ export const AdImage: React.FC<AdImageProps> = ({ src, alt = "Ad", className = "
     // Reset state when src changes
     retryCount.current = 0;
     setHasError(false);
-    setIsLoading(true);
-
+    
     if (!src || src === null || src === '') {
       console.log('[AdImage] No src provided — using fallback');
       setCurrentSrc(DEFAULT_FALLBACK);
+      setIsLoading(false);
       return;
     }
 
+    setIsLoading(true);
     console.log('[AdImage] Loading image:', src.startsWith('data:') ? 'base64 image' : src);
     setCurrentSrc(src);
 
@@ -85,7 +86,6 @@ export const AdImage: React.FC<AdImageProps> = ({ src, alt = "Ad", className = "
         className={`w-full h-full object-cover transition-opacity duration-500 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
         onLoad={handleLoad}
         onError={handleError}
-        crossOrigin="anonymous"
       />
 
       {/* Only show icon placeholder if truly nothing loaded */}

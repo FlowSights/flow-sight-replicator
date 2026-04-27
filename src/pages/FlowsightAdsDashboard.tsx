@@ -16,8 +16,12 @@ import {
   Lightbulb, Info, ArrowRight, MapPin as MapPinIcon,
   Upload as UploadIcon, X as XIcon, Sparkles as SparklesIcon,
   RefreshCw, Search, Activity, Eye, MousePointer,
-  MapPin as MapPinIconLucide, Upload as UploadIconLucide, X as XIconLucide, Sparkles as SparklesIconLucide
+  MapPin as MapPinIconLucide, Upload as UploadIconLucide, X as XIconLucide, Sparkles as SparklesIconLucide,
+  BookOpen, PlayCircle, MousePointerClick
 } from 'lucide-react';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { locations } from '@/data/locations';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MetaPreview, TikTokPreview, LinkedInPreview, GoogleAdsPreview } from '@/components/PlatformPreviewsNative';
 import jsPDF from 'jspdf';
@@ -68,6 +72,9 @@ const FlowsightAdsDashboard: React.FC = () => {
   const [showResults, setShowResults] = useState(false);
   const [selectedAdForLightbox, setSelectedAdForLightbox] = useState<GeneratedAd | null>(null);
   const [metricsVisible, setMetricsVisible] = useState(false);
+  const [locationSearch, setLocationSearch] = useState('');
+  const [isLocationPopoverOpen, setIsLocationPopoverOpen] = useState(false);
+  const [activeGuidePlatform, setActiveGuidePlatform] = useState<string | null>(null);
   
   const [config, setConfig] = useState<CampaignConfig>({
     promote: '',
@@ -877,12 +884,52 @@ const FlowsightAdsDashboard: React.FC = () => {
                   <div className="relative group">
                     <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-3xl blur opacity-20 group-focus-within:opacity-40 transition duration-1000" />
                     <MapPinIconLucide className="absolute left-8 top-1/2 -translate-y-1/2 text-emerald-500 w-8 h-8 z-10" />
-                    <Input 
-                      value={config.location}
-                      onChange={(e) => setConfig({...config, location: e.target.value})}
-                      placeholder="Ciudad, País o 'Todo el mundo'"
-                      className="relative text-2xl py-10 pl-20 pr-8 rounded-3xl border-none bg-white dark:bg-white/5 shadow-2xl focus:ring-2 focus:ring-emerald-500"
-                    />
+                    <Popover open={isLocationPopoverOpen} onOpenChange={setIsLocationPopoverOpen}>
+                      <PopoverTrigger asChild>
+                        <div className="relative w-full">
+                          <Input 
+                            value={config.location}
+                            onChange={(e) => {
+                              setConfig({...config, location: e.target.value});
+                              setLocationSearch(e.target.value);
+                              if (!isLocationPopoverOpen) setIsLocationPopoverOpen(true);
+                            }}
+                            placeholder="Ciudad, País o 'Todo el mundo'"
+                            className="relative text-2xl py-10 pl-20 pr-8 rounded-3xl border-none bg-white dark:bg-white/5 shadow-2xl focus:ring-2 focus:ring-emerald-500 w-full"
+                          />
+                        </div>
+                      </PopoverTrigger>
+                      <PopoverContent className="p-0 w-[var(--radix-popover-trigger-width)] rounded-3xl border-none shadow-2xl overflow-hidden" align="start">
+                        <Command className="dark:bg-[#1a1a1a]">
+                          <CommandList className="max-h-[300px]">
+                            <CommandEmpty className="py-6 text-center text-gray-500">No se encontraron resultados.</CommandEmpty>
+                            <CommandGroup heading="Sugerencias de ubicación">
+                              {locations
+                                .filter(loc => 
+                                  loc.label.toLowerCase().includes(locationSearch.toLowerCase()) || 
+                                  config.location.toLowerCase().includes(loc.label.toLowerCase())
+                                )
+                                .slice(0, 8)
+                                .map((loc) => (
+                                  <CommandItem
+                                    key={loc.value}
+                                    value={loc.value}
+                                    onSelect={(currentValue) => {
+                                      setConfig({...config, location: currentValue});
+                                      setIsLocationPopoverOpen(false);
+                                    }}
+                                    className="py-4 px-6 cursor-pointer hover:bg-emerald-500/10 aria-selected:bg-emerald-500/10 flex items-center gap-3"
+                                  >
+                                    <MapPin className={`w-4 h-4 ${loc.type === 'country' ? 'text-emerald-500' : 'text-blue-500'}`} />
+                                    <span className="text-lg font-medium">{loc.label}</span>
+                                    <span className="ml-auto text-xs uppercase tracking-widest text-gray-400 font-bold">{loc.type === 'country' ? 'País' : 'Ciudad'}</span>
+                                  </CommandItem>
+                                ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
                   </div>
 
                   <div className="flex gap-4">
@@ -1078,13 +1125,66 @@ const FlowsightAdsDashboard: React.FC = () => {
                       {ad.platform === 'tiktok' && <TikTokPreview {...ad} imageUrl={ad.imageUrl} />}
                       {ad.platform === 'linkedin' && <LinkedInPreview {...ad} imageUrl={ad.imageUrl} />}
                     </div>
-                    <div className="mt-4 flex justify-center">
+                    <div className="mt-4 space-y-3">
                       <Button 
                         onClick={(e) => { e.stopPropagation(); generatePDF(ad.platform); }}
                         className="w-full bg-white/5 hover:bg-emerald-500/10 text-gray-400 hover:text-emerald-500 border border-white/5 hover:border-emerald-500/20 py-4 rounded-2xl font-bold gap-2 transition-all"
                       >
                         <Download className="w-4 h-4" /> Kit {ad.platform.toUpperCase()}
                       </Button>
+                      
+                      <div className="flex gap-2">
+                        <Button 
+                          variant="ghost"
+                          onClick={(e) => { e.stopPropagation(); window.open(ad.platformUrl, '_blank'); }}
+                          className="flex-1 bg-emerald-500/5 hover:bg-emerald-500/20 text-emerald-500 rounded-xl py-2 text-xs font-bold gap-1.5"
+                        >
+                          <ExternalLink className="w-3 h-3" /> Publicar
+                        </Button>
+                        <Button 
+                          variant="ghost"
+                          onClick={(e) => { e.stopPropagation(); setActiveGuidePlatform(activeGuidePlatform === ad.platform ? null : ad.platform); }}
+                          className={`flex-1 rounded-xl py-2 text-xs font-bold gap-1.5 transition-all ${activeGuidePlatform === ad.platform ? 'bg-emerald-500 text-white' : 'bg-gray-100 dark:bg-white/5 text-gray-500 hover:bg-gray-200 dark:hover:bg-white/10'}`}
+                        >
+                          <BookOpen className="w-3 h-3" /> Guía
+                        </Button>
+                      </div>
+
+                      <AnimatePresence>
+                        {activeGuidePlatform === ad.platform && (
+                          <motion.div 
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="overflow-hidden"
+                          >
+                            <div className="p-4 bg-emerald-500/5 border border-emerald-500/10 rounded-2xl space-y-3 mt-2">
+                              <p className="text-[10px] font-black text-emerald-500 uppercase tracking-widest flex items-center gap-1.5">
+                                <PlayCircle className="w-3 h-3" /> Guía Interactiva {ad.platform.toUpperCase()}
+                              </p>
+                              <div className="space-y-2">
+                                {[
+                                  { step: '1', text: 'Entra al panel de control', icon: ExternalLink },
+                                  { step: '2', text: 'Crea nueva campaña', icon: Sparkles },
+                                  { step: '3', text: 'Copia tus textos y sube imagen', icon: MousePointerClick }
+                                ].map((item, i) => (
+                                  <div key={i} className="flex items-start gap-2">
+                                    <span className="flex-shrink-0 w-4 h-4 rounded-full bg-emerald-500 text-[10px] text-white flex items-center justify-center font-bold mt-0.5">{item.step}</span>
+                                    <p className="text-[11px] text-gray-600 dark:text-gray-300 leading-tight">{item.text}</p>
+                                  </div>
+                                ))}
+                              </div>
+                              <Button 
+                                size="sm" 
+                                className="w-full h-7 text-[10px] bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-bold"
+                                onClick={(e) => { e.stopPropagation(); generatePDF(ad.platform); }}
+                              >
+                                Ver Guía Completa (PDF)
+                              </Button>
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </div>
                   </motion.div>
                 ))}
