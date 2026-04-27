@@ -16,8 +16,8 @@ export const PlatformPreview: React.FC<PlatformPreviewProps> = ({
   imageUrl,
 }) => {
   const logos = {
-    meta: "/logos/meta-logo.png",
-    google: "/logos/google-ads-logo.png",
+    meta: "/logos/meta-icon.png",
+    google: "/logos/google-ads-icon.png",
     tiktok: "https://upload.wikimedia.org/wikipedia/en/a/a9/TikTok_logo.svg",
     linkedin: "https://upload.wikimedia.org/wikipedia/commons/0/01/LinkedIn_Logo.svg",
     facebook_f: "https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png"

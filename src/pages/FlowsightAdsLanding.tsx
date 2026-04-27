@@ -212,11 +212,11 @@ const FlowsightAdsLanding: React.FC = () => {
 
         <div className="flex justify-center items-center gap-8 mb-8">
           <div className="flex flex-col items-center gap-1">
-            <img src="/logos/meta-logo.png" alt="Meta" className="w-8 h-8 object-contain" />
+            <img src="/logos/meta-icon.png" alt="Meta" className="w-8 h-8 object-contain" />
             <span className="text-[10px] font-bold text-gray-500 uppercase tracking-tighter">Meta</span>
           </div>
           <div className="flex flex-col items-center gap-1">
-            <img src="/logos/google-ads-logo.png" alt="Google Ads" className="w-8 h-8 object-contain" />
+            <img src="/logos/google-ads-icon.png" alt="Google Ads" className="w-8 h-8 object-contain" />
             <span className="text-[10px] font-bold text-gray-500 uppercase tracking-tighter">Google Ads</span>
           </div>
           <div className="flex flex-col items-center gap-1">
