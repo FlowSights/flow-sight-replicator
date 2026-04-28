@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabaseClient';
 import { Button } from '@/components/ui/button';
@@ -27,6 +27,7 @@ import { MetaPreview, TikTokPreview, LinkedInPreview, GoogleAdsPreview } from '@
 import { VisualGuideLightbox } from '@/components/VisualGuideLightbox';
 import jsPDF from 'jspdf';
 import { useCountUp } from '@/hooks/useCountUp';
+import { useInactivityTimeout } from '@/hooks/useInactivityTimeout';
 
 type HeroStat = { value: number; suffix: string; prefix?: string; label: string; decimals?: number };
 
@@ -74,6 +75,7 @@ const FlowsightAdsDashboard: React.FC = () => {
   const [showResults, setShowResults] = useState(false);
   const [selectedAdForLightbox, setSelectedAdForLightbox] = useState<GeneratedAd | null>(null);
   const [metricsVisible, setMetricsVisible] = useState(false);
+  const [showInactivityModal, setShowInactivityModal] = useState(false);
 
   const [activeGuidePlatform, setActiveGuidePlatform] = useState<string | null>(null);
   const [isGuideLightboxOpen, setIsGuideLightboxOpen] = useState(false);
@@ -107,6 +109,14 @@ const FlowsightAdsDashboard: React.FC = () => {
     await supabase.auth.signOut();
     navigate('/flowsight-ads');
   };
+
+  // Cerrar sesión por inactividad (10 minutos)
+  const handleInactivityTimeout = useCallback(async () => {
+    setShowInactivityModal(true);
+    await supabase.auth.signOut();
+  }, []);
+
+  useInactivityTimeout(handleInactivityTimeout, 10 * 60 * 1000);
 
   useEffect(() => {
     const checkUser = async () => {
@@ -1145,7 +1155,7 @@ const FlowsightAdsDashboard: React.FC = () => {
                       <Button 
                         variant="ghost"
                         onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.open(ad.platformUrl, '_blank'); }}
-                        className="flex-1 bg-transparent hover:bg-emerald-500/10 dark:hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 rounded-xl py-2 text-xs font-bold gap-1.5 cursor-pointer transition-all border-2 border-emerald-600 dark:border-emerald-500 hover:border-emerald-700 dark:hover:border-emerald-400"
+                        className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white dark:bg-transparent dark:hover:bg-emerald-500/20 dark:text-emerald-400 rounded-xl py-2 text-xs font-bold gap-1.5 cursor-pointer transition-all border-2 border-emerald-600 dark:border-emerald-500 hover:border-emerald-700 dark:hover:border-emerald-400"
                       >
                         <ExternalLink className="w-3 h-3" /> Publicar
                       </Button>
@@ -1171,9 +1181,9 @@ const FlowsightAdsDashboard: React.FC = () => {
               <div className="mt-12 pt-8 border-t border-white/10">
                 <h2 className="text-3xl font-black text-gray-900 dark:text-white mb-2 flex items-center gap-3">
                   <TrendingUp className="w-8 h-8 text-emerald-500" />
-                  Tu Potencial de Ganancias
+                  ¿Cuánto te aporta usar FlowSights Ads?
                 </h2>
-                <p className="text-gray-600 dark:text-gray-400 mb-8 text-lg">Mira cuanto podrias ganar con cada plataforma segun tu presupuesto</p>
+                <p className="text-gray-600 dark:text-gray-400 mb-8 text-lg">Compara lo que obtendrías gestionando tus anuncios solo vs. con la ayuda de FlowSights Ads</p>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {generatedAds.map((ad, idx) => (
                     <ROIEstimator key={idx} budget={config.budget} platform={ad.platform} />
@@ -1190,6 +1200,45 @@ const FlowsightAdsDashboard: React.FC = () => {
           onClose={() => setIsGuideLightboxOpen(false)}
           platform={guideLightboxPlatform}
         />
+
+        {/* Modal de sesión expirada por inactividad */}
+        <AnimatePresence>
+          {showInactivityModal && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-sm p-6"
+            >
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                transition={{ type: 'spring', damping: 20, stiffness: 300 }}
+                className="bg-white dark:bg-[#111] rounded-3xl shadow-2xl p-8 max-w-sm w-full text-center border border-gray-100 dark:border-white/10"
+              >
+                <div className="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto mb-5">
+                  <ShieldCheck className="w-8 h-8 text-emerald-500" />
+                </div>
+                <h3 className="text-2xl font-black text-gray-900 dark:text-white mb-2">
+                  Sesión cerrada
+                </h3>
+                <p className="text-gray-500 dark:text-gray-400 text-sm mb-6 leading-relaxed">
+                  Tu sesión se cerró automáticamente por <strong>10 minutos de inactividad</strong> como medida de seguridad.
+                </p>
+                <Button
+                  onClick={() => {
+                    setShowInactivityModal(false);
+                    navigate('/flowsight-ads');
+                  }}
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-2xl text-base"
+                >
+                  Volver a iniciar sesión
+                </Button>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </main>
     </div>
   );
