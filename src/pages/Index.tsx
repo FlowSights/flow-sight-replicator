@@ -35,6 +35,7 @@ import { ToolsMarquee } from "@/components/ToolsMarquee";
 import SEO from "@/components/SEO";
 
 import { ExplodedLaptop } from "@/components/ExplodedLaptop";
+import { FloatingDashboard } from "@/components/FloatingDashboard";
 import { InstagramFeed } from "@/components/InstagramFeed";
 import { Showcase } from "@/components/Showcase";
 import {
@@ -462,7 +463,7 @@ const Index = () => {
 
           <div className="relative">
             <div className="absolute -inset-20 bg-primary/10 blur-[120px] rounded-full pointer-events-none" />
-            <ExplodedLaptop />
+            <FloatingDashboard />
           </div>
         </div>
       </section>
