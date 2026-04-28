@@ -56,15 +56,17 @@ export const useStripeCheckout = () => {
 
       if (paymentError) throw paymentError;
 
-      // 4. Redirigir a Stripe Checkout
-      const stripe = await stripePromise;
-      if (!stripe) throw new Error('No se pudo cargar Stripe');
-
-      const { error: stripeError } = await stripe.redirectToCheckout({
-        sessionId: data.sessionId,
-      });
-
-      if (stripeError) throw stripeError;
+      // 4. Redirigir directamente a la URL de Stripe Checkout proporcionada por la Edge Function
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        // Fallback por si solo tenemos el sessionId (aunque la función ya devuelve la URL)
+        const stripe = await stripePromise;
+        if (!stripe) throw new Error('No se pudo cargar Stripe');
+        
+        // Si redirectToCheckout falló, intentamos la redirección manual a la URL estándar de Stripe
+        window.location.href = `https://checkout.stripe.com/pay/${data.sessionId}`;
+      }
 
     } catch (err: any) {
       console.error('Error en Checkout:', err);
