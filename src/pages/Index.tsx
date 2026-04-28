@@ -449,6 +449,30 @@ const Index = () => {
                   <a href={EMAIL_URL}><Mail className="mr-1" /> Escríbenos</a>
                 </Button>
               </motion.div>
+              <motion.div 
+                variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+                className="w-full sm:w-auto"
+              >
+                <Button 
+                  variant="morphoglass" 
+                  size="lg" 
+                  asChild 
+                  className="group w-full sm:w-auto px-8 py-6 text-lg font-semibold tracking-wide"
+                >
+                  <Link to="/flowsight-ads" className="flex items-center gap-3">
+                    <div className="relative">
+                      <Sparkles className="w-5 h-5 text-emerald-400 group-hover:scale-110 transition-transform duration-500" />
+                      <div className="absolute inset-0 blur-sm bg-emerald-400/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    </div>
+                    <span className="bg-gradient-to-r from-white via-white to-emerald-200 bg-clip-text text-transparent">
+                      Probar Herramienta de Ads
+                    </span>
+                    <div className="flex items-center justify-center w-6 h-6 rounded-full bg-emerald-500/20 border border-emerald-500/30 group-hover:bg-emerald-500/40 transition-colors duration-500">
+                      <ArrowRight className="w-3.5 h-3.5 text-emerald-400 group-hover:translate-x-0.5 transition-transform duration-500" />
+                    </div>
+                  </Link>
+                </Button>
+              </motion.div>
             </motion.div>
             <div className="grid grid-cols-3 gap-6 pt-8 border-t border-border/60 max-w-lg">
               {([
