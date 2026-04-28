@@ -17,7 +17,8 @@ import {
   Upload as UploadIcon, X as XIcon, Sparkles as SparklesIcon,
   RefreshCw, Search, Activity, Eye, MousePointer,
   MapPin as MapPinIconLucide, Upload as UploadIconLucide, X as XIconLucide, Sparkles as SparklesIconLucide,
-  BookOpen, PlayCircle, MousePointerClick, Moon, Sun
+  BookOpen, PlayCircle, MousePointerClick, Moon, Sun,
+  Building2, Link2, Globe2
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { LocationInput } from '@/components/LocationInput';
@@ -53,9 +54,15 @@ interface GeneratedAd {
   type: 'Offer' | 'Emotional' | 'Urgency';
   score: number;
   platformUrl: string;
+  businessName?: string;
+  websiteUrl?: string;
 }
 
 interface CampaignConfig {
+  businessName: string;
+  websiteUrl: string;
+  instagramUrl: string;
+  facebookUrl: string;
   promote: string;
   location: string;
   idealCustomer: string;
@@ -82,6 +89,10 @@ const FlowsightAdsDashboard: React.FC = () => {
   const [guideLightboxPlatform, setGuideLightboxPlatform] = useState<'meta' | 'google' | 'tiktok' | 'linkedin'>('meta');
   
   const [config, setConfig] = useState<CampaignConfig>({
+    businessName: '',
+    websiteUrl: '',
+    instagramUrl: '',
+    facebookUrl: '',
     promote: '',
     location: '',
     idealCustomer: '',
@@ -148,50 +159,64 @@ const FlowsightAdsDashboard: React.FC = () => {
       await new Promise(resolve => setTimeout(resolve, 1500));
     }
 
-    // La imagen es provista por el usuario (obligatoria desde el paso 3)
+    // La imagen es provista por el usuario (obligatoria desde el paso 4)
     const finalImage = config.userImage || '';
+    const biz = config.businessName || 'FlowSights';
+    const websiteDomain = config.websiteUrl
+      ? config.websiteUrl.replace(/^https?:\/\/(www\.)?/, '').split('/')[0]
+      : 'tunegocio.com';
+    // Usar el link de Instagram o Facebook como URL de destino si está disponible
+    const socialUrl = config.instagramUrl || config.facebookUrl || '';
     console.log('[FlowSightAds] Rendering with user image:', finalImage.startsWith('data:') ? 'base64 image' : finalImage);
 
     const ads: GeneratedAd[] = [
       {
         type: 'Offer',
-        headline: `¡Oferta Exclusiva: ${config.promote}!`,
+        headline: `¡${biz}: ${config.promote} con Descuento!`,
         description: `La mejor solución en ${config.location} para ${config.idealCustomer}. ¡Consigue un descuento especial hoy mismo!`,
         cta: 'Obtener Oferta',
         imageUrl: finalImage,
         platform: 'google',
         score: 94,
-        platformUrl: `https://ads.google.com/aw/campaigns/new?keyword=${encodeURIComponent(config.promote)}`
+        platformUrl: `https://ads.google.com/aw/campaigns/new?keyword=${encodeURIComponent(config.promote)}`,
+        businessName: biz,
+        websiteUrl: config.websiteUrl || ''
       },
       {
         type: 'Emotional',
-        headline: `Diseñado para ${config.idealCustomer}`,
-        description: `En ${config.location} entendemos tus necesidades. ${config.promote} es la pieza que faltaba en tu vida.`,
+        headline: `${biz}: Diseñado para ${config.idealCustomer}`,
+        description: `En ${config.location} entendemos tus necesidades. ${config.promote} de ${biz} es la pieza que faltaba en tu vida.`,
         cta: 'Saber Más',
         imageUrl: finalImage,
         platform: 'meta',
         score: 89,
-        platformUrl: `https://adsmanager.facebook.com/adsmanager/manage/campaigns`
+        platformUrl: socialUrl || `https://adsmanager.facebook.com/adsmanager/manage/campaigns`,
+        businessName: biz,
+        websiteUrl: config.websiteUrl || ''
       },
       {
         type: 'Urgency',
         headline: `¡Última oportunidad en ${config.location}!`,
-        description: `Solo para ${config.idealCustomer}. No dejes pasar la oportunidad de mejorar con ${config.promote}.`,
+        description: `${biz} para ${config.idealCustomer}. No dejes pasar la oportunidad de mejorar con ${config.promote}.`,
         cta: 'Reservar Ahora',
         imageUrl: finalImage,
         platform: 'tiktok',
         score: 97,
-        platformUrl: `https://ads.tiktok.com/i18n/dashboard`
+        platformUrl: `https://ads.tiktok.com/i18n/dashboard`,
+        businessName: biz,
+        websiteUrl: config.websiteUrl || ''
       },
       {
         type: 'Offer',
-        headline: `Impulsa tu éxito con ${config.promote}`,
-        description: `Soluciones profesionales para ${config.idealCustomer} en ${config.location}. Líderes en el sector.`,
+        headline: `Impulsa tu éxito con ${biz}`,
+        description: `Soluciones profesionales para ${config.idealCustomer} en ${config.location}. ${biz}: líderes en ${config.promote}.`,
         cta: 'Contactar',
         imageUrl: finalImage,
         platform: 'linkedin',
         score: 92,
-        platformUrl: `https://www.linkedin.com/campaignmanager/accounts`
+        platformUrl: `https://www.linkedin.com/campaignmanager/accounts`,
+        businessName: biz,
+        websiteUrl: config.websiteUrl || ''
       }
     ];
 
@@ -281,10 +306,17 @@ const FlowsightAdsDashboard: React.FC = () => {
     doc.setTextColor(180, 180, 180);
     doc.setFontSize(11);
     doc.setFont(undefined, 'normal');
-    doc.text(`Producto: ${config.promote}`, margin, 155);
-    doc.text(`Mercado: ${config.location}`, margin, 165);
-    doc.text(`Audiencia: ${config.idealCustomer}`, margin, 175);
-    doc.text(`Inversion: $${config.budget} USD / mes`, margin, 185);
+    if (config.businessName) {
+      doc.text(`Negocio: ${config.businessName}`, margin, 148);
+    }
+    doc.text(`Producto: ${config.promote}`, margin, config.businessName ? 158 : 155);
+    doc.text(`Mercado: ${config.location}`, margin, config.businessName ? 168 : 165);
+    doc.text(`Audiencia: ${config.idealCustomer}`, margin, config.businessName ? 178 : 175);
+    doc.text(`Inversion: $${config.budget} USD / mes`, margin, config.businessName ? 188 : 185);
+    if (config.websiteUrl) {
+      doc.setTextColor(16, 185, 129);
+      doc.text(`Web: ${config.websiteUrl}`, margin, config.businessName ? 198 : 195);
+    }
 
     // Footer portada
     doc.setTextColor(100, 100, 100);
@@ -326,11 +358,13 @@ const FlowsightAdsDashboard: React.FC = () => {
 
     // Tabla de estrategia
     const strategyItems = [
+      ...(config.businessName ? [{ label: 'Tu negocio', value: config.businessName, icon: 'Empresa' }] : []),
       { label: 'Que vendes', value: config.promote, icon: 'Producto' },
       { label: 'Donde esta tu cliente', value: config.location, icon: 'Mercado' },
       { label: 'A quien le hablas', value: config.idealCustomer, icon: 'Audiencia' },
       { label: 'Cuanto invertir', value: `$${config.budget} USD / mes`, icon: 'Inversion' },
       { label: 'Donde publicar', value: selectedPlatform ? platformNames[selectedPlatform] : 'Todas las plataformas', icon: 'Plataforma' },
+      ...(config.websiteUrl ? [{ label: 'Sitio web', value: config.websiteUrl, icon: 'Web' }] : []),
     ];
 
     strategyItems.forEach((item) => {
@@ -784,10 +818,10 @@ const FlowsightAdsDashboard: React.FC = () => {
               className="w-full max-w-4xl max-h-[90vh] overflow-y-auto custom-scrollbar"
               onClick={(e) => e.stopPropagation()}
             >
-              {selectedAdForLightbox.platform === 'google' && <GoogleAdsPreview {...selectedAdForLightbox} imageUrl={selectedAdForLightbox.imageUrl} />}
-              {selectedAdForLightbox.platform === 'meta' && <MetaPreview {...selectedAdForLightbox} imageUrl={selectedAdForLightbox.imageUrl} />}
-              {selectedAdForLightbox.platform === 'tiktok' && <TikTokPreview {...selectedAdForLightbox} imageUrl={selectedAdForLightbox.imageUrl} />}
-              {selectedAdForLightbox.platform === 'linkedin' && <LinkedInPreview {...selectedAdForLightbox} imageUrl={selectedAdForLightbox.imageUrl} />}
+              {selectedAdForLightbox.platform === 'google' && <GoogleAdsPreview {...selectedAdForLightbox} imageUrl={selectedAdForLightbox.imageUrl} businessName={selectedAdForLightbox.businessName} websiteUrl={selectedAdForLightbox.websiteUrl} />}
+              {selectedAdForLightbox.platform === 'meta' && <MetaPreview {...selectedAdForLightbox} imageUrl={selectedAdForLightbox.imageUrl} businessName={selectedAdForLightbox.businessName} websiteUrl={selectedAdForLightbox.websiteUrl} />}
+              {selectedAdForLightbox.platform === 'tiktok' && <TikTokPreview {...selectedAdForLightbox} imageUrl={selectedAdForLightbox.imageUrl} businessName={selectedAdForLightbox.businessName} />}
+              {selectedAdForLightbox.platform === 'linkedin' && <LinkedInPreview {...selectedAdForLightbox} imageUrl={selectedAdForLightbox.imageUrl} businessName={selectedAdForLightbox.businessName} />}
               
               <div className="mt-8 flex flex-wrap justify-center gap-4">
                 <Button 
@@ -818,8 +852,8 @@ const FlowsightAdsDashboard: React.FC = () => {
                   setStep(step - 1);
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
-              }} 
-              disabled={step === 1}
+              }}
+              disabled={step === 1 || showResults}
               className="group flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-emerald-500 dark:hover:text-emerald-500 transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed" 
               title="Volver al paso anterior"
             >
@@ -829,7 +863,7 @@ const FlowsightAdsDashboard: React.FC = () => {
           </div>
           <div className="flex items-center gap-6">
             <div className="hidden md:flex items-center gap-3">
-              {[1, 2, 3, 4].map((s) => (
+              {[1, 2, 3, 4, 5].map((s) => (
                 <div key={s} className={`h-1.5 rounded-full transition-all duration-500 ${s === step ? 'w-10 bg-emerald-500' : s < step ? 'w-4 bg-emerald-500/30' : 'w-4 bg-gray-200 dark:bg-white/10'}`} />
               ))}
             </div>
@@ -860,10 +894,90 @@ const FlowsightAdsDashboard: React.FC = () => {
           {!showResults ? (
             <div className="max-w-3xl mx-auto">
               {step === 1 && (
+                <motion.div key="step0" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="space-y-10">
+                  <div className="space-y-4">
+                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 text-emerald-500 text-xs font-black uppercase tracking-widest">
+                      Fase 01: Tu Negocio
+                    </div>
+                    <h1 className="text-5xl md:text-6xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">
+                      Cuéntanos sobre tu <span className="text-emerald-500">negocio</span>
+                    </h1>
+                    <p className="text-xl text-gray-500 dark:text-gray-400">La IA usará esta información para personalizar tus anuncios y mockups.</p>
+                  </div>
+
+                  {/* Nombre del negocio */}
+                  <div className="space-y-3">
+                    <label className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest">Nombre del negocio o empresa</label>
+                    <div className="relative group">
+                      <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-3xl blur opacity-20 group-focus-within:opacity-40 transition duration-1000" />
+                      <Building2 className="absolute left-8 top-1/2 -translate-y-1/2 text-emerald-500 w-7 h-7 z-10" />
+                      <Input
+                        value={config.businessName}
+                        onChange={(e) => setConfig({ ...config, businessName: e.target.value })}
+                        placeholder="Ej: FlowSights, Café Luna, Studio Fit..."
+                        className="relative text-2xl py-10 pl-20 pr-8 rounded-3xl border-none bg-white dark:bg-white/5 shadow-2xl focus:ring-2 focus:ring-emerald-500"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Links del negocio */}
+                  <div className="space-y-3">
+                    <label className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest">Links del negocio <span className="normal-case font-normal text-gray-400">(opcionales — ayudan a la IA)</span></label>
+                    <div className="space-y-3">
+                      {/* Web */}
+                      <div className="relative flex items-center gap-3 bg-white dark:bg-white/5 rounded-2xl shadow-lg px-5 py-4 border border-gray-100 dark:border-white/5 focus-within:border-emerald-500/40 transition-all">
+                        <Globe2 className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                        <Input
+                          value={config.websiteUrl}
+                          onChange={(e) => setConfig({ ...config, websiteUrl: e.target.value })}
+                          placeholder="https://tunegocio.com"
+                          className="border-none bg-transparent p-0 text-base shadow-none focus-visible:ring-0 placeholder:text-gray-400"
+                        />
+                      </div>
+                      {/* Instagram */}
+                      <div className="relative flex items-center gap-3 bg-white dark:bg-white/5 rounded-2xl shadow-lg px-5 py-4 border border-gray-100 dark:border-white/5 focus-within:border-pink-500/40 transition-all">
+                        <span className="w-5 h-5 text-pink-400 flex-shrink-0 font-bold text-sm flex items-center justify-center">IG</span>
+                        <Input
+                          value={config.instagramUrl}
+                          onChange={(e) => setConfig({ ...config, instagramUrl: e.target.value })}
+                          placeholder="https://instagram.com/tunegocio"
+                          className="border-none bg-transparent p-0 text-base shadow-none focus-visible:ring-0 placeholder:text-gray-400"
+                        />
+                      </div>
+                      {/* Facebook */}
+                      <div className="relative flex items-center gap-3 bg-white dark:bg-white/5 rounded-2xl shadow-lg px-5 py-4 border border-gray-100 dark:border-white/5 focus-within:border-blue-500/40 transition-all">
+                        <span className="w-5 h-5 text-blue-500 flex-shrink-0 font-bold text-sm flex items-center justify-center">FB</span>
+                        <Input
+                          value={config.facebookUrl}
+                          onChange={(e) => setConfig({ ...config, facebookUrl: e.target.value })}
+                          placeholder="https://facebook.com/tunegocio"
+                          className="border-none bg-transparent p-0 text-base shadow-none focus-visible:ring-0 placeholder:text-gray-400"
+                        />
+                      </div>
+                    </div>
+                    {(config.websiteUrl || config.instagramUrl || config.facebookUrl) && (
+                      <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1.5">
+                        <Check className="w-3.5 h-3.5" /> ¡Perfecto! La IA analizará tus links para personalizar mejor la campaña.
+                      </p>
+                    )}
+                  </div>
+
+                  <Button
+                    type="button"
+                    disabled={!config.businessName}
+                    onClick={(e) => { e.preventDefault(); setStep(2); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                    className="w-full py-10 text-xl font-black bg-emerald-600 hover:bg-emerald-700 text-white rounded-3xl shadow-2xl shadow-emerald-500/40 transition-all active:scale-[0.98]"
+                  >
+                    Siguiente Paso
+                  </Button>
+                </motion.div>
+              )}
+
+              {step === 2 && (
                 <motion.div key="step1" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="space-y-10">
                   <div className="space-y-4">
                     <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 text-emerald-500 text-xs font-black uppercase tracking-widest">
-                      Fase 01: Concepto
+                      Fase 02: Concepto
                     </div>
                     <h1 className="text-5xl md:text-6xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">
                       ¿Qué vamos a <span className="text-emerald-500">vender</span> hoy?
@@ -899,7 +1013,7 @@ const FlowsightAdsDashboard: React.FC = () => {
                   <Button 
                     type="button"
                     disabled={!config.promote}
-                    onClick={(e) => { e.preventDefault(); setStep(2); }}
+                    onClick={(e) => { e.preventDefault(); setStep(3); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
                     className="w-full py-10 text-xl font-black bg-emerald-600 hover:bg-emerald-700 text-white rounded-3xl shadow-2xl shadow-emerald-500/40 transition-all active:scale-[0.98]"
                   >
                     Siguiente Paso
@@ -907,11 +1021,11 @@ const FlowsightAdsDashboard: React.FC = () => {
                 </motion.div>
               )}
 
-              {step === 2 && (
+              {step === 3 && (
                 <motion.div key="step2" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="space-y-10">
                   <div className="space-y-4">
                     <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 text-emerald-500 text-xs font-black uppercase tracking-widest">
-                      Fase 02: Alcance
+                      Fase 03: Alcance
                     </div>
                     <h1 className="text-5xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">
                       ¿Dónde está tu <span className="text-emerald-500">audiencia</span>?
@@ -926,10 +1040,10 @@ const FlowsightAdsDashboard: React.FC = () => {
                   />
 
                   <div className="flex gap-4">
-                    <Button variant="ghost" onClick={() => setStep(1)} className="flex-1 py-10 text-xl font-bold rounded-3xl hover:bg-gray-100 dark:hover:bg-white/5">Atrás</Button>
+                    <Button variant="ghost" onClick={() => setStep(2)} className="flex-1 py-10 text-xl font-bold rounded-3xl hover:bg-gray-100 dark:hover:bg-white/5">Atrás</Button>
                     <Button 
                       disabled={!config.location}
-                      onClick={() => setStep(3)}
+                      onClick={() => { setStep(4); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
                       className="flex-[2] py-10 text-xl font-black bg-emerald-600 hover:bg-emerald-700 text-white rounded-3xl shadow-2xl shadow-emerald-500/40"
                     >
                       Continuar
@@ -938,11 +1052,11 @@ const FlowsightAdsDashboard: React.FC = () => {
                 </motion.div>
               )}
 
-              {step === 3 && (
+              {step === 4 && (
                 <motion.div key="step3" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="space-y-10">
                   <div className="space-y-4">
                     <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 text-emerald-500 text-xs font-black uppercase tracking-widest">
-                      Fase 03: Creatividad
+                      Fase 04: Creatividad
                     </div>
                     <h1 className="text-5xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">
                       Personaliza tu <span className="text-emerald-500">impacto</span>
@@ -1013,10 +1127,10 @@ const FlowsightAdsDashboard: React.FC = () => {
                   </div>
 
                   <div className="flex gap-4">
-                    <Button variant="ghost" onClick={() => setStep(2)} className="flex-1 py-10 text-xl font-bold rounded-3xl hover:bg-gray-100 dark:hover:bg-white/5">Atrás</Button>
+                    <Button variant="ghost" onClick={() => setStep(3)} className="flex-1 py-10 text-xl font-bold rounded-3xl hover:bg-gray-100 dark:hover:bg-white/5">Atrás</Button>
                     <Button 
                       disabled={!config.idealCustomer || !config.userImage}
-                      onClick={() => setStep(4)}
+                      onClick={() => { setStep(5); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
                       className="flex-[2] py-10 text-xl font-black bg-emerald-600 hover:bg-emerald-700 text-white rounded-3xl shadow-2xl shadow-emerald-500/40 disabled:opacity-40 disabled:cursor-not-allowed"
                     >
                       Continuar
@@ -1025,11 +1139,11 @@ const FlowsightAdsDashboard: React.FC = () => {
                 </motion.div>
               )}
 
-              {step === 4 && (
+              {step === 5 && (
                 <motion.div key="step4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="space-y-10">
                   <div className="space-y-4">
                     <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 text-emerald-500 text-xs font-black uppercase tracking-widest">
-                      Fase 04: Inversión
+                      Fase 05: Inversión
                     </div>
                     <h1 className="text-5xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">
                       ¿Cuál es tu <span className="text-emerald-500">presupuesto</span>?
@@ -1064,7 +1178,7 @@ const FlowsightAdsDashboard: React.FC = () => {
                   </div>
 
                   <div className="flex gap-4">
-                    <Button variant="ghost" onClick={() => setStep(3)} className="flex-1 py-10 text-xl font-bold rounded-3xl hover:bg-gray-100 dark:hover:bg-white/5">Atrás</Button>
+                    <Button variant="ghost" onClick={() => setStep(4)} className="flex-1 py-10 text-xl font-bold rounded-3xl hover:bg-gray-100 dark:hover:bg-white/5">Atrás</Button>
                     <Button onClick={handleGenerate} className="flex-[2] py-10 text-xl font-black bg-emerald-600 hover:bg-emerald-700 text-white rounded-3xl shadow-2xl shadow-emerald-500/40 gap-3">
                       <SparklesIconLucide className="w-6 h-6" /> Generar Campaña Premium
                     </Button>
@@ -1138,10 +1252,10 @@ const FlowsightAdsDashboard: React.FC = () => {
                           <Maximize2 className="w-5 h-5 text-emerald-500" />
                         </div>
                       </div>
-                      {ad.platform === 'google' && <GoogleAdsPreview {...ad} imageUrl={ad.imageUrl} />}
-                      {ad.platform === 'meta' && <MetaPreview {...ad} imageUrl={ad.imageUrl} />}
-                      {ad.platform === 'tiktok' && <TikTokPreview {...ad} imageUrl={ad.imageUrl} />}
-                      {ad.platform === 'linkedin' && <LinkedInPreview {...ad} imageUrl={ad.imageUrl} />}
+                      {ad.platform === 'google' && <GoogleAdsPreview {...ad} imageUrl={ad.imageUrl} businessName={ad.businessName} websiteUrl={ad.websiteUrl} />}
+                      {ad.platform === 'meta' && <MetaPreview {...ad} imageUrl={ad.imageUrl} businessName={ad.businessName} websiteUrl={ad.websiteUrl} />}
+                      {ad.platform === 'tiktok' && <TikTokPreview {...ad} imageUrl={ad.imageUrl} businessName={ad.businessName} />}
+                      {ad.platform === 'linkedin' && <LinkedInPreview {...ad} imageUrl={ad.imageUrl} businessName={ad.businessName} />}
                     </div>
                     <div className="mt-4 space-y-3 relative z-20">
                       <Button 

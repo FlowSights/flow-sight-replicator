@@ -9,9 +9,14 @@ interface PreviewProps {
   cta: string;
   imageUrl?: string;
   platform: 'meta' | 'tiktok' | 'linkedin' | 'google';
+  businessName?: string;
+  websiteUrl?: string;
 }
 
-export const MetaPreview: React.FC<PreviewProps> = ({ headline, description, cta, imageUrl }) => {
+export const MetaPreview: React.FC<PreviewProps> = ({ headline, description, cta, imageUrl, businessName, websiteUrl }) => {
+  const displayName = businessName || 'FlowSights';
+  const displayInitial = displayName.charAt(0).toUpperCase();
+  const displayDomain = websiteUrl ? websiteUrl.replace(/^https?:\/\/(www\.)?/, '').split('/')[0] : 'flowsights.com';
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -21,9 +26,9 @@ export const MetaPreview: React.FC<PreviewProps> = ({ headline, description, cta
       {/* Header */}
       <div className="p-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center text-white font-bold">F</div>
+          <div className="w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center text-white font-bold">{displayInitial}</div>
           <div>
-            <p className="text-[15px] font-bold text-gray-900 dark:text-white leading-tight">FlowSights</p>
+            <p className="text-[15px] font-bold text-gray-900 dark:text-white leading-tight">{displayName}</p>
             <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400">
               <p className="text-[12px]">Publicidad</p>
               <span>•</span>
@@ -45,7 +50,7 @@ export const MetaPreview: React.FC<PreviewProps> = ({ headline, description, cta
       {/* CTA Bar */}
       <div className="bg-[#f0f2f5] dark:bg-[#3a3b3c] p-3 flex justify-between items-center">
         <div className="flex-1 pr-4">
-          <p className="text-[12px] text-gray-500 dark:text-gray-400 uppercase">FLOWSIGHTS.COM</p>
+          <p className="text-[12px] text-gray-500 dark:text-gray-400 uppercase">{displayDomain.toUpperCase()}</p>
           <p className="text-[16px] font-bold text-gray-900 dark:text-white truncate">{headline}</p>
         </div>
         <button className="bg-[#e4e6eb] dark:bg-[#4e4f50] hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold py-2 px-4 rounded-lg text-[14px] transition-colors whitespace-nowrap">
@@ -65,7 +70,10 @@ export const MetaPreview: React.FC<PreviewProps> = ({ headline, description, cta
   );
 };
 
-export const GoogleAdsPreview: React.FC<PreviewProps> = ({ headline, description, cta, imageUrl }) => {
+export const GoogleAdsPreview: React.FC<PreviewProps> = ({ headline, description, cta, imageUrl, businessName, websiteUrl }) => {
+  const displayName = businessName || 'FlowSights';
+  const displayDomain = websiteUrl ? websiteUrl.replace(/^https?:\/\/(www\.)?/, '').split('/')[0] : 'flowsights.com';
+  const searchQuery = encodeURIComponent(displayName);
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -77,14 +85,14 @@ export const GoogleAdsPreview: React.FC<PreviewProps> = ({ headline, description
           <Search className="w-4 h-4 text-gray-400" />
         </div>
         <div className="flex-1 h-8 bg-gray-100 dark:bg-gray-800 rounded-full px-4 flex items-center">
-          <span className="text-sm text-gray-400">google.com/search?q=mi+negocio</span>
+          <span className="text-sm text-gray-400">google.com/search?q={displayName.toLowerCase().replace(/\s+/g, '+')}</span>
         </div>
       </div>
 
       <div className="space-y-2">
         <div className="flex items-center gap-2">
           <span className="text-[12px] font-bold text-gray-900 dark:text-white">Patrocinado</span>
-          <span className="text-[12px] text-gray-500">• flowsights.com</span>
+          <span className="text-[12px] text-gray-500">• {displayDomain}</span>
           <MoreVertical className="w-3 h-3 text-gray-500 ml-auto" />
         </div>
         
@@ -118,7 +126,10 @@ export const GoogleAdsPreview: React.FC<PreviewProps> = ({ headline, description
   );
 };
 
-export const TikTokPreview: React.FC<PreviewProps> = ({ headline, description, cta, imageUrl }) => {
+export const TikTokPreview: React.FC<PreviewProps> = ({ headline, description, cta, imageUrl, businessName }) => {
+  const displayName = businessName || 'FlowSights';
+  const displayHandle = '@' + displayName.toLowerCase().replace(/\s+/g, '').replace(/[^a-z0-9]/g, '');
+  const displayInitial = displayName.charAt(0).toUpperCase();
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -133,7 +144,7 @@ export const TikTokPreview: React.FC<PreviewProps> = ({ headline, description, c
       <div className="absolute inset-0 p-4 flex flex-col justify-end">
         <div className="flex items-end justify-between mb-4">
           <div className="flex-1 pr-12">
-            <p className="text-white font-bold mb-1">@FlowSights</p>
+            <p className="text-white font-bold mb-1">{displayHandle}</p>
             <p className="text-white text-[13px] line-clamp-3 mb-3">{description}</p>
             <div className="flex items-center gap-2 text-white text-[13px] font-medium">
               <span className="bg-white/20 backdrop-blur px-2 py-0.5 rounded">Ad</span>
@@ -142,7 +153,7 @@ export const TikTokPreview: React.FC<PreviewProps> = ({ headline, description, c
           </div>
           
           <div className="flex flex-col gap-4 items-center">
-            <div className="w-12 h-12 bg-emerald-500 rounded-full border-2 border-white flex items-center justify-center text-white font-bold">F</div>
+            <div className="w-12 h-12 bg-emerald-500 rounded-full border-2 border-white flex items-center justify-center text-white font-bold">{displayInitial}</div>
             <div className="flex flex-col items-center">
               <Heart className="w-8 h-8 text-white fill-white" />
               <span className="text-white text-[12px] font-medium">24.5K</span>
@@ -166,7 +177,9 @@ export const TikTokPreview: React.FC<PreviewProps> = ({ headline, description, c
   );
 };
 
-export const LinkedInPreview: React.FC<PreviewProps> = ({ headline, description, cta, imageUrl }) => {
+export const LinkedInPreview: React.FC<PreviewProps> = ({ headline, description, cta, imageUrl, businessName }) => {
+  const displayName = businessName || 'FlowSights';
+  const displayInitial = displayName.charAt(0).toUpperCase();
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -175,9 +188,9 @@ export const LinkedInPreview: React.FC<PreviewProps> = ({ headline, description,
     >
       <div className="p-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-12 h-12 bg-emerald-600 rounded flex items-center justify-center text-white font-bold text-xl">F</div>
+          <div className="w-12 h-12 bg-emerald-600 rounded flex items-center justify-center text-white font-bold text-xl">{displayInitial}</div>
           <div>
-            <p className="text-[14px] font-bold text-gray-900 dark:text-white">FlowSights</p>
+            <p className="text-[14px] font-bold text-gray-900 dark:text-white">{displayName}</p>
             <p className="text-[12px] text-gray-500 dark:text-gray-400">1,234 seguidores</p>
             <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400">
               <p className="text-[12px]">Promocionado</p>
