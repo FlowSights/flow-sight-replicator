@@ -318,6 +318,35 @@ const FlowsightAdsDashboard: React.FC = () => {
       doc.text(`Web: ${config.websiteUrl}`, margin, config.businessName ? 198 : 195);
     }
 
+    // Imagen del usuario en portada (lado derecho)
+    if (config.userImage) {
+      try {
+        // Determinar formato de la imagen
+        const imgFormat = config.userImage.startsWith('data:image/png') ? 'PNG'
+          : config.userImage.startsWith('data:image/webp') ? 'WEBP'
+          : 'JPEG';
+        // Imagen principal del anuncio en portada
+        const imgX = pageWidth / 2 + 5;
+        const imgY = 60;
+        const imgW = pageWidth / 2 - margin - 5;
+        const imgH = imgW * 0.6;
+        // Marco decorativo
+        doc.setDrawColor(16, 185, 129);
+        doc.setLineWidth(0.5);
+        doc.roundedRect(imgX - 1, imgY - 1, imgW + 2, imgH + 2, 3, 3, 'S');
+        doc.addImage(config.userImage, imgFormat, imgX, imgY, imgW, imgH, undefined, 'FAST');
+        // Etiqueta sobre la imagen
+        doc.setFillColor(16, 185, 129);
+        doc.roundedRect(imgX, imgY + imgH - 10, 40, 8, 1, 1, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(6);
+        doc.setFont(undefined, 'bold');
+        doc.text('CREATIVO DEL ANUNCIO', imgX + 3, imgY + imgH - 4.5);
+      } catch (e) {
+        // Si falla la imagen, continuar sin ella
+      }
+    }
+
     // Footer portada
     doc.setTextColor(100, 100, 100);
     doc.setFontSize(9);
@@ -450,6 +479,38 @@ const FlowsightAdsDashboard: React.FC = () => {
       ? generatedAds.filter(ad => ad.platform === selectedPlatform)
       : generatedAds;
 
+    // Sección de imagen del creativo (una vez, antes de los copies)
+    if (config.userImage) {
+      y = checkPageBreak(y, 75);
+      try {
+        const imgFormat = config.userImage.startsWith('data:image/png') ? 'PNG'
+          : config.userImage.startsWith('data:image/webp') ? 'WEBP'
+          : 'JPEG';
+        // Imagen centrada con proporción 1.91:1 (estándar publicitario)
+        const adImgW = contentWidth;
+        const adImgH = adImgW / 1.91;
+        // Fondo oscuro
+        doc.setFillColor(10, 10, 10);
+        doc.roundedRect(margin, y, contentWidth, adImgH + 16, 3, 3, 'F');
+        // Etiqueta superior
+        doc.setTextColor(16, 185, 129);
+        doc.setFontSize(7);
+        doc.setFont(undefined, 'bold');
+        doc.text('IMAGEN DEL ANUNCIO  ·  LISTA PARA USAR', margin + 5, y + 8);
+        // Imagen
+        doc.addImage(config.userImage, imgFormat, margin, y + 12, adImgW, adImgH, undefined, 'FAST');
+        // Dimensiones recomendadas
+        doc.setFillColor(0, 0, 0, 0.6);
+        doc.setTextColor(200, 200, 200);
+        doc.setFontSize(7);
+        doc.text('Dimensiones recomendadas: 1200 x 628 px (Meta/Google) · 1080 x 1920 px (TikTok/Stories)', margin + 5, y + adImgH + 10);
+        y += adImgH + 22;
+      } catch (e) {
+        // Si falla la imagen, continuar
+      }
+    }
+    y += 5;
+
     adsToPrint.forEach((ad) => {
       y = checkPageBreak(y, 85);
       
@@ -537,38 +598,47 @@ const FlowsightAdsDashboard: React.FC = () => {
     y = drawSectionHeader('Guia de Lanzamiento Paso a Paso', y);
     y += 5;
 
+    const dailyBudget = (config.budget / 30).toFixed(0);
+    const weeklyBudget = (config.budget / 4).toFixed(0);
+    const cpcGoogle = (1.5).toFixed(2); // CPC promedio Google Search
+    const cpcMeta = (0.8).toFixed(2);   // CPC promedio Meta
+    const cpcTikTok = (0.5).toFixed(2); // CPC promedio TikTok
+    const cpcLinkedIn = (5.0).toFixed(2); // CPC promedio LinkedIn
+    const estimatedClicks = Math.round(config.budget * 0.8);
+    const estimatedReach = Math.round(config.budget * 15);
+
     const platformGuides: Record<string, Array<{step: string; title: string; desc: string; link?: string}>> = {
       google: [
-        { step: '01', title: 'Abre Google Ads', desc: 'Haz clic en el enlace para ir directamente a crear tu campana.', link: 'https://ads.google.com/aw/campaigns/new' },
-        { step: '02', title: 'Elige tu objetivo', desc: 'Selecciona "Ventas" o "Trafico del sitio web" segun tu necesidad.' },
-        { step: '03', title: 'Define tu presupuesto', desc: `Ingresa $${(config.budget / 30).toFixed(0)} USD como presupuesto diario (equivale a $${config.budget}/mes).` },
-        { step: '04', title: 'Agrega palabras clave', desc: 'Piensa como busca tu cliente. Usa frases especificas, no palabras sueltas.' },
-        { step: '05', title: 'Copia tus textos', desc: 'Pega los titulos y descripciones de la pagina anterior en los campos del anuncio.' },
-        { step: '06', title: 'Publica', desc: 'Revisa el resumen y haz clic en "Publicar campana". Google lo revisara en unas horas.' },
+        { step: '01', title: 'Crea tu campana en Google Ads', desc: 'Ve a Google Ads > Campanas > Nueva campana. Elige objetivo "Trafico al sitio web" o "Ventas". Tipo de campana: Busqueda.', link: 'https://ads.google.com/aw/campaigns/new' },
+        { step: '02', title: 'Configura el presupuesto diario', desc: `Ingresa $${dailyBudget} USD/dia. Google puede gastar hasta el doble en dias de alta demanda, pero el promedio mensual no superara $${config.budget} USD. Si en 7 dias no ves clics, sube el presupuesto un 20%.` },
+        { step: '03', title: 'Agrega palabras clave exactas', desc: `Usa concordancia exacta: [${config.promote}], [${config.promote} precio], [${config.promote} en ${config.location}]. Evita palabras genericas de 1 sola palabra. Apunta a un CPC maximo de $${cpcGoogle} USD por clic.` },
+        { step: '04', title: 'Pega tus titulos y descripciones', desc: 'Agrega 3 titulos (max 30 caracteres cada uno) y 2 descripciones (max 90 caracteres). Usa los textos de la pagina anterior. El sistema rotara las combinaciones y mostrara las que mejor funcionen.' },
+        { step: '05', title: 'Activa extensiones de anuncio', desc: 'En "Recursos" agrega: Enlace de sitio (tu URL principal), Llamada (tu telefono), Extracto de texto (3 beneficios clave). Esto no tiene costo extra y aumenta el CTR hasta un 15%.' },
+        { step: '06', title: 'Metricas clave a revisar en 7 dias', desc: `CTR objetivo: mayor a 3%. Si es menor, cambia el titulo. CPC real objetivo: menor a $${cpcGoogle} USD. Si es mayor, pausa las palabras clave mas caras. Tasa de conversion objetivo: mayor a 2%.` },
       ],
       meta: [
-        { step: '01', title: 'Abre el Administrador de Anuncios', desc: 'Haz clic en el enlace para ir directamente a tu cuenta.', link: 'https://adsmanager.facebook.com/adsmanager/manage/campaigns' },
-        { step: '02', title: 'Haz clic en "+ Crear"', desc: 'El boton verde en la esquina superior izquierda.' },
-        { step: '03', title: 'Elige tu objetivo', desc: 'Selecciona "Trafico" para visitas o "Ventas" para conversiones.' },
-        { step: '04', title: 'Define tu audiencia', desc: `Ingresa "${config.location}" como ubicacion y ajusta edad y genero segun tu cliente ideal.` },
-        { step: '05', title: 'Sube tu imagen y textos', desc: 'Carga la imagen que preparamos y pega el copy y titulo de la pagina anterior.' },
-        { step: '06', title: 'Publica', desc: 'Revisa la vista previa y presiona "Publicar". Meta lo revisara en minutos.' },
+        { step: '01', title: 'Crea tu campana en Meta Ads', desc: 'Ve a Administrador de Anuncios > Crear. Objetivo recomendado: "Trafico" (para visitas) o "Ventas" (si tienes pixel instalado en tu web).', link: 'https://adsmanager.facebook.com/adsmanager/manage/campaigns' },
+        { step: '02', title: 'Configura el presupuesto del conjunto de anuncios', desc: `Presupuesto diario: $${dailyBudget} USD. Activa "Presupuesto Advantage+" para que Meta lo distribuya automaticamente. Programa el anuncio todos los dias, sin restriccion de horario, al menos las primeras 2 semanas.` },
+        { step: '03', title: 'Define tu audiencia con precision', desc: `Ubicacion: ${config.location}. Edad: ajusta segun tu cliente ideal (ej: 25-45). Activa "Expansion de audiencia Advantage+" para que Meta encuentre personas similares a las que ya te compran. Audiencia estimada ideal: entre 200,000 y 1,000,000 personas.` },
+        { step: '04', title: 'Sube tu imagen y textos del anuncio', desc: 'Formato: imagen 1200x628 px (feed) o 1080x1920 px (stories/reels). Sube la imagen de este kit. Pega el texto principal y el titular de la pagina anterior. CTA recomendado: "Mas informacion" o "Comprar ahora".'},
+        { step: '05', title: 'Activa el Pixel de Meta en tu web', desc: 'Si tienes sitio web, instala el Pixel de Meta (codigo de seguimiento). Esto permite a Meta optimizar para conversiones reales, no solo clics, y puede reducir tu costo por resultado hasta un 40%.' },
+        { step: '06', title: 'Metricas clave a revisar en 7 dias', desc: `CPM objetivo: menor a $8 USD. Si es mayor, tu audiencia es muy pequena o el anuncio tiene baja relevancia. CPC objetivo: menor a $${cpcMeta} USD. CTR objetivo: mayor a 1.5%. Frecuencia: si supera 3.0, cambia la imagen del anuncio.` },
       ],
       tiktok: [
-        { step: '01', title: 'Abre TikTok Ads Manager', desc: 'Haz clic en el enlace para ir a tu panel de control.', link: 'https://ads.tiktok.com/i18n/dashboard' },
-        { step: '02', title: 'Crea una campana', desc: 'Haz clic en "Crear" en la pestana de Campanas.' },
-        { step: '03', title: 'Elige tu objetivo', desc: 'Selecciona "Trafico" para empezar rapido.' },
-        { step: '04', title: 'Configura tu audiencia', desc: `Define ubicacion "${config.location}", edad y genero. Deja los intereses amplios.` },
-        { step: '05', title: 'Sube tu contenido', desc: 'Carga tu imagen o video en formato vertical (9:16) y pega el texto del anuncio.' },
-        { step: '06', title: 'Envia a revision', desc: 'Revisa la vista previa en formato movil y presiona "Enviar".' },
+        { step: '01', title: 'Crea tu campana en TikTok Ads', desc: 'Ve a TikTok Ads Manager > Campanas > Crear. Objetivo: "Trafico" para empezar. Cuando tengas datos, cambia a "Conversiones".', link: 'https://ads.tiktok.com/i18n/dashboard' },
+        { step: '02', title: 'Configura el presupuesto del grupo de anuncios', desc: `Presupuesto diario minimo en TikTok: $20 USD. Recomendado para tu caso: $${Math.max(20, parseInt(dailyBudget))} USD/dia. Activa "Optimizacion de presupuesto de campana" para que TikTok distribuya entre grupos de anuncios.` },
+        { step: '03', title: 'Configura la audiencia', desc: `Ubicacion: ${config.location}. Edad y genero segun tu cliente. Intereses: deja amplios al inicio (TikTok aprende mejor con audiencias grandes). Tamano de audiencia ideal: entre 500,000 y 5,000,000 personas.` },
+        { step: '04', title: 'Sube tu creativo en formato vertical', desc: 'Formato obligatorio: video o imagen 9:16 (1080x1920 px). Duracion de video recomendada: 9 a 15 segundos. Los primeros 3 segundos deben mostrar el beneficio principal. Activa "Identidad de marca" para mostrar tu nombre y logo.' },
+        { step: '05', title: 'Activa Smart Creative', desc: 'En la seccion de creativos, activa "Smart Creative". TikTok combinara automaticamente distintas versiones de tu anuncio y mostrara la que mejor funcione, sin costo adicional.' },
+        { step: '06', title: 'Metricas clave a revisar en 7 dias', desc: `CPM objetivo: menor a $10 USD. CPC objetivo: menor a $${cpcTikTok} USD. Tasa de reproduccion al 100% objetivo: mayor a 20%. Si el video no llega al 20%, el problema esta en los primeros 3 segundos: cambia el inicio.` },
       ],
       linkedin: [
-        { step: '01', title: 'Abre Campaign Manager', desc: 'Haz clic en el enlace para ir a tu cuenta publicitaria.', link: 'https://www.linkedin.com/campaignmanager/accounts' },
-        { step: '02', title: 'Crea una campana', desc: 'Selecciona tu cuenta y haz clic en "Crear" > "Campana".' },
-        { step: '03', title: 'Elige tu objetivo', desc: 'Selecciona "Visitas al sitio web" o "Generacion de contactos".' },
-        { step: '04', title: 'Segmenta profesionalmente', desc: 'Usa filtros de cargo, sector y tamano de empresa para llegar a los decisores correctos.' },
-        { step: '05', title: 'Sube tu imagen y textos', desc: 'Elige "Anuncio con imagen", sube la imagen y pega los textos de la pagina anterior.' },
-        { step: '06', title: 'Lanza tu campana', desc: `Confirma tu presupuesto de $${(config.budget / 30).toFixed(0)} USD/dia y haz clic en "Lanzar campana".` },
+        { step: '01', title: 'Crea tu campana en LinkedIn', desc: 'Ve a Campaign Manager > Crear campana. Objetivo: "Visitas al sitio web" o "Generacion de contactos" (Lead Gen Forms, muy efectivo en LinkedIn).', link: 'https://www.linkedin.com/campaignmanager/accounts' },
+        { step: '02', title: 'Configura el presupuesto', desc: `Presupuesto diario: $${Math.max(10, parseInt(dailyBudget))} USD (minimo recomendado en LinkedIn: $10 USD/dia). LinkedIn es mas caro que otras plataformas (CPC promedio: $${cpcLinkedIn} USD), pero la calidad del lead es mucho mayor.` },
+        { step: '03', title: 'Segmenta por cargo y empresa', desc: `Ubicacion: ${config.location}. Cargo: elige los titulos exactos de tu cliente ideal (ej: "Director de Marketing", "CEO", "Gerente de Compras"). Tamano de empresa segun tu mercado. Audiencia ideal: entre 50,000 y 300,000 personas.` },
+        { step: '04', title: 'Crea tu anuncio de imagen unica', desc: 'Formato: imagen 1200x627 px. Sube la imagen de este kit. Texto introductorio: max 150 caracteres (lo que ve el usuario antes de "ver mas"). Titular: max 70 caracteres. CTA: "Mas informacion" o "Registrarse".'},
+        { step: '05', title: 'Activa el Insight Tag en tu web', desc: 'Instala el Insight Tag de LinkedIn en tu sitio web. Esto permite retargeting (mostrar anuncios a quienes ya visitaron tu web) y medir conversiones. El retargeting en LinkedIn puede reducir el CPA hasta un 30%.' },
+        { step: '06', title: 'Metricas clave a revisar en 7 dias', desc: `CTR objetivo: mayor a 0.4% (LinkedIn tiene CTRs mas bajos que otras plataformas, es normal). CPC objetivo: menor a $${cpcLinkedIn} USD. Tasa de apertura de Lead Gen Form: mayor a 10%. Si el CTR es menor a 0.4%, cambia el titular del anuncio.` },
       ],
     };
 
@@ -633,28 +703,36 @@ const FlowsightAdsDashboard: React.FC = () => {
 
     const platformAdvice: Record<string, Array<{title: string; desc: string}>> = {
       google: [
-        { title: 'Usa palabras clave especificas', desc: 'Las frases largas y detalladas ("comprar zapatos deportivos baratos en Madrid") atraen clientes con mayor intencion de compra que las palabras genericas ("zapatos").' },
-        { title: 'Activa las extensiones de anuncio', desc: 'Agrega tu numero de telefono, direccion y enlaces adicionales. Esto hace que tu anuncio ocupe mas espacio en Google y se vea mas profesional, sin costo extra.' },
-        { title: 'No toques nada en 5 dias', desc: 'El sistema de Google necesita entre 3 y 7 dias para aprender quien hace clic en tu anuncio. Si cambias cosas antes, reinicia el aprendizaje.' },
-        { title: 'Revisa el "Informe de terminos de busqueda"', desc: 'Despues de una semana, revisa por que palabras reales te encontraron. Elimina las que no tienen sentido para tu negocio.' },
+        { title: 'Semana 1-2: Periodo de aprendizaje (no toques nada)', desc: 'Google necesita entre 50 y 100 conversiones para salir del periodo de aprendizaje. Durante este tiempo, el CPC puede ser mas alto de lo normal. No pauses ni edites la campana. Solo observa.' },
+        { title: 'Semana 2: Revisa el Informe de Terminos de Busqueda', desc: `Ve a Palabras clave > Terminos de busqueda. Agrega como palabras clave negativas todo lo que no sea relevante para ${config.promote}. Esto puede reducir el desperdicio de presupuesto hasta un 30%.` },
+        { title: 'Si el CTR es menor a 3%: cambia los titulos', desc: 'Un CTR bajo significa que las personas ven tu anuncio pero no hacen clic. Prueba titulos que incluyan el precio, una oferta o una pregunta directa. Ejemplo: "Desde $X USD" o "Disponible en ${config.location}".' },
+        { title: 'Si el CPC supera $2.00 USD: pausa palabras caras', desc: 'Ve a Palabras clave, ordena por CPC de mayor a menor. Pausa las que cuesten mas de $2.00 USD y tengan 0 conversiones. Esto libera presupuesto para las que si convierten.' },
+        { title: 'Mes 2: Activa Smart Bidding', desc: 'Una vez que tengas al menos 30 conversiones registradas, cambia la estrategia de puja a "CPA objetivo" o "Maximizar conversiones". Ingresa como CPA objetivo el 20% del valor de tu venta promedio.' },
+        { title: 'Indicador de exito: ROAS mayor a 3x', desc: `Si gastas $${config.budget} USD y generas mas de $${config.budget * 3} USD en ventas, tu campana es rentable. Si el ROAS es menor a 2x despues de 30 dias, revisa la pagina de destino y el proceso de compra.` },
       ],
       meta: [
-        { title: 'La imagen es el 70% del exito', desc: 'En Facebook e Instagram, la gente se detiene por la imagen, no por el texto. Asegurate de que tu visual sea llamativo y profesional.' },
-        { title: 'Deja que Meta optimice por ti', desc: 'Activa "Ubicaciones Advantage+" y "Presupuesto Advantage+". La inteligencia artificial de Meta sabe donde mostrar tu anuncio al menor costo.' },
-        { title: 'Responde los comentarios', desc: 'Cuando alguien comenta en tu anuncio, respondele rapido. Esto mejora la relevancia del anuncio y genera confianza.' },
-        { title: 'Prueba diferentes imagenes', desc: 'Despues de una semana, duplica tu anuncio con una imagen diferente. Compara cual funciona mejor y apaga el perdedor.' },
+        { title: 'Semana 1-2: Fase de aprendizaje de Meta', desc: 'Meta necesita al menos 50 eventos de optimizacion (clics, compras, leads) por semana para salir del aprendizaje. Evita editar el conjunto de anuncios durante este periodo o reiniciara el proceso.' },
+        { title: 'Si el CPM supera $10 USD: amplia la audiencia', desc: `Un CPM alto indica que tu audiencia es muy pequena o muy competida. Expande la ubicacion mas alla de ${config.location}, sube el rango de edad 5 anos, o activa "Expansion de audiencia Advantage+".` },
+        { title: 'Si el CTR es menor a 1%: cambia la imagen', desc: 'En Meta, la imagen genera el 80% de los clics. Si el CTR esta por debajo de 1%, duplica el anuncio con una imagen diferente y pausa el original. Prueba imagenes con personas reales vs. productos solos.' },
+        { title: 'Frecuencia mayor a 3.0: rota los creativos', desc: 'Cuando la frecuencia supera 3.0, las personas ya vieron tu anuncio demasiadas veces y lo ignoran. Duplica el conjunto de anuncios con una imagen nueva. Mantener frecuencia entre 1.5 y 2.5 es lo ideal.' },
+        { title: 'Mes 2: Crea una audiencia de retargeting', desc: 'Ve a Audiencias > Crear audiencia personalizada > Personas que visitaron tu web (ultimos 30 dias). Crea un anuncio especifico para ellos con una oferta o descuento. El retargeting convierte 3x mas que el trafico frio.' },
+        { title: 'Indicador de exito: CPA menor al 20% del valor de venta', desc: `Si tu producto vale $100 USD, tu costo por adquisicion (CPA) no deberia superar $20 USD. Con presupuesto de $${config.budget} USD/mes y CPA de $20, deberias obtener al menos ${Math.round(config.budget / 20)} clientes nuevos.` },
       ],
       tiktok: [
-        { title: 'Que parezca contenido real', desc: 'Los anuncios que parecen videos caseros o naturales funcionan mucho mejor que los que se ven "producidos". La autenticidad es la clave en TikTok.' },
-        { title: 'Los primeros 3 segundos lo son todo', desc: 'Si no captas la atencion en los primeros 3 segundos, la persona seguira de largo. Empieza con algo impactante o una pregunta directa.' },
-        { title: 'Usa musica en tendencia', desc: 'TikTok es una plataforma de audio. Usar una cancion popular puede multiplicar el alcance de tu anuncio.' },
-        { title: 'Formato vertical obligatorio', desc: 'Tu contenido debe ser en formato 9:16 (vertical, pantalla completa). Nunca uses videos horizontales en TikTok.' },
+        { title: 'Semana 1: Fase de aprendizaje de TikTok', desc: 'TikTok necesita al menos 50 conversiones por grupo de anuncios para optimizar bien. Durante la primera semana, el algoritmo esta aprendiendo. No pauses ni edites el grupo de anuncios.' },
+        { title: 'Si la tasa de reproduccion al 100% es menor a 20%: cambia el inicio', desc: 'Si menos del 20% de las personas ven tu video completo, el problema esta en los primeros 3 segundos. Prueba empezar con una pregunta, un dato sorprendente o mostrando el resultado final primero.' },
+        { title: 'Si el CPM supera $12 USD: amplia la audiencia', desc: 'TikTok funciona mejor con audiencias grandes. Si tu CPM es alto, elimina los filtros de intereses y deja solo ubicacion y edad. El algoritmo de TikTok es muy bueno encontrando a las personas correctas por su cuenta.' },
+        { title: 'Semana 2: Prueba 3 versiones del creativo', desc: 'Crea 3 variantes del anuncio con distintos primeros 3 segundos. Deja correr 3 dias y pausa las 2 que tengan menor CTR. Esto puede mejorar el rendimiento hasta un 50%.' },
+        { title: 'Activa el Pixel de TikTok en tu web', desc: 'Instala el Pixel de TikTok en tu sitio web. Esto permite optimizar para conversiones reales (no solo clics) y crear audiencias de retargeting. Sin el Pixel, solo puedes optimizar para trafico.' },
+        { title: 'Indicador de exito: CPC menor a $0.50 USD', desc: `Con presupuesto de $${config.budget} USD/mes y CPC de $0.50 USD, deberias obtener al menos ${Math.round(config.budget / 0.5)} clics al mes. Si el CPC supera $1.00 USD, el creativo necesita mejoras.` },
       ],
       linkedin: [
-        { title: 'Segmenta por cargo, no por intereses', desc: 'LinkedIn es poderoso porque puedes llegar directamente a "Directores de Marketing" o "CEOs de empresas de tecnologia". Usa esta ventaja.' },
-        { title: 'Manten tu audiencia entre 50K y 300K', desc: 'Si tu audiencia es muy pequena, sera cara. Si es muy grande, sera poco relevante. El punto ideal esta en ese rango.' },
-        { title: 'Tono profesional pero humano', desc: 'Evita sonar como un robot corporativo. Habla como un profesional que le escribe a otro profesional. Directo, claro y con valor.' },
-        { title: 'El mejor horario: martes a jueves', desc: 'Los profesionales estan mas activos en LinkedIn entre martes y jueves, de 8am a 10am y de 5pm a 6pm.' },
+        { title: 'Semana 1-2: Fase de aprendizaje de LinkedIn', desc: 'LinkedIn necesita entre 7 y 14 dias para optimizar la entrega. Durante este periodo, el CPC puede ser mas alto. No hagas cambios. El algoritmo esta encontrando a las personas con mayor probabilidad de hacer clic.' },
+        { title: 'Si el CTR es menor a 0.4%: cambia el titular', desc: 'En LinkedIn, el titular es lo mas importante. Prueba incluir el beneficio concreto ("Reduce costos un 30%") o dirigirte directamente al cargo ("Para Directores de Marketing"). Evita titulos genericos.' },
+        { title: 'Audiencia menor a 50,000: amplia los criterios', desc: 'Si tu audiencia es menor a 50,000 personas, el costo por impresion sera muy alto. Agrega mas titulos de cargo, expande a paises vecinos, o sube el rango de anos de experiencia.' },
+        { title: 'Semana 3: Activa el retargeting de visitantes web', desc: 'Si tienes el Insight Tag instalado, crea una campana de retargeting para personas que visitaron tu web en los ultimos 90 dias. En LinkedIn, el retargeting puede reducir el CPA hasta un 30%.' },
+        { title: 'Usa Lead Gen Forms para capturar contactos', desc: 'En lugar de enviar trafico a tu web, usa el formulario nativo de LinkedIn. Las personas no tienen que salir de la app para dejar sus datos. La tasa de conversion es 3x mayor que con landing pages externas.' },
+        { title: 'Indicador de exito: CPL menor a $50 USD', desc: `En LinkedIn B2B, un costo por lead (CPL) menor a $50 USD es excelente. Con presupuesto de $${config.budget} USD/mes, apunta a obtener al menos ${Math.round(config.budget / 50)} leads calificados. Si el CPL supera $100 USD, revisa la segmentacion.` },
       ],
     };
 
@@ -848,12 +926,18 @@ const FlowsightAdsDashboard: React.FC = () => {
           <div className="flex items-center gap-4">
             <button 
               onClick={() => { 
-                if (step > 1) {
+                if (showResults) {
+                  // Desde resultados, volver al paso 5 (presupuesto)
+                  setShowResults(false);
+                  setGeneratedAds([]);
+                  setStep(5);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else if (step > 1) {
                   setStep(step - 1);
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
               }}
-              disabled={step === 1 || showResults}
+              disabled={step === 1 && !showResults}
               className="group flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-emerald-500 dark:hover:text-emerald-500 transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed" 
               title="Volver al paso anterior"
             >
@@ -864,8 +948,9 @@ const FlowsightAdsDashboard: React.FC = () => {
           <div className="flex items-center gap-6">
             <div className="hidden md:flex items-center gap-3">
               {[1, 2, 3, 4, 5].map((s) => (
-                <div key={s} className={`h-1.5 rounded-full transition-all duration-500 ${s === step ? 'w-10 bg-emerald-500' : s < step ? 'w-4 bg-emerald-500/30' : 'w-4 bg-gray-200 dark:bg-white/10'}`} />
+                <div key={s} className={`h-1.5 rounded-full transition-all duration-500 ${showResults ? 'w-4 bg-emerald-500/50' : s === step ? 'w-10 bg-emerald-500' : s < step ? 'w-4 bg-emerald-500/30' : 'w-4 bg-gray-200 dark:bg-white/10'}`} />
               ))}
+              {showResults && <div className="h-1.5 w-10 rounded-full bg-emerald-500" />}
             </div>
             <div className="h-8 w-px bg-gray-200 dark:bg-white/10 mx-2" />
             <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-500 text-xs font-bold">
