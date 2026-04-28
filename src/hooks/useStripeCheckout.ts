@@ -28,26 +28,7 @@ export const useStripeCheckout = () => {
         throw new Error('Debes iniciar sesión para realizar un pago');
       }
 
-      // 1. Crear registro de pago en la tabla 'payments'
-      // Validar si campaignId es un UUID válido, si no, no lo enviamos (será null)
-      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(options.campaignId);
-      
-      const { data: payment, error: paymentError } = await supabase
-        .from('payments')
-        .insert({
-          user_id: session.user.id,
-          campaign_id: isUuid ? options.campaignId : null,
-          amount_cents: options.amount,
-          currency: options.currency,
-          status: 'pending',
-          metadata: { platform_hint: options.campaignId }
-        })
-        .select()
-        .single();
-
-      if (paymentError) throw paymentError;
-
-      // 2. Llamar a la Edge Function para crear la sesión de Stripe
+      // 1. Llamar primero a la Edge Function para obtener la sesión de Stripe
       const { data, error: functionError } = await supabase.functions.invoke('create-checkout-session', {
         body: {
           ...options,
@@ -56,12 +37,24 @@ export const useStripeCheckout = () => {
       });
 
       if (functionError) throw functionError;
+      if (!data?.sessionId) throw new Error('No se pudo crear la sesión de Stripe');
 
-      // 3. Actualizar el registro de pago con el stripe_session_id
-      await supabase
+      // 2. Crear registro de pago en la tabla 'payments' con el sessionId ya obtenido
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(options.campaignId);
+      
+      const { error: paymentError } = await supabase
         .from('payments')
-        .update({ stripe_session_id: data.sessionId })
-        .eq('id', payment.id);
+        .insert({
+          user_id: session.user.id,
+          campaign_id: isUuid ? options.campaignId : null,
+          stripe_session_id: data.sessionId,
+          amount_cents: options.amount,
+          currency: options.currency,
+          status: 'pending',
+          metadata: { platform_hint: options.campaignId }
+        });
+
+      if (paymentError) throw paymentError;
 
       // 4. Redirigir a Stripe Checkout
       const stripe = await stripePromise;
