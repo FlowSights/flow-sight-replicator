@@ -80,7 +80,7 @@ export const AppleStyleLoadingScreen: React.FC<AppleStyleLoadingScreenProps> = (
               initial={{ width: '0%' }}
               animate={{ width: `${((currentStep + 1) / totalSteps) * 100}%` }}
               transition={{ duration: 0.8, ease: 'easeInOut' }}
-              className="h-full bg-gradient-to-r from-green-400 to-blue-600 rounded-full"
+              className="h-full bg-gradient-to-r from-emerald-500 to-teal-600 rounded-full"
             />
           </div>
           <p className="text-xs text-gray-500 dark:text-gray-500 mt-2 text-center">
