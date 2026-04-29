@@ -706,11 +706,11 @@ export default function DiagnosticQuiz() {
                       Fuga de capital estimada
                     </div>
                     <div className="text-4xl font-display font-bold text-gradient mb-2">
-                      ${results.mo.toLocaleString()}
+                      ${results.mo.toLocaleString('es-ES')}
                       <span className="text-lg font-semibold text-muted-foreground">/mes</span>
                     </div>
                     <div className="text-xs text-muted-foreground">
-                      ≈ ${results.yr.toLocaleString()} al año en costos ocultos
+                      ≈ ${results.yr.toLocaleString('es-ES')} al año en costos ocultos
                     </div>
                   </Card>
                 </motion.div>
