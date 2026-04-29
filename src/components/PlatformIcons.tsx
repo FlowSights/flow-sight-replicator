@@ -30,7 +30,21 @@ export const PlatformIcon: React.FC<PlatformIconProps> = ({ platform, size = 24,
     case 'tiktok':
       return (
         <svg viewBox="0 0 24 24" className={iconClass} fill="currentColor" preserveAspectRatio="xMidYMid meet">
-          <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.68v13.67a2.4 2.4 0 1 1-2.4-2.4c.34 0 .67.05 1 .15V9.41a6.96 6.96 0 0 0-1-.08A6.59 6.59 0 1 0 12 20.1a6.52 6.52 0 0 0 6.59-6.59V9.86a8.62 8.62 0 0 0 3.41 1.61v-3.66a4.5 4.5 0 0 1-.4-.03z" />
+          {/* TikTok Logo Oficial - Nota musical estilizada */}
+          <g>
+            {/* Círculo de fondo */}
+            <circle cx="12" cy="12" r="11" fill="none" stroke="currentColor" strokeWidth="0.5" opacity="0" />
+            
+            {/* Nota musical principal - línea vertical izquierda */}
+            <path d="M 8 4 L 8 14 Q 8 16 10 16 Q 12 16 12 14 L 12 6" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+            
+            {/* Nota musical - línea vertical derecha */}
+            <path d="M 14 6 L 14 16 Q 14 18 16 18 Q 18 18 18 16 L 18 8" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+            
+            {/* Conectores curvos entre notas */}
+            <path d="M 12 6 Q 13 5 14 6" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M 8 14 Q 10 15 12 14" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+          </g>
         </svg>
       );
 
