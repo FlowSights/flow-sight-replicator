@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, ChevronLeft, ChevronRight, Download, Share2, BookOpen } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, Download, Share2, BookOpen, Maximize2, Sparkles, CheckCircle2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PaymentModal } from '@/components/PaymentModal';
 import { VisualGuideLightbox } from '@/components/VisualGuideLightbox';
@@ -18,11 +18,11 @@ interface MockupLightboxProps {
   onPaymentRequired: () => void;
 }
 
-const platformColors: Record<string, { bg: string; text: string; accent: string }> = {
-  meta: { bg: 'from-blue-600 to-blue-700', text: 'text-blue-600', accent: 'bg-blue-600' },
-  google: { bg: 'from-red-500 to-yellow-500', text: 'text-red-500', accent: 'bg-red-500' },
-  tiktok: { bg: 'from-black to-pink-600', text: 'text-black', accent: 'bg-black' },
-  linkedin: { bg: 'from-blue-700 to-blue-800', text: 'text-blue-700', accent: 'bg-blue-700' },
+const platformColors: Record<string, { bg: string; text: string; accent: string; gradient: string }> = {
+  meta: { bg: 'from-blue-600 to-blue-700', text: 'text-blue-600', accent: 'bg-blue-600', gradient: 'from-blue-500 to-blue-600' },
+  google: { bg: 'from-red-500 to-yellow-500', text: 'text-red-500', accent: 'bg-red-500', gradient: 'from-red-500 via-yellow-500 to-blue-500' },
+  tiktok: { bg: 'from-gray-900 to-black', text: 'text-black', accent: 'bg-black', gradient: 'from-black via-gray-900 to-pink-500' },
+  linkedin: { bg: 'from-blue-700 to-blue-800', text: 'text-blue-700', accent: 'bg-blue-700', gradient: 'from-blue-600 to-blue-800' },
 };
 
 export const MockupLightbox: React.FC<MockupLightboxProps> = ({
@@ -40,6 +40,7 @@ export const MockupLightbox: React.FC<MockupLightboxProps> = ({
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showGuideModal, setShowGuideModal] = useState(false);
   const [paymentAction, setPaymentAction] = useState<'download' | 'publish' | 'guide'>('download');
+  const [isZoomed, setIsZoomed] = useState(false);
 
   const currentAd = ads[currentIndex];
   const colors = platformColors[platform];
@@ -57,14 +58,13 @@ export const MockupLightbox: React.FC<MockupLightboxProps> = ({
       setShowGuideModal(true);
     } else if (action === 'publish') {
       const platformUrls: Record<string, string> = {
-        meta: 'https://ads.facebook.com/',
-        google: 'https://ads.google.com/',
-        tiktok: 'https://ads.tiktok.com/',
-        linkedin: 'https://www.linkedin.com/campaignmanager/',
+        meta: 'https://adsmanager.facebook.com/adsmanager/manage/campaigns',
+        google: 'https://ads.google.com/aw/campaigns/new',
+        tiktok: 'https://ads.tiktok.com/i18n/dashboard',
+        linkedin: 'https://www.linkedin.com/campaignmanager/accounts',
       };
       window.open(platformUrls[platform], '_blank');
     } else if (action === 'download') {
-      // Trigger download
       onPaymentRequired();
     }
   };
@@ -77,200 +77,216 @@ export const MockupLightbox: React.FC<MockupLightboxProps> = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 bg-black/95 backdrop-blur-xl z-50 flex items-center justify-center p-4 sm:p-8"
             onClick={onClose}
           >
             <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="bg-white dark:bg-[#0A0A0A] rounded-[40px] shadow-[0_0_100px_rgba(0,0,0,0.5)] max-w-6xl w-full max-h-[90vh] overflow-hidden flex flex-col border border-white/10"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Header con cierre */}
-              <div className={`bg-gradient-to-r ${colors.bg} p-6 flex justify-between items-center sticky top-0 z-10`}>
-                <div className="text-white">
-                  <h2 className="text-2xl font-bold">{businessName}</h2>
-                  <p className="text-white/80 text-sm">Previsualización de Anuncio</p>
+              {/* Header Premium */}
+              <div className={`bg-gradient-to-r ${colors.gradient} p-8 flex justify-between items-center relative overflow-hidden`}>
+                <div className="absolute top-0 right-0 text-9xl opacity-10 pointer-events-none transform translate-x-1/4 -translate-y-1/4">
+                  <Sparkles size={120} />
+                </div>
+                <div className="relative z-10">
+                  <div className="flex items-center gap-2 mb-1">
+                    <CheckCircle2 className="w-4 h-4 text-white/80" />
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/80">Vista Previa Premium</span>
+                  </div>
+                  <h2 className="text-3xl font-black text-white tracking-tight">{businessName}</h2>
                 </div>
                 <button
                   onClick={onClose}
-                  className="text-white hover:bg-white/20 p-2 rounded-lg transition"
+                  className="bg-white/10 hover:bg-white/20 text-white p-3 rounded-2xl transition-all active:scale-95 backdrop-blur-md border border-white/10"
                 >
                   <X size={24} />
                 </button>
               </div>
 
-              {/* Contenido Principal */}
-              <div className="p-8">
-                {/* Mockup Grande */}
-                <div className="mb-8 flex justify-center">
-                  <div className="bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900 rounded-xl p-8 shadow-lg max-w-2xl w-full">
-                    <div className="bg-white dark:bg-slate-800 rounded-lg p-6 shadow-md">
-                      {/* Simulación de anuncio según plataforma */}
-                      {platform === 'meta' && (
-                        <div className="space-y-3">
-                          <div className="flex items-center gap-2 pb-3 border-b">
-                            <div className="w-10 h-10 bg-blue-600 rounded-full" />
-                            <div>
-                              <p className="font-bold text-sm">{businessName}</p>
-                              <p className="text-xs text-gray-500">2 horas</p>
+              {/* Contenido Scrollable */}
+              <div className="flex-1 overflow-y-auto custom-scrollbar">
+                <div className="p-8 lg:p-12 grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+                  
+                  {/* Columna Izquierda: Mockup con Zoom */}
+                  <div className="space-y-6">
+                    <div 
+                      className={`relative group cursor-zoom-in rounded-[32px] overflow-hidden transition-all duration-500 ${isZoomed ? 'fixed inset-4 z-[60] bg-black/90 p-4 sm:p-12 flex items-center justify-center cursor-zoom-out' : 'bg-gray-50 dark:bg-white/[0.03] p-8 border border-gray-100 dark:border-white/5'}`}
+                      onClick={() => setIsZoomed(!isZoomed)}
+                    >
+                      <motion.div 
+                        layout
+                        className={`${isZoomed ? 'max-w-4xl w-full h-full flex items-center justify-center' : 'w-full'}`}
+                      >
+                        {/* El Mockup Real */}
+                        <div className={`bg-white dark:bg-[#111] rounded-3xl shadow-2xl overflow-hidden border border-gray-200 dark:border-white/10 mx-auto ${platform === 'tiktok' ? 'max-w-[320px]' : 'w-full'}`}>
+                          {/* Simulación de anuncio */}
+                          {platform === 'meta' && (
+                            <div className="p-4 space-y-3">
+                              <div className="flex items-center gap-2">
+                                <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xs">F</div>
+                                <div>
+                                  <p className="font-bold text-sm dark:text-white">{businessName}</p>
+                                  <p className="text-[10px] text-gray-500">Publicidad</p>
+                                </div>
+                              </div>
+                              <p className="text-xs dark:text-gray-300 leading-relaxed">{currentAd.description}</p>
+                              <div className="aspect-[1.91/1] bg-gray-100 dark:bg-white/5 rounded-xl flex items-center justify-center overflow-hidden">
+                                <img src={currentAd.imageUrl} alt="Ad" className="w-full h-full object-cover" />
+                              </div>
+                              <div className="flex justify-between items-center pt-2 border-t dark:border-white/5">
+                                <div className="flex-1">
+                                  <p className="text-[10px] font-bold dark:text-white uppercase truncate">{currentAd.headline}</p>
+                                  <p className="text-[9px] text-gray-500 truncate">{currentAd.websiteUrl}</p>
+                                </div>
+                                <button className="bg-gray-100 dark:bg-white/10 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider dark:text-white">{currentAd.cta}</button>
+                              </div>
                             </div>
-                          </div>
-                          <p className="text-sm">{currentAd.description}</p>
-                          <div className="bg-gray-200 h-48 rounded-lg flex items-center justify-center">
-                            <span className="text-gray-500">Imagen del Anuncio</span>
-                          </div>
-                          <button className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold text-sm">
-                            {currentAd.cta}
-                          </button>
-                        </div>
-                      )}
+                          )}
 
-                      {platform === 'google' && (
-                        <div className="space-y-2">
-                          <div className="text-xs text-green-600 font-semibold">ads.google.com</div>
-                          <h3 className="font-bold text-lg text-blue-600">{currentAd.headline}</h3>
-                          <p className="text-sm text-gray-700">{currentAd.description}</p>
-                          <div className="text-xs text-green-600">{businessName}</div>
-                        </div>
-                      )}
-
-                      {platform === 'tiktok' && (
-                        <div className="space-y-3">
-                          <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 bg-black rounded-full" />
-                            <p className="font-bold text-sm">{businessName}</p>
-                          </div>
-                          <p className="text-sm">{currentAd.description}</p>
-                          <div className="bg-gray-200 h-64 rounded-lg flex items-center justify-center">
-                            <span className="text-gray-500">Video/Imagen</span>
-                          </div>
-                          <div className="flex gap-4 text-xs">
-                            <span>❤️ Me gusta</span>
-                            <span>💬 Comentar</span>
-                            <span>↗️ Compartir</span>
-                          </div>
-                        </div>
-                      )}
-
-                      {platform === 'linkedin' && (
-                        <div className="space-y-3">
-                          <div className="flex items-center gap-2">
-                            <div className="w-10 h-10 bg-blue-700 rounded-full" />
-                            <div>
-                              <p className="font-bold text-sm">{businessName}</p>
-                              <p className="text-xs text-gray-500">Empresa</p>
+                          {platform === 'google' && (
+                            <div className="p-6 space-y-2">
+                              <div className="flex items-center gap-2">
+                                <span className="text-[10px] font-bold text-gray-600 dark:text-gray-400">Patrocinado</span>
+                                <span className="text-[10px] text-gray-400">• {currentAd.websiteUrl}</span>
+                              </div>
+                              <h3 className="text-xl font-medium text-blue-600 dark:text-blue-400 hover:underline cursor-pointer">{currentAd.headline}</h3>
+                              <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{currentAd.description}</p>
                             </div>
-                          </div>
-                          <p className="text-sm">{currentAd.description}</p>
-                          <button className="w-full bg-blue-700 text-white py-2 rounded-lg font-semibold text-sm">
-                            {currentAd.cta}
-                          </button>
+                          )}
+
+                          {platform === 'tiktok' && (
+                            <div className="relative aspect-[9/16] bg-black text-white">
+                              <img src={currentAd.imageUrl} alt="TikTok" className="absolute inset-0 w-full h-full object-cover opacity-80" />
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
+                              <div className="absolute bottom-0 left-0 p-4 w-full space-y-3">
+                                <p className="font-bold text-sm">@{businessName.toLowerCase().replace(/\s/g, '')}</p>
+                                <p className="text-xs line-clamp-3">{currentAd.description}</p>
+                                <div className="bg-pink-500 py-3 rounded-lg text-center font-black text-xs uppercase tracking-widest">{currentAd.cta}</div>
+                              </div>
+                              <div className="absolute right-4 bottom-24 flex flex-col items-center gap-6">
+                                <div className="w-10 h-10 rounded-full border-2 border-white bg-gray-500" />
+                                <div className="flex flex-col items-center gap-1"><div className="w-6 h-6 bg-white/20 rounded-full" /><span className="text-[10px]">24.5K</span></div>
+                                <div className="flex flex-col items-center gap-1"><div className="w-6 h-6 bg-white/20 rounded-full" /><span className="text-[10px]">1,203</span></div>
+                                <div className="flex flex-col items-center gap-1"><div className="w-6 h-6 bg-white/20 rounded-full" /><span className="text-[10px]">856</span></div>
+                              </div>
+                            </div>
+                          )}
+
+                          {platform === 'linkedin' && (
+                            <div className="p-5 space-y-4">
+                              <div className="flex items-center gap-3">
+                                <div className="w-12 h-12 bg-blue-700 rounded flex items-center justify-center text-white font-bold">in</div>
+                                <div>
+                                  <p className="font-bold text-sm dark:text-white">{businessName}</p>
+                                  <p className="text-[10px] text-gray-500">Promocionado</p>
+                                </div>
+                              </div>
+                              <p className="text-xs dark:text-gray-300 leading-relaxed">{currentAd.description}</p>
+                              <div className="aspect-[1.91/1] bg-gray-100 dark:bg-white/5 rounded-xl flex items-center justify-center overflow-hidden border dark:border-white/5">
+                                <img src={currentAd.imageUrl} alt="Ad" className="w-full h-full object-cover" />
+                              </div>
+                              <div className="flex justify-between items-center">
+                                <p className="text-xs font-bold dark:text-white">{currentAd.headline}</p>
+                                <button className="border-2 border-blue-700 text-blue-700 dark:text-blue-400 dark:border-blue-400 px-4 py-1.5 rounded-full text-xs font-bold hover:bg-blue-50 transition-colors">{currentAd.cta}</button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </motion.div>
+                      
+                      {!isZoomed && (
+                        <div className="absolute top-4 right-4 p-2 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Maximize2 size={16} />
                         </div>
                       )}
                     </div>
+                    <p className="text-center text-[10px] font-black uppercase tracking-widest text-gray-400">Haz clic en el mockup para ampliar (Zoom Inmersivo)</p>
                   </div>
-                </div>
 
-                {/* Información del Anuncio */}
-                <div className="grid grid-cols-2 gap-4 mb-8">
-                  <div className={`p-4 rounded-lg bg-gradient-to-br ${colors.bg} text-white`}>
-                    <p className="text-xs opacity-90">Tipo de Anuncio</p>
-                    <p className="text-lg font-bold">{currentAd.type}</p>
-                  </div>
-                  <div className={`p-4 rounded-lg bg-gradient-to-br ${colors.bg} text-white`}>
-                    <p className="text-xs opacity-90">Puntuación</p>
-                    <p className="text-lg font-bold">{currentAd.score}/100</p>
-                  </div>
-                </div>
-
-                {/* Razonamiento */}
-                <div className="mb-8 p-4 bg-slate-100 dark:bg-slate-800 rounded-lg">
-                  <p className="text-xs font-semibold text-gray-600 dark:text-gray-400 mb-2">¿Por qué este anuncio?</p>
-                  <p className="text-sm text-gray-700 dark:text-gray-300">{currentAd.reasoning}</p>
-                </div>
-
-                {/* Navegación y Acciones */}
-                <div className="flex flex-col gap-4">
-                  {/* Navegación entre anuncios */}
-                  {ads.length > 1 && (
-                    <div className="flex items-center justify-between">
-                      <button
-                        onClick={onPrevious}
-                        className="p-2 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition"
-                      >
-                        <ChevronLeft size={20} />
-                      </button>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        {currentIndex + 1} de {ads.length}
-                      </p>
-                      <button
-                        onClick={onNext}
-                        className="p-2 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition"
-                      >
-                        <ChevronRight size={20} />
-                      </button>
+                  {/* Columna Derecha: Detalles Premium */}
+                  <div className="space-y-10">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="p-6 rounded-3xl bg-gray-50 dark:bg-white/[0.03] border border-gray-100 dark:border-white/5">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Estrategia</p>
+                        <p className="text-xl font-black text-gray-900 dark:text-white">{currentAd.type}</p>
+                      </div>
+                      <div className="p-6 rounded-3xl bg-gray-50 dark:bg-white/[0.03] border border-gray-100 dark:border-white/5">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Calidad</p>
+                        <p className="text-xl font-black text-emerald-500">{currentAd.score}%</p>
+                      </div>
                     </div>
-                  )}
 
-                  {/* Botones de Acción */}
-                  <div className="grid grid-cols-3 gap-3 pt-4 border-t">
-                    <button
-                      onClick={() => handleActionClick('guide')}
-                      className={`flex items-center justify-center gap-2 py-3 px-4 rounded-lg font-semibold transition ${
-                        hasPaid
-                          ? 'bg-slate-200 dark:bg-slate-700 text-gray-800 dark:text-white hover:bg-slate-300'
-                          : 'bg-slate-200 dark:bg-slate-700 text-gray-600 dark:text-gray-400 opacity-60'
-                      }`}
-                    >
-                      <BookOpen size={18} />
-                      <span className="hidden sm:inline">Guía</span>
-                    </button>
-                    <button
-                      onClick={() => handleActionClick('publish')}
-                      className={`flex items-center justify-center gap-2 py-3 px-4 rounded-lg font-semibold transition ${
-                        hasPaid
-                          ? `bg-gradient-to-r ${colors.bg} text-white hover:shadow-lg`
-                          : `bg-gradient-to-r ${colors.bg} text-white opacity-60`
-                      }`}
-                    >
-                      <Share2 size={18} />
-                      <span className="hidden sm:inline">Publicar</span>
-                    </button>
-                    <button
-                      onClick={() => handleActionClick('download')}
-                      className={`flex items-center justify-center gap-2 py-3 px-4 rounded-lg font-semibold transition ${
-                        hasPaid
-                          ? 'bg-green-600 text-white hover:bg-green-700'
-                          : 'bg-green-600 text-white opacity-60'
-                      }`}
-                    >
-                      <Download size={18} />
-                      <span className="hidden sm:inline">Descargar</span>
-                    </button>
+                    <div className="space-y-4">
+                      <h4 className="text-sm font-black uppercase tracking-widest text-gray-900 dark:text-white">Análisis del Copy</h4>
+                      <div className="p-8 rounded-[32px] bg-emerald-500/5 border border-emerald-500/10 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 p-4 opacity-10">
+                          <Sparkles className="text-emerald-500" size={40} />
+                        </div>
+                        <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed relative z-10">
+                          {currentAd.reasoning || "Este copy ha sido optimizado utilizando principios de psicología de ventas y urgencia para maximizar el CTR en la plataforma seleccionada."}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Acciones Finales */}
+                    <div className="space-y-4 pt-6 border-t dark:border-white/5">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <Button
+                          onClick={() => handleActionClick('guide')}
+                          variant="outline"
+                          className="py-8 rounded-2xl font-black uppercase tracking-widest text-xs gap-2 border-gray-100 dark:border-white/5"
+                        >
+                          <BookOpen size={16} /> Guía
+                        </Button>
+                        <Button
+                          onClick={() => handleActionClick('publish')}
+                          className={`py-8 rounded-2xl font-black uppercase tracking-widest text-xs gap-2 text-white bg-gradient-to-r ${colors.gradient} shadow-xl shadow-emerald-500/10`}
+                        >
+                          <Share2 size={16} /> Publicar
+                        </Button>
+                        <Button
+                          onClick={() => handleActionClick('download')}
+                          className="py-8 rounded-2xl font-black uppercase tracking-widest text-xs gap-2 bg-emerald-600 hover:bg-emerald-700 text-white"
+                        >
+                          <Download size={16} /> Kit
+                        </Button>
+                      </div>
+                      {!hasPaid && (
+                        <p className="text-[10px] text-center text-gray-500 font-bold uppercase tracking-wider">
+                          Desbloquea el Campaign Kit completo con acceso Premium
+                        </p>
+                      )}
+                    </div>
                   </div>
-
-                  {!hasPaid && (
-                    <p className="text-xs text-center text-gray-500 dark:text-gray-400 py-2">
-                      Desbloquea todas las funciones con acceso premium
-                    </p>
-                  )}
                 </div>
               </div>
+
+              {/* Navegador Inferior */}
+              {ads.length > 1 && (
+                <div className="p-6 bg-gray-50 dark:bg-white/[0.02] border-t border-gray-100 dark:border-white/5 flex items-center justify-between">
+                  <button onClick={onPrevious} className="p-4 hover:bg-gray-200 dark:hover:bg-white/5 rounded-2xl transition-all active:scale-90">
+                    <ChevronLeft size={24} className="dark:text-white" />
+                  </button>
+                  <div className="flex gap-2">
+                    {ads.map((_, i) => (
+                      <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${i === currentIndex ? 'w-8 bg-emerald-500' : 'w-2 bg-gray-300 dark:bg-white/10'}`} />
+                    ))}
+                  </div>
+                  <button onClick={onNext} className="p-4 hover:bg-gray-200 dark:hover:bg-white/5 rounded-2xl transition-all active:scale-90">
+                    <ChevronRight size={24} className="dark:text-white" />
+                  </button>
+                </div>
+              )}
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Modales */}
-      <PaymentModal
-        isOpen={showPaymentModal}
-        onClose={() => setShowPaymentModal(false)}
-        businessName={businessName}
-        action={paymentAction}
-      />
-
+      {/* Modales adicionales */}
       <VisualGuideLightbox
         isOpen={showGuideModal}
         onClose={() => setShowGuideModal(false)}

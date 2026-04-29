@@ -34,6 +34,14 @@ export const usePaymentStatus = () => {
           return;
         }
 
+        // Lógica de Cuenta Master para el Creador
+        const MASTER_EMAIL = 'spineda2014.123@gmail.com';
+        if (session.user.email === MASTER_EMAIL) {
+          setHasPaid(true);
+          setIsLoading(false);
+          return;
+        }
+
         // Buscar un pago completado para este usuario
         const { data: payments, error } = await supabase
           .from('payments')
