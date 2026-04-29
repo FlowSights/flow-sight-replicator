@@ -20,20 +20,20 @@ import {
 interface PaymentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  campaignId: string;
-  campaignName: string;
-  amount: number;
-  currency: string;
+  campaignId?: string;
+  campaignName?: string;
+  amount?: number;
+  currency?: string;
   onPaymentSuccess?: () => void;
 }
 
 export const PaymentModal: React.FC<PaymentModalProps> = ({
   isOpen,
   onClose,
-  campaignId,
-  campaignName,
-  amount,
-  currency,
+  campaignId = 'flowsights-ads-kit',
+  campaignName = 'Campaign Kit',
+  amount = 4999,
+  currency = 'USD',
 }) => {
   const { initiateCheckout, loading } = useStripeCheckout();
 
@@ -47,10 +47,19 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
     });
   };
 
-  const formattedAmount = (amount / 100).toLocaleString('en-US', {
-    style: 'currency',
-    currency: currency,
-  });
+  // Validar que la moneda sea válida, por defecto USD
+  const validCurrency = currency && /^[A-Z]{3}$/.test(currency) ? currency : 'USD';
+  
+  let formattedAmount = '';
+  try {
+    formattedAmount = (amount / 100).toLocaleString('en-US', {
+      style: 'currency',
+      currency: validCurrency,
+    });
+  } catch (error) {
+    // Fallback si hay error
+    formattedAmount = `$${(amount / 100).toFixed(2)}`;
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !loading && !open && onClose()}>

@@ -1530,7 +1530,10 @@ const FlowsightAdsDashboard: React.FC = () => {
       <PaymentModal
         isOpen={showPaymentModal}
         onClose={() => setShowPaymentModal(false)}
-        businessName={config.businessName || 'Tu Campaña'}
+        campaignId="flowsights-ads-kit"
+        campaignName={config.businessName || 'Tu Campaña'}
+        amount={4999}
+        currency="USD"
       />
     </div>
   );
