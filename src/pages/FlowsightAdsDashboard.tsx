@@ -1145,9 +1145,10 @@ const FlowsightAdsDashboard: React.FC = () => {
                     <p className="text-xl text-gray-500 dark:text-gray-400">Define la ubicación geográfica de tu mercado ideal.</p>
                   </div>
 
-                  <SmartLocationSelector
+                  <LocationInput
                     value={config.location}
                     onChange={(value) => setConfig({...config, location: value})}
+                    placeholder="Escribe una ciudad o país..."
                   />
 
                   <div className="flex gap-4">

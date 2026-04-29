@@ -35,7 +35,7 @@ export const AppleStyleLoadingScreen: React.FC<AppleStyleLoadingScreenProps> = (
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-950 z-50 flex flex-col items-center justify-center"
+      className="fixed inset-0 bg-gradient-to-br from-white to-gray-50 dark:from-[#0A0A0A] dark:to-[#050505] z-50 flex flex-col items-center justify-center"
     >
       {/* Contenedor Principal */}
       <div className="flex flex-col items-center gap-8 max-w-md mx-auto px-6">
@@ -45,14 +45,14 @@ export const AppleStyleLoadingScreen: React.FC<AppleStyleLoadingScreenProps> = (
           transition={{ duration: 2, repeat: Infinity }}
           className="relative"
         >
-          <div className="w-20 h-20 bg-gradient-to-br from-green-400 to-blue-600 rounded-full flex items-center justify-center shadow-lg">
+          <div className="w-20 h-20 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center shadow-2xl shadow-emerald-500/40">
             <Sparkles className="text-white" size={32} />
           </div>
           {/* Anillo de carga */}
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-            className="absolute inset-0 border-2 border-transparent border-t-green-400 border-r-blue-600 rounded-full"
+            className="absolute inset-0 border-2 border-transparent border-t-emerald-400 border-r-teal-600 rounded-full"
           />
         </motion.div>
 
@@ -65,10 +65,10 @@ export const AppleStyleLoadingScreen: React.FC<AppleStyleLoadingScreenProps> = (
           transition={{ duration: 0.5 }}
           className="text-center"
         >
-          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
+          <h2 className="text-3xl font-black text-gray-900 dark:text-white mb-2 tracking-tight">
             {displayedMessage.title}
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 text-sm">
+          <p className="text-gray-500 dark:text-gray-400 text-sm">
             {displayedMessage.subtitle}
           </p>
         </motion.div>

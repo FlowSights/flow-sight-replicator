@@ -10,6 +10,7 @@ import {
   FileText,
   Sparkles,
   Lock,
+  Zap,
 } from 'lucide-react';
 import { Button } from './ui/button';
 import { MetaPreview, GoogleAdsPreview, TikTokPreview, LinkedInPreview } from './PlatformPreviewsNative';
