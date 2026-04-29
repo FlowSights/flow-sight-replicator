@@ -1,1 +1,121 @@
-import React, { useState, useEffect } from 'react';\nimport { motion } from 'framer-motion';\nimport { Sparkles } from 'lucide-react';\n\ninterface AppleStyleLoadingScreenProps {\n  isVisible: boolean;\n  currentStep: number;\n  totalSteps?: number;\n}\n\nconst loadingMessages = [\n  { title: 'Analizando tu negocio', subtitle: 'Comprendiendo tu modelo y audiencia' },\n  { title: 'Generando estrategia', subtitle: 'Creando copys optimizados con IA' },\n  { title: 'Optimizando anuncios', subtitle: 'Adaptando para cada plataforma' },\n  { title: 'Finalizando', subtitle: 'Preparando tu Campaign Kit Premium' },\n];\n\nexport const AppleStyleLoadingScreen: React.FC<AppleStyleLoadingScreenProps> = ({\n  isVisible,\n  currentStep,\n  totalSteps = 4,\n}) => {\n  const [displayedMessage, setDisplayedMessage] = useState(loadingMessages[0]);\n\n  useEffect(() => {\n    if (currentStep < loadingMessages.length) {\n      setDisplayedMessage(loadingMessages[currentStep]);\n    }\n  }, [currentStep]);\n\n  if (!isVisible) return null;\n\n  return (\n    <motion.div\n      initial={{ opacity: 0 }}\n      animate={{ opacity: 1 }}\n      exit={{ opacity: 0 }}\n      className=\"fixed inset-0 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-950 z-50 flex flex-col items-center justify-center\"\n    >\n      {/* Contenedor Principal */}\n      <div className=\"flex flex-col items-center gap-8 max-w-md mx-auto px-6\">\n        {/* Icono Animado */}\n        <motion.div\n          animate={{ scale: [1, 1.1, 1] }}\n          transition={{ duration: 2, repeat: Infinity }}\n          className=\"relative\"\n        >\n          <div className=\"w-20 h-20 bg-gradient-to-br from-green-400 to-blue-600 rounded-full flex items-center justify-center shadow-lg\">\n            <Sparkles className=\"text-white\" size={32} />\n          </div>\n          {/* Anillo de carga */}\n          <motion.div\n            animate={{ rotate: 360 }}\n            transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}\n            className=\"absolute inset-0 border-2 border-transparent border-t-green-400 border-r-blue-600 rounded-full\"\n          />\n        </motion.div>\n\n        {/* Texto Principal */}\n        <motion.div\n          key={`msg-${currentStep}`}\n          initial={{ opacity: 0, y: 10 }}\n          animate={{ opacity: 1, y: 0 }}\n          exit={{ opacity: 0, y: -10 }}\n          transition={{ duration: 0.5 }}\n          className=\"text-center\"\n        >\n          <h2 className=\"text-2xl font-semibold text-gray-900 dark:text-white mb-2\">\n            {displayedMessage.title}\n          </h2>\n          <p className=\"text-gray-600 dark:text-gray-400 text-sm\">\n            {displayedMessage.subtitle}\n          </p>\n        </motion.div>\n\n        {/* Barra de Progreso */}\n        <div className=\"w-full max-w-xs\">\n          <div className=\"h-1 bg-gray-300 dark:bg-gray-700 rounded-full overflow-hidden\">\n            <motion.div\n              initial={{ width: '0%' }}\n              animate={{ width: `${((currentStep + 1) / totalSteps) * 100}%` }}\n              transition={{ duration: 0.8, ease: 'easeInOut' }}\n              className=\"h-full bg-gradient-to-r from-green-400 to-blue-600 rounded-full\"\n            />\n          </div>\n          <p className=\"text-xs text-gray-500 dark:text-gray-500 mt-2 text-center\">\n            {currentStep + 1} de {totalSteps}\n          </p>\n        </div>\n\n        {/* Puntos de Progreso */}\n        <div className=\"flex gap-2\">\n          {Array.from({ length: totalSteps }).map((_, i) => (\n            <motion.div\n              key={i}\n              animate={{\n                scale: i <= currentStep ? 1 : 0.8,\n                opacity: i <= currentStep ? 1 : 0.3,\n              }}\n              transition={{ duration: 0.3 }}\n              className={`w-2 h-2 rounded-full ${\n                i <= currentStep\n                  ? 'bg-gradient-to-r from-green-400 to-blue-600'\n                  : 'bg-gray-400 dark:bg-gray-600'\n              }`}\n            />\n          ))}\n        </div>\n\n        {/* Mensaje Inspirador */}\n        <motion.p\n          animate={{ opacity: [0.6, 1, 0.6] }}\n          transition={{ duration: 3, repeat: Infinity }}\n          className=\"text-xs text-gray-500 dark:text-gray-500 text-center mt-4\"\n        >\n          Tu Campaign Kit Premium está casi listo...\n        </motion.p>\n      </div>\n    </motion.div>\n  );\n};\n
+import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { Sparkles } from 'lucide-react';
+
+interface AppleStyleLoadingScreenProps {
+  isVisible: boolean;
+  currentStep: number;
+  totalSteps?: number;
+}
+
+const loadingMessages = [
+  { title: 'Analizando tu negocio', subtitle: 'Comprendiendo tu modelo y audiencia' },
+  { title: 'Generando estrategia', subtitle: 'Creando copys optimizados con IA' },
+  { title: 'Optimizando anuncios', subtitle: 'Adaptando para cada plataforma' },
+  { title: 'Finalizando', subtitle: 'Preparando tu Campaign Kit Premium' },
+];
+
+export const AppleStyleLoadingScreen: React.FC<AppleStyleLoadingScreenProps> = ({
+  isVisible,
+  currentStep,
+  totalSteps = 4,
+}) => {
+  const [displayedMessage, setDisplayedMessage] = useState(loadingMessages[0]);
+
+  useEffect(() => {
+    if (currentStep < loadingMessages.length) {
+      setDisplayedMessage(loadingMessages[currentStep]);
+    }
+  }, [currentStep]);
+
+  if (!isVisible) return null;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-950 z-50 flex flex-col items-center justify-center"
+    >
+      {/* Contenedor Principal */}
+      <div className="flex flex-col items-center gap-8 max-w-md mx-auto px-6">
+        {/* Icono Animado */}
+        <motion.div
+          animate={{ scale: [1, 1.1, 1] }}
+          transition={{ duration: 2, repeat: Infinity }}
+          className="relative"
+        >
+          <div className="w-20 h-20 bg-gradient-to-br from-green-400 to-blue-600 rounded-full flex items-center justify-center shadow-lg">
+            <Sparkles className="text-white" size={32} />
+          </div>
+          {/* Anillo de carga */}
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+            className="absolute inset-0 border-2 border-transparent border-t-green-400 border-r-blue-600 rounded-full"
+          />
+        </motion.div>
+
+        {/* Texto Principal */}
+        <motion.div
+          key={`msg-${currentStep}`}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.5 }}
+          className="text-center"
+        >
+          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
+            {displayedMessage.title}
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400 text-sm">
+            {displayedMessage.subtitle}
+          </p>
+        </motion.div>
+
+        {/* Barra de Progreso */}
+        <div className="w-full max-w-xs">
+          <div className="h-1 bg-gray-300 dark:bg-gray-700 rounded-full overflow-hidden">
+            <motion.div
+              initial={{ width: '0%' }}
+              animate={{ width: `${((currentStep + 1) / totalSteps) * 100}%` }}
+              transition={{ duration: 0.8, ease: 'easeInOut' }}
+              className="h-full bg-gradient-to-r from-green-400 to-blue-600 rounded-full"
+            />
+          </div>
+          <p className="text-xs text-gray-500 dark:text-gray-500 mt-2 text-center">
+            {currentStep + 1} de {totalSteps}
+          </p>
+        </div>
+
+        {/* Puntos de Progreso */}
+        <div className="flex gap-2">
+          {Array.from({ length: totalSteps }).map((_, i) => (
+            <motion.div
+              key={i}
+              animate={{
+                scale: i <= currentStep ? 1 : 0.8,
+                opacity: i <= currentStep ? 1 : 0.3,
+              }}
+              transition={{ duration: 0.3 }}
+              className={`w-2 h-2 rounded-full ${
+                i <= currentStep
+                  ? 'bg-gradient-to-r from-green-400 to-blue-600'
+                  : 'bg-gray-400 dark:bg-gray-600'
+              }`}
+            />
+          ))}
+        </div>
+
+        {/* Mensaje Inspirador */}
+        <motion.p
+          animate={{ opacity: [0.6, 1, 0.6] }}
+          transition={{ duration: 3, repeat: Infinity }}
+          className="text-xs text-gray-500 dark:text-gray-500 text-center mt-4"
+        >
+          Tu Campaign Kit Premium está casi listo...
+        </motion.p>
+      </div>
+    </motion.div>
+  );
+};

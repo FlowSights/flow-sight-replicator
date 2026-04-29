@@ -30,6 +30,12 @@ import { VisualGuideLightbox } from '@/components/VisualGuideLightbox';
 import jsPDF from 'jspdf';
 import { useCountUp } from '@/hooks/useCountUp';
 import { useInactivityTimeout } from '@/hooks/useInactivityTimeout';
+import { useInactivityTimeoutStrict } from '@/hooks/useInactivityTimeoutStrict';
+import { MockupLightbox } from '@/components/MockupLightbox';
+import { AppleStyleLoadingScreen } from '@/components/AppleStyleLoadingScreen';
+import { SimplifiedROICalculator } from '@/components/SimplifiedROICalculator';
+import { SmartLocationSelector } from '@/components/SmartLocationSelector';
+import { ClientDashboard } from '@/components/ClientDashboard';
 import { PaymentModal } from '@/components/PaymentModal';
 import { useStripeCheckout } from '@/hooks/useStripeCheckout';
 import { usePaymentStatus } from '@/hooks/usePaymentStatus';
@@ -100,7 +106,15 @@ const FlowsightAdsDashboard: React.FC = () => {
   const [showInactivityModal, setShowInactivityModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [selectedCampaignForPayment, setSelectedCampaignForPayment] = useState<string | null>(null);
+  const [mockupLightboxOpen, setMockupLightboxOpen] = useState(false);
+  const [mockupLightboxIndex, setMockupLightboxIndex] = useState(0);
+  const [showClientDashboard, setShowClientDashboard] = useState(false);
   const { hasPaid, isLoading: isPaymentLoading } = usePaymentStatus();
+  
+  // Inactividad estricta: cierra sesión después de 3 minutos
+  useInactivityTimeoutStrict(() => {
+    setShowInactivityModal(true);
+  });
 
   const [activeGuidePlatform, setActiveGuidePlatform] = useState<string | null>(null);
   const [isGuideLightboxOpen, setIsGuideLightboxOpen] = useState(false);
@@ -1294,7 +1308,7 @@ const FlowsightAdsDashboard: React.FC = () => {
                       <span className="text-2xl font-bold text-gray-400 uppercase tracking-widest">USD / MES</span>
                     </div>
                     
-                    <Slider value={[config.budget]} onValueChange={(val) => setConfig({...config, budget: val[0]})} max={5000} min={100} step={100} className="py-4" />
+                    <Slider value={[config.budget]} onValueChange={(val) => setConfig({...config, budget: val[0]})} max={5000} min={50} step={50} className="py-4" />
                     
                     <div className="grid grid-cols-3 gap-4">
                       <div className="text-center p-4 rounded-2xl bg-gray-50 dark:bg-white/5">
@@ -1413,110 +1427,103 @@ const FlowsightAdsDashboard: React.FC = () => {
                 onDownloadAssets={handleDownloadAssets}
               />
 
-              {/* Dynamic ROI Estimator */}
+              {/* Simplified ROI Calculator */}
               <div className="mt-12 pt-8 border-t border-white/10">
                 <h2 className="text-3xl font-black text-gray-900 dark:text-white mb-2 flex items-center gap-3">
                   <TrendingUp className="w-8 h-8 text-emerald-500" />
-                  Análisis de ROI Personalizado
+                  Lo que puedes esperar
                 </h2>
-                <p className="text-gray-600 dark:text-gray-400 mb-8 text-lg">Calcula tu retorno de inversión basado en tus métricas reales</p>
-                <DynamicROIEstimator
+                <p className="text-gray-600 dark:text-gray-400 mb-8 text-lg">Visualiza el potencial de tu inversión en cada plataforma</p>
+                <SimplifiedROICalculator
                   budget={config.budget}
-                  businessName={config.businessName}
-                  location={config.location}
-                  idealCustomer={config.idealCustomer}
+                  onBudgetChange={(budget) => setConfig({...config, budget})}
                 />
               </div>
+
+              {/* Client Dashboard - Nuevo */}
+              {hasPaid && (
+                <div className="mt-12 pt-8 border-t border-white/10">
+                  <ClientDashboard
+                    businessName={config.businessName}
+                    generatedAds={generatedAds}
+                    budget={config.budget}
+                    location={config.location}
+                    createdAt={new Date()}
+                    hasPaid={hasPaid}
+                    onDownloadKit={handleExportPDF}
+                    onDownloadGuide={() => setIsGuideLightboxOpen(true)}
+                  />
+                </div>
+              )}
 
               {/* Editable Platform Previews */}
               <div className="mt-12 pt-8 border-t border-white/10">
                 <h2 className="text-3xl font-black text-gray-900 dark:text-white mb-2 flex items-center gap-3">
                   <Edit2 className="w-8 h-8 text-blue-500" />
-                  Edita tus Anuncios en Vivo
+                  Personaliza tus Anuncios
                 </h2>
-                <p className="text-gray-600 dark:text-gray-400 mb-8 text-lg">Personaliza los copys directamente sobre las previsualizaciones</p>
+                <p className="text-gray-600 dark:text-gray-400 mb-8 text-lg">Ajusta los textos y descarga cada versión para tu plataforma</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {generatedAds.map((ad, idx) => (
-                    <EditablePlatformPreview
-                      key={idx}
-                      platform={ad.platform}
-                      headline={ad.headline}
-                      description={ad.description}
-                      cta={ad.cta}
-                      imageUrl={ad.imageUrl}
-                      businessName={ad.businessName}
-                      websiteUrl={ad.websiteUrl}
-                      onUpdate={(updates) => {
-                        const updatedAds = [...generatedAds];
+                      <EditablePlatformPreview
+                        key={idx}
+                        platform={ad.platform}
+                        headline={ad.headline}
+                        description={ad.description}
+                        cta={ad.cta}
+                        imageUrl={ad.imageUrl}
+                        businessName={ad.businessName}
+                        websiteUrl={ad.websiteUrl}
+                        onUpdate={(updates) => {
+                          const updatedAds = [...generatedAds];
                         updatedAds[idx] = {
                           ...updatedAds[idx],
                           ...updates,
                         };
                         setGeneratedAds(updatedAds);
-                      }}
-                    />
-                  ))}
+                        }}
+                      />
+                    ))}
                 </div>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
-        
-        {/* Visual Guide Lightbox */}
-<VisualGuideLightbox 
-          isOpen={isGuideLightboxOpen} 
-          onClose={() => setIsGuideLightboxOpen(false)} 
-          platform={guideLightboxPlatform} 
-        />
-
-        <PaymentModal
-          isOpen={showPaymentModal}
-          onClose={() => setShowPaymentModal(false)}
-          campaignId={generatedAds[0]?.platform || 'premium-kit'}
-          campaignName={config.businessName || 'Tu Campaña'}
-          amount={4999}
-          currency="USD"
-        />
-
-        {/* Modal de sesión expirada por inactividad */}
-        <AnimatePresence>
-          {showInactivityModal && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-sm p-6"
-            >
-              <motion.div
-                initial={{ scale: 0.9, opacity: 0, y: 20 }}
-                animate={{ scale: 1, opacity: 1, y: 0 }}
-                exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                transition={{ type: 'spring', damping: 20, stiffness: 300 }}
-                className="bg-white dark:bg-[#111] rounded-3xl shadow-2xl p-8 max-w-sm w-full text-center border border-gray-100 dark:border-white/10"
-              >
-                <div className="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto mb-5">
-                  <ShieldCheck className="w-8 h-8 text-emerald-500" />
-                </div>
-                <h3 className="text-2xl font-black text-gray-900 dark:text-white mb-2">
-                  Sesión cerrada
-                </h3>
-                <p className="text-gray-500 dark:text-gray-400 text-sm mb-6 leading-relaxed">
-                  Tu sesión se cerró automáticamente por <strong>10 minutos de inactividad</strong> como medida de seguridad.
-                </p>
-                <Button
-                  onClick={() => {
-                    setShowInactivityModal(false);
-                    navigate('/flowsight-ads');
-                  }}
-                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-2xl text-base"
-                >
-                  Volver a iniciar sesión
-                </Button>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </main>
+
+      {/* Apple Style Loading Screen */}
+      <AppleStyleLoadingScreen
+        isVisible={isLoading}
+        currentStep={loadingStep}
+        totalSteps={4}
+      />
+
+      {/* Mockup Lightbox */}
+      <MockupLightbox
+        isOpen={mockupLightboxOpen}
+        onClose={() => setMockupLightboxOpen(false)}
+        ads={generatedAds.filter((ad) => ad.platform === selectedPlatform)}
+        currentIndex={mockupLightboxIndex}
+        onPrevious={() => setMockupLightboxIndex(Math.max(0, mockupLightboxIndex - 1))}
+        onNext={() => setMockupLightboxIndex(Math.min(generatedAds.filter((ad) => ad.platform === selectedPlatform).length - 1, mockupLightboxIndex + 1))}
+        platform={selectedPlatform}
+        businessName={config.businessName}
+        hasPaid={hasPaid}
+        onPaymentRequired={() => setShowPaymentModal(true)}
+      />
+      {/* Visual Guide Lightbox */}
+      <VisualGuideLightbox 
+        isOpen={isGuideLightboxOpen} 
+        onClose={() => setIsGuideLightboxOpen(false)} 
+        platform={guideLightboxPlatform} 
+      />
+
+      {/* Payment Modal */}
+      <PaymentModal
+        isOpen={showPaymentModal}
+        onClose={() => setShowPaymentModal(false)}
+        businessName={config.businessName || 'Tu Campaña'}
+      />
     </div>
   );
 };
