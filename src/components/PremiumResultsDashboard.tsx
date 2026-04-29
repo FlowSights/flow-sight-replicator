@@ -35,19 +35,38 @@ export const PremiumResultsDashboard: React.FC<PremiumResultsDashboardProps> = (
 }) => {
   const [activeTab, setActiveTab] = useState('overview');
 
-  const platformColors: Record<string, string> = {
-    google: 'from-red-500 to-yellow-500',
-    meta: 'from-blue-600 to-blue-400',
-    tiktok: 'from-gray-900 to-black',
-    linkedin: 'from-blue-700 to-blue-500',
+  // Colores dinámicos por plataforma
+  const platformColors: Record<string, { gradient: string; icon: string; description: string }> = {
+    google: {
+      gradient: 'from-red-500 via-yellow-500 to-blue-500',
+      icon: '🔍',
+      description: 'Estrategia completa para Google Ads'
+    },
+    meta: {
+      gradient: 'from-blue-600 to-blue-400',
+      icon: '📱',
+      description: 'Estrategia completa para Meta (Facebook/Instagram)'
+    },
+    tiktok: {
+      gradient: 'from-gray-900 via-black to-pink-500',
+      icon: '🎵',
+      description: 'Estrategia completa para TikTok Ads'
+    },
+    linkedin: {
+      gradient: 'from-blue-700 to-blue-500',
+      icon: '💼',
+      description: 'Estrategia completa para LinkedIn Ads'
+    },
   };
 
-  const platformIcons: Record<string, string> = {
-    google: '🔍',
-    meta: '📱',
-    tiktok: '🎵',
-    linkedin: '💼',
+  const platformNames: Record<string, string> = {
+    google: 'Google Ads',
+    meta: 'Meta (Facebook/Instagram)',
+    tiktok: 'TikTok Ads',
+    linkedin: 'LinkedIn Ads',
   };
+
+  const currentPlatform = platformColors[platform];
 
   const deliverables = [
     {
@@ -82,9 +101,18 @@ export const PremiumResultsDashboard: React.FC<PremiumResultsDashboardProps> = (
       animate={{ opacity: 1, y: 0 }}
       className="space-y-6"
     >
-      {/* Hero Section */}
-      <div className={`bg-gradient-to-r ${platformColors[platform]} rounded-3xl p-8 text-white shadow-2xl overflow-hidden relative`}>
-        <div className="absolute top-0 right-0 text-8xl opacity-10">{platformIcons[platform]}</div>
+      {/* Hero Section - Banner Dinámico */}
+      <motion.div
+        key={platform}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className={`bg-gradient-to-r ${currentPlatform.gradient} rounded-3xl p-8 text-white shadow-2xl overflow-hidden relative`}
+      >
+        {/* Fondo decorativo */}
+        <div className="absolute top-0 right-0 text-8xl opacity-10">{currentPlatform.icon}</div>
+        <div className="absolute bottom-0 left-0 w-40 h-40 bg-white/5 rounded-full -mb-20 -ml-20" />
+        
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-2">
             <CheckCircle2 className="w-6 h-6" />
@@ -94,10 +122,10 @@ export const PremiumResultsDashboard: React.FC<PremiumResultsDashboardProps> = (
             {campaignName || 'Tu Campaña'}
           </h1>
           <p className="text-lg opacity-90">
-            Estrategia completa para {businessName} en {platform.toUpperCase()}
+            {currentPlatform.description}
           </p>
         </div>
-      </div>
+      </motion.div>
 
       {/* Tabs de Contenido */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -167,7 +195,7 @@ export const PremiumResultsDashboard: React.FC<PremiumResultsDashboardProps> = (
             transition={{ delay: 0.1 }}
             className="space-y-3"
           >
-            <h3 className="font-bold text-gray-900 dark:text-white">📝 Anuncios Generados</h3>
+            <h3 className="font-bold text-gray-900 dark:text-white">Anuncios Generados</h3>
             {generatedAds.slice(0, 3).map((ad, idx) => (
               <Card key={idx} className="p-4 border-l-4 border-emerald-500">
                 <div className="flex items-start justify-between mb-2">
@@ -294,7 +322,7 @@ export const PremiumResultsDashboard: React.FC<PremiumResultsDashboardProps> = (
         animate={{ opacity: 1, y: 0 }}
         className="bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl p-6 text-white text-center"
       >
-        <p className="text-sm font-semibold opacity-90 mb-2">🚀 ¡Listo para Lanzar!</p>
+        <p className="text-sm font-semibold opacity-90 mb-2">Listo para Lanzar</p>
         <h3 className="text-2xl font-black mb-3">
           Tu Estrategia Premium está Completa
         </h3>

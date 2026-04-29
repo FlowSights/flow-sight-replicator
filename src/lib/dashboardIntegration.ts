@@ -76,7 +76,7 @@ export const generateAdsWithGeminiIntegration = async (
   try {
     // Paso 1: Llamar a Gemini
     onStepUpdate?.(0);
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 800));
 
     let geminiResponse;
     try {
@@ -111,13 +111,13 @@ export const generateAdsWithGeminiIntegration = async (
 
     // Paso 2: Procesar respuesta de Gemini
     onStepUpdate?.(1);
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 800));
 
     const geminiAds: GeneratedAdCopy[] = geminiResponse.ads;
 
     // Paso 3: Mapear a GeneratedAd con URLs de plataforma
     onStepUpdate?.(2);
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 800));
 
     const platformUrls: Record<string, string> = {
       google: `https://ads.google.com/aw/campaigns/new?keyword=${encodeURIComponent(config.promote)}`,
@@ -144,7 +144,7 @@ export const generateAdsWithGeminiIntegration = async (
 
     // Paso 4: Finalizar
     onStepUpdate?.(3);
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 800));
 
     return generatedAds;
   } catch (error) {

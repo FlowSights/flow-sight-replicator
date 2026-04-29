@@ -29,7 +29,7 @@ export const PlatformIcon: React.FC<PlatformIconProps> = ({ platform, size = 24,
 
     case 'tiktok':
       return (
-        <svg viewBox="0 0 24 24" className={iconClass} fill="currentColor">
+        <svg viewBox="0 0 24 24" className={iconClass} fill="currentColor" preserveAspectRatio="xMidYMid meet">
           <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.68v13.67a2.4 2.4 0 1 1-2.4-2.4c.34 0 .67.05 1 .15V9.41a6.96 6.96 0 0 0-1-.08A6.59 6.59 0 1 0 12 20.1a6.52 6.52 0 0 0 6.59-6.59V9.86a8.62 8.62 0 0 0 3.41 1.61v-3.66a4.5 4.5 0 0 1-.4-.03z" />
         </svg>
       );

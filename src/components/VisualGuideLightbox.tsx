@@ -107,7 +107,7 @@ const platformGuides: Record<string, PlatformGuide> = {
         tips: [
           'La vista previa muestra cómo se verá en Facebook, Instagram y Messenger',
           'Meta revisará tu anuncio en minutos',
-          '¡Felicidades! Tu campaña está en vivo'
+          'Felicidades! Tu campaña está en vivo'
         ]
       }
     ]
@@ -182,7 +182,7 @@ const platformGuides: Record<string, PlatformGuide> = {
         tips: [
           'Google revisará tu campaña en unas horas',
           'Recibirás notificaciones cuando esté aprobada',
-          '¡Ya estás en el buscador más grande del mundo!'
+          'Ya estás en el buscador más grande del mundo!'
         ]
       }
     ]
@@ -257,7 +257,7 @@ const platformGuides: Record<string, PlatformGuide> = {
         tips: [
           'La vista previa muestra exactamente cómo se verá en TikTok',
           'TikTok revisará tu anuncio en unas horas',
-          '¡Prepárate para conquistar el feed "Para Ti"!'
+          'Prepárate para conquistar el feed "Para Ti"!'
         ]
       }
     ]
@@ -265,74 +265,74 @@ const platformGuides: Record<string, PlatformGuide> = {
   linkedin: {
     platform: 'linkedin',
     platformName: 'LinkedIn Ads',
-    color: 'from-blue-700 to-blue-800',
+    color: 'from-blue-700 to-blue-500',
     platformUrl: 'https://www.linkedin.com/campaignmanager/accounts',
     steps: [
       {
         step: 1,
-        title: 'Accede a Campaign Manager',
-        description: 'Abre tu administrador de campañas de LinkedIn. Este es tu espacio para conectar con profesionales.',
+        title: 'Accede a LinkedIn Campaign Manager',
+        description: 'Abre tu panel de control de LinkedIn. Este es tu espacio para crear campañas profesionales.',
         action: 'Haz clic en "Abrir LinkedIn Campaign Manager"',
         tips: [
-          'Necesitas una cuenta de LinkedIn con acceso a publicidad',
-          'LinkedIn es ideal para B2B y profesionales',
-          'Tienes acceso a millones de tomadores de decisiones'
+          'Necesitas una cuenta de LinkedIn con rol de administrador',
+          'Si es tu primera vez, LinkedIn te guiará en la configuración',
+          'Tienes acceso a anuncios de texto, imagen y video'
         ],
         link: 'https://www.linkedin.com/campaignmanager/accounts'
       },
       {
         step: 2,
-        title: 'Selecciona tu cuenta publicitaria',
-        description: 'Elige la cuenta publicitaria con la que quieres trabajar. Luego haz clic en "Crear" > "Campaña".',
-        action: 'Selecciona tu cuenta y crea una nueva campaña',
+        title: 'Crea una nueva campaña',
+        description: 'Haz clic en el botón "Crear campaña" para comenzar. LinkedIn te pedirá que definas tu objetivo.',
+        action: 'Selecciona "Crear campaña" en el panel principal',
         tips: [
-          'Si no tienes cuenta publicitaria, puedes crearla aquí',
-          'Asegúrate de estar en la cuenta correcta',
-          'Tendrás acceso a reportes y análisis detallados'
+          'Elige el objetivo "Tráfico al sitio web" o "Generación de clientes potenciales"',
+          'LinkedIn es ideal para B2B y profesionales',
+          'Selecciona tu presupuesto y duración de campaña'
         ]
       },
       {
         step: 3,
-        title: 'Elige tu objetivo',
-        description: 'LinkedIn te pedirá que selecciones un objetivo. Elige "Visitas al sitio web" o "Generación de contactos".',
-        action: 'Selecciona el objetivo que mejor se adapte a tu estrategia',
+        title: 'Define tu audiencia objetivo',
+        description: 'Segmenta tu audiencia por industria, cargo, empresa y ubicación. LinkedIn es muy específico.',
+        action: 'Completa los campos de segmentación profesional',
         tips: [
-          'Visitas al sitio web: para tráfico a tu web',
-          'Generación de contactos: para recopilar datos de prospectos',
-          'Engagement: para aumentar interacción en LinkedIn'
+          'Industria: selecciona la industria de tu cliente ideal',
+          'Cargo: elige los títulos de trabajo relevantes',
+          'Ubicación: especifica países o ciudades'
         ]
       },
       {
         step: 4,
-        title: 'Segmenta profesionalmente',
-        description: 'Aquí es donde LinkedIn brilla. Define tu audiencia usando filtros profesionales: cargo, sector, tamaño de empresa.',
-        action: 'Completa los filtros de segmentación profesional',
+        title: 'Sube tu contenido',
+        description: 'Carga la imagen o video que preparaste. LinkedIn recomienda formatos profesionales y claros.',
+        action: 'Sube tu contenido visual y completa los textos',
         tips: [
-          'Cargos: "Director de Marketing", "CEO", etc.',
-          'Sectores: "Tecnología", "Salud", etc.',
-          'Mantén tu audiencia entre 50,000 y 300,000 personas'
+          'Formato recomendado: 1200x627 píxeles',
+          'Mantén un tono profesional y corporativo',
+          'Los textos deben ser concisos y orientados a resultados'
         ]
       },
       {
         step: 5,
-        title: 'Sube tu imagen y textos',
-        description: 'Selecciona el formato "Anuncio con una sola imagen", sube tu imagen y copia los textos del kit.',
-        action: 'Carga la imagen y pega los textos del anuncio',
+        title: 'Configura el CTA y landing',
+        description: 'Elige el botón de llamada a la acción y asegúrate de que el landing page esté optimizado.',
+        action: 'Selecciona el CTA y verifica la URL de destino',
         tips: [
-          'Formato recomendado: 1200x628 píxeles',
-          'Los textos están optimizados para profesionales',
-          'Elige un CTA profesional: "Más información", "Descargar", etc.'
+          'CTAs efectivos: "Solicitar demo", "Aprender más", "Descargar"',
+          'Verifica que tu landing page sea responsive',
+          'Asegúrate de que el mensaje sea coherente'
         ]
       },
       {
         step: 6,
-        title: 'Lanza tu campaña',
-        description: 'Revisa todos los detalles de tu campaña. Confirma tu presupuesto diario y haz clic en "Lanzar campaña".',
-        action: 'Haz clic en "Lanzar campaña" para activarla',
+        title: 'Revisa y lanza',
+        description: 'Revisa todos los detalles de tu campaña. Si todo está correcto, haz clic en "Lanzar".',
+        action: 'Haz clic en el botón "Lanzar campaña"',
         tips: [
-          'LinkedIn revisará tu anuncio en unas horas',
-          'Recibirás notificaciones sobre el estado de tu campaña',
-          '¡Tu mensaje está en camino a los profesionales correctos!'
+          'LinkedIn revisará tu campaña en 24-48 horas',
+          'Recibirás notificaciones sobre el estado de aprobación',
+          'Monitorea el rendimiento desde el dashboard'
         ]
       }
     ]
@@ -345,9 +345,9 @@ interface VisualGuideLightboxProps {
   platform: 'meta' | 'google' | 'tiktok' | 'linkedin';
 }
 
-export const VisualGuideLightbox: React.FC<VisualGuideLightboxProps> = ({ 
-  isOpen, 
-  onClose, 
+export const VisualGuideLightbox: React.FC<VisualGuideLightboxProps> = ({
+  isOpen,
+  onClose,
   platform 
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -390,9 +390,6 @@ export const VisualGuideLightbox: React.FC<VisualGuideLightboxProps> = ({
                 Paso {currentStep + 1} de {guide.steps.length}
               </p>
             </div>
-            <DialogClose className="absolute right-4 top-4 p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-lg transition-colors">
-              <X className="w-5 h-5" />
-            </DialogClose>
           </div>
         </DialogHeader>
 
@@ -514,7 +511,7 @@ export const VisualGuideLightbox: React.FC<VisualGuideLightboxProps> = ({
               onClick={handleClose}
               className="w-full py-6 rounded-xl font-bold text-lg bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white"
             >
-              ¡Entendido! Voy a publicar mi campaña
+              Entendido! Voy a publicar mi campaña
             </Button>
           </motion.div>
         )}

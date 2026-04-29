@@ -287,7 +287,13 @@ const FlowsightAdsDashboard: React.FC = () => {
   };
 
   const handleViewDashboard = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setShowClientDashboard(true);
+    setTimeout(() => {
+      const dashboardElement = document.getElementById('client-dashboard');
+      if (dashboardElement) {
+        dashboardElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 100);
   };
 
   const generatePDF = (selectedPlatform?: string) => {
@@ -1405,7 +1411,7 @@ const FlowsightAdsDashboard: React.FC = () => {
 
               {/* Client Dashboard - Nuevo */}
               {hasPaid && (
-                <div className="mt-12 pt-8 border-t border-white/10">
+                <div id="client-dashboard" className="mt-12 pt-8 border-t border-white/10">
                   <ClientDashboard
                     businessName={config.businessName}
                     generatedAds={generatedAds}
