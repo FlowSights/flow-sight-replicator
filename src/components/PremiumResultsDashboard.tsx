@@ -71,9 +71,9 @@ export const PremiumResultsDashboard: React.FC<PremiumResultsDashboardProps> = (
   const deliverables = [
     {
       icon: <FileText className="w-6 h-6" />,
-      title: 'PDF Estratégico Premium',
+      title: 'Campaing Kit Premium',
       description: 'Informe profesional de 15+ páginas con análisis, copys y guías paso a paso',
-      action: 'Descargar PDF',
+      action: 'Descargar Kit',
       onClick: onExportPDF,
       color: 'emerald',
     },
@@ -87,8 +87,8 @@ export const PremiumResultsDashboard: React.FC<PremiumResultsDashboardProps> = (
     },
     {
       icon: <Zap className="w-6 h-6" />,
-      title: 'Assets Optimizados',
-      description: 'Imágenes y archivos listos para importar directamente en cada plataforma',
+      title: 'Assets Optimizados para tu Plataforma',
+      description: 'Imágenes y archivos listos para importar directamente en tu plataforma',
       action: 'Descargar Assets',
       onClick: onDownloadAssets,
       color: 'purple',
@@ -116,7 +116,7 @@ export const PremiumResultsDashboard: React.FC<PremiumResultsDashboardProps> = (
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-2">
             <CheckCircle2 className="w-6 h-6" />
-            <span className="text-sm font-bold uppercase tracking-widest">✨ Campaña Generada</span>
+            <span className="text-sm font-bold uppercase tracking-widest">Campaña Generada</span>
           </div>
           <h1 className="text-4xl font-black mb-2">
             {campaignName || 'Tu Campaña'}
@@ -327,14 +327,14 @@ export const PremiumResultsDashboard: React.FC<PremiumResultsDashboardProps> = (
           Tu Estrategia Premium está Completa
         </h3>
         <p className="text-sm opacity-90 mb-4">
-          Todos tus entregables están listos. Descarga tu kit y comienza a generar resultados hoy mismo.
+          Todos tus entregables están listos. Descarga tu Campaing Kit completo y comienza a generar resultados hoy mismo.
         </p>
         <Button
           onClick={onExportPDF}
           className="bg-white text-emerald-600 hover:bg-gray-100 font-bold gap-2"
         >
           <Download className="w-4 h-4" />
-          Descargar Todo Ahora
+          Descargar Campaing Kit Completo
         </Button>
       </motion.div>
     </motion.div>

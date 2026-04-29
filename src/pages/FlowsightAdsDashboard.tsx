@@ -258,7 +258,7 @@ const FlowsightAdsDashboard: React.FC = () => {
 
     downloadPremiumPDFV2(pdfData);
     toast({
-      title: '✅ PDF Descargado',
+      title: '✅ Campaing Kit Descargado',
       description: 'Tu estrategia premium está lista',
     });
   };
@@ -1453,14 +1453,13 @@ const FlowsightAdsDashboard: React.FC = () => {
                 </div>
               )}
 
-              {/* Editable Platform Previews */}
+              {/* Editable Platform Previews - Premium Gallery */}
               <div className="mt-12 pt-8 border-t border-white/10">
-                <h2 className="text-3xl font-black text-gray-900 dark:text-white mb-2 flex items-center gap-3">
-                  <Edit2 className="w-8 h-8 text-blue-500" />
-                  Personaliza tus Anuncios
-                </h2>
-                <p className="text-gray-600 dark:text-gray-400 mb-8 text-lg">Ajusta los textos y descarga cada versión para tu plataforma</p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2 mb-8">
+                  <h2 className="text-4xl font-black text-gray-900 dark:text-white tracking-tight">Personaliza tus <span className="text-emerald-500">Anuncios</span></h2>
+                  <p className="text-gray-600 dark:text-gray-400 text-lg">Ajusta los textos y descarga cada Campaing Kit personalizado para tu plataforma</p>
+                </div>
+                <div className="space-y-6">
                   {generatedAds.map((ad, idx) => (
                       <EditablePlatformPreview
                         key={idx}
@@ -1472,7 +1471,13 @@ const FlowsightAdsDashboard: React.FC = () => {
                         businessName={ad.businessName}
                         websiteUrl={ad.websiteUrl}
                         hasPaid={hasPaid}
-                        onDownloadKit={() => downloadPremiumPDFV2(config, [ad], ad.platform)}
+                        onDownloadKit={() => {
+                          downloadPremiumPDFV2(config, [ad], ad.platform);
+                          toast({
+                            title: '✅ Campaing Kit Descargado',
+                            description: `Kit personalizado para ${ad.platform} listo`,
+                          });
+                        }}
                         onDownloadGuide={() => {
                           setGuideLightboxPlatform(ad.platform);
                           setIsGuideLightboxOpen(true);
