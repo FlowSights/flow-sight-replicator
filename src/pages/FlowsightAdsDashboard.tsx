@@ -899,44 +899,7 @@ const FlowsightAdsDashboard: React.FC = () => {
   };
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center p-6 overflow-hidden">
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] bg-emerald-500/10 blur-[120px] rounded-full" />
-          <div className="absolute -bottom-[20%] -right-[10%] w-[50%] h-[50%] bg-blue-500/10 blur-[120px] rounded-full" />
-        </div>
-        
-        <div className="w-full max-w-md text-center relative z-10">
-          <motion.div 
-            animate={{ scale: [1, 1.1, 1], rotate: [0, 5, -5, 0] }}
-            transition={{ duration: 4, repeat: Infinity }}
-            className="w-32 h-32 mx-auto mb-12 relative"
-          >
-            <div className="absolute inset-0 bg-emerald-500/20 blur-2xl rounded-full animate-pulse" />
-            <div className="relative w-full h-full bg-gradient-to-br from-emerald-400 to-teal-600 rounded-3xl flex items-center justify-center shadow-2xl shadow-emerald-500/40">
-              <Rocket className="w-16 h-16 text-white" />
-            </div>
-          </motion.div>
-
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={loadingStep}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="space-y-6"
-            >
-              <h2 className="text-3xl font-black text-white tracking-tight">{loadingMessages[loadingStep]}</h2>
-              <div className="flex justify-center gap-2">
-                {[0, 1, 2, 3].map((i) => (
-                  <div key={i} className={`h-1.5 rounded-full transition-all duration-500 ${i === loadingStep ? 'w-8 bg-emerald-500' : 'w-2 bg-white/10'}`} />
-                ))}
-              </div>
-            </motion.div>
-          </AnimatePresence>
-        </div>
-      </div>
-    );
+    return <AppleStyleLoadingScreen isVisible={true} currentStep={loadingStep} totalSteps={4} />;
   }
 
   return (
@@ -1182,10 +1145,9 @@ const FlowsightAdsDashboard: React.FC = () => {
                     <p className="text-xl text-gray-500 dark:text-gray-400">Define la ubicación geográfica de tu mercado ideal.</p>
                   </div>
 
-                  <LocationInput
+                  <SmartLocationSelector
                     value={config.location}
                     onChange={(value) => setConfig({...config, location: value})}
-                    placeholder="Escribe una ciudad o país..."
                   />
 
                   <div className="flex gap-4">

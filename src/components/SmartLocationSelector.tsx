@@ -1,1 +1,227 @@
-import React, { useState, useMemo } from 'react';\nimport { Search, MapPin, Globe } from 'lucide-react';\nimport { motion, AnimatePresence } from 'framer-motion';\n\ninterface SmartLocationSelectorProps {\n  value: string;\n  onChange: (location: string) => void;\n}\n\nconst countries = [\n  // América Latina\n  { name: 'Argentina', region: 'Latinoamérica', flag: '🇦🇷', code: 'AR' },\n  { name: 'Brasil', region: 'Latinoamérica', flag: '🇧🇷', code: 'BR' },\n  { name: 'Chile', region: 'Latinoamérica', flag: '🇨🇱', code: 'CL' },\n  { name: 'Colombia', region: 'Latinoamérica', flag: '🇨🇴', code: 'CO' },\n  { name: 'Costa Rica', region: 'Latinoamérica', flag: '🇨🇷', code: 'CR' },\n  { name: 'Ecuador', region: 'Latinoamérica', flag: '🇪🇨', code: 'EC' },\n  { name: 'El Salvador', region: 'Latinoamérica', flag: '🇸🇻', code: 'SV' },\n  { name: 'Guatemala', region: 'Latinoamérica', flag: '🇬🇹', code: 'GT' },\n  { name: 'Honduras', region: 'Latinoamérica', flag: '🇭🇳', code: 'HN' },\n  { name: 'México', region: 'Latinoamérica', flag: '🇲🇽', code: 'MX' },\n  { name: 'Nicaragua', region: 'Latinoamérica', flag: '🇳🇮', code: 'NI' },\n  { name: 'Panamá', region: 'Latinoamérica', flag: '🇵🇦', code: 'PA' },\n  { name: 'Paraguay', region: 'Latinoamérica', flag: '🇵🇾', code: 'PY' },\n  { name: 'Perú', region: 'Latinoamérica', flag: '🇵🇪', code: 'PE' },\n  { name: 'Uruguay', region: 'Latinoamérica', flag: '🇺🇾', code: 'UY' },\n  { name: 'Venezuela', region: 'Latinoamérica', flag: '🇻🇪', code: 'VE' },\n  // Europa\n  { name: 'España', region: 'Europa', flag: '🇪🇸', code: 'ES' },\n  { name: 'Francia', region: 'Europa', flag: '🇫🇷', code: 'FR' },\n  { name: 'Alemania', region: 'Europa', flag: '🇩🇪', code: 'DE' },\n  { name: 'Italia', region: 'Europa', flag: '🇮🇹', code: 'IT' },\n  { name: 'Portugal', region: 'Europa', flag: '🇵🇹', code: 'PT' },\n  { name: 'Reino Unido', region: 'Europa', flag: '🇬🇧', code: 'GB' },\n  { name: 'Irlanda', region: 'Europa', flag: '🇮🇪', code: 'IE' },\n  { name: 'Países Bajos', region: 'Europa', flag: '🇳🇱', code: 'NL' },\n  { name: 'Bélgica', region: 'Europa', flag: '🇧🇪', code: 'BE' },\n  { name: 'Suiza', region: 'Europa', flag: '🇨🇭', code: 'CH' },\n  { name: 'Suecia', region: 'Europa', flag: '🇸🇪', code: 'SE' },\n  { name: 'Noruega', region: 'Europa', flag: '🇳🇴', code: 'NO' },\n  { name: 'Dinamarca', region: 'Europa', flag: '🇩🇰', code: 'DK' },\n  { name: 'Finlandia', region: 'Europa', flag: '🇫🇮', code: 'FI' },\n  { name: 'Polonia', region: 'Europa', flag: '🇵🇱', code: 'PL' },\n  { name: 'República Checa', region: 'Europa', flag: '🇨🇿', code: 'CZ' },\n  { name: 'Rumania', region: 'Europa', flag: '🇷🇴', code: 'RO' },\n  { name: 'Hungría', region: 'Europa', flag: '🇭🇺', code: 'HU' },\n  { name: 'Grecia', region: 'Europa', flag: '🇬🇷', code: 'GR' },\n  // América del Norte\n  { name: 'Estados Unidos', region: 'América del Norte', flag: '🇺🇸', code: 'US' },\n  { name: 'Canadá', region: 'América del Norte', flag: '🇨🇦', code: 'CA' },\n  // Asia\n  { name: 'China', region: 'Asia', flag: '🇨🇳', code: 'CN' },\n  { name: 'Japón', region: 'Asia', flag: '🇯🇵', code: 'JP' },\n  { name: 'Corea del Sur', region: 'Asia', flag: '🇰🇷', code: 'KR' },\n  { name: 'India', region: 'Asia', flag: '🇮🇳', code: 'IN' },\n  { name: 'Tailandia', region: 'Asia', flag: '🇹🇭', code: 'TH' },\n  { name: 'Vietnam', region: 'Asia', flag: '🇻🇳', code: 'VN' },\n  { name: 'Filipinas', region: 'Asia', flag: '🇵🇭', code: 'PH' },\n  { name: 'Indonesia', region: 'Asia', flag: '🇮🇩', code: 'ID' },\n  { name: 'Singapur', region: 'Asia', flag: '🇸🇬', code: 'SG' },\n  { name: 'Malasia', region: 'Asia', flag: '🇲🇾', code: 'MY' },\n  // Oceanía\n  { name: 'Australia', region: 'Oceanía', flag: '🇦🇺', code: 'AU' },\n  { name: 'Nueva Zelanda', region: 'Oceanía', flag: '🇳🇿', code: 'NZ' },\n  // África\n  { name: 'Sudáfrica', region: 'África', flag: '🇿🇦', code: 'ZA' },\n  { name: 'Egipto', region: 'África', flag: '🇪🇬', code: 'EG' },\n  { name: 'Nigeria', region: 'África', flag: '🇳🇬', code: 'NG' },\n];\n\nexport const SmartLocationSelector: React.FC<SmartLocationSelectorProps> = ({\n  value,\n  onChange,\n}) => {\n  const [isOpen, setIsOpen] = useState(false);\n  const [searchQuery, setSearchQuery] = useState('');\n\n  const filteredCountries = useMemo(() => {\n    if (!searchQuery) return countries;\n\n    const query = searchQuery.toLowerCase();\n    return countries.filter(\n      (country) =>\n        country.name.toLowerCase().includes(query) ||\n        country.region.toLowerCase().includes(query) ||\n        country.code.toLowerCase().includes(query)\n    );\n  }, [searchQuery]);\n\n  const groupedCountries = useMemo(() => {\n    const grouped: Record<string, typeof countries> = {};\n    filteredCountries.forEach((country) => {\n      if (!grouped[country.region]) {\n        grouped[country.region] = [];\n      }\n      grouped[country.region].push(country);\n    });\n    return grouped;\n  }, [filteredCountries]);\n\n  const selectedCountry = countries.find((c) => c.name === value);\n\n  return (\n    <div className=\"relative\">\n      {/* Botón Principal */}\n      <button\n        onClick={() => setIsOpen(!isOpen)}\n        className=\"w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg flex items-center justify-between hover:border-gray-400 dark:hover:border-gray-500 transition bg-white dark:bg-slate-800\"\n      >\n        <div className=\"flex items-center gap-3\">\n          {selectedCountry ? (\n            <>\n              <span className=\"text-2xl\">{selectedCountry.flag}</span>\n              <div className=\"text-left\">\n                <p className=\"text-sm font-medium text-gray-900 dark:text-white\">\n                  {selectedCountry.name}\n                </p>\n                <p className=\"text-xs text-gray-500 dark:text-gray-400\">\n                  {selectedCountry.region}\n                </p>\n              </div>\n            </>\n          ) : (\n            <>\n              <Globe className=\"text-gray-400\" size={20} />\n              <span className=\"text-gray-500 dark:text-gray-400\">Selecciona un país</span>\n            </>\n          )}\n        </div>\n        <Search size={20} className=\"text-gray-400\" />\n      </button>\n\n      {/* Dropdown */}\n      <AnimatePresence>\n        {isOpen && (\n          <motion.div\n            initial={{ opacity: 0, y: -10 }}\n            animate={{ opacity: 1, y: 0 }}\n            exit={{ opacity: 0, y: -10 }}\n            className=\"absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-800 border-2 border-gray-300 dark:border-gray-600 rounded-lg shadow-xl z-50 max-h-96 overflow-hidden flex flex-col\"\n          >\n            {/* Barra de Búsqueda */}\n            <div className=\"sticky top-0 p-3 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-800\">\n              <div className=\"flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-slate-700 rounded-lg\">\n                <Search size={18} className=\"text-gray-400\" />\n                <input\n                  type=\"text\"\n                  placeholder=\"Busca un país o región...\"\n                  value={searchQuery}\n                  onChange={(e) => setSearchQuery(e.target.value)}\n                  className=\"flex-1 bg-transparent outline-none text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400\"\n                  autoFocus\n                />\n              </div>\n            </div>\n\n            {/* Lista de Países */}\n            <div className=\"overflow-y-auto flex-1\">\n              {Object.entries(groupedCountries).map(([region, regionCountries]) => (\n                <div key={region}>\n                  <div className=\"sticky top-0 px-4 py-2 bg-gray-50 dark:bg-slate-700/50 border-b border-gray-200 dark:border-gray-700\">\n                    <p className=\"text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider\">\n                      {region}\n                    </p>\n                  </div>\n                  {regionCountries.map((country) => (\n                    <button\n                      key={country.code}\n                      onClick={() => {\n                        onChange(country.name);\n                        setIsOpen(false);\n                        setSearchQuery('');\n                      }}\n                      className={`w-full px-4 py-3 flex items-center gap-3 hover:bg-gray-100 dark:hover:bg-slate-700 transition text-left ${\n                        value === country.name\n                          ? 'bg-green-50 dark:bg-green-900/20 border-l-4 border-green-500'\n                          : ''\n                      }`}\n                    >\n                      <span className=\"text-2xl\">{country.flag}</span>\n                      <div>\n                        <p className=\"text-sm font-medium text-gray-900 dark:text-white\">\n                          {country.name}\n                        </p>\n                        <p className=\"text-xs text-gray-500 dark:text-gray-400\">\n                          {country.code}\n                        </p>\n                      </div>\n                      {value === country.name && (\n                        <div className=\"ml-auto w-2 h-2 bg-green-500 rounded-full\" />\n                      )}\n                    </button>\n                  ))}\n                </div>\n              ))}\n            </div>\n          </motion.div>\n        )}\n      </AnimatePresence>\n    </div>\n  );\n};\n
+import React, { useState, useMemo } from 'react';
+import { Search, MapPin, Globe } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+
+interface SmartLocationSelectorProps {
+  value: string;
+  onChange: (location: string) => void;
+}
+
+const countries = [
+  // América Latina
+  { name: 'Argentina', code: 'AR', region: 'América Latina', flag: '🇦🇷' },
+  { name: 'Brasil', code: 'BR', region: 'América Latina', flag: '🇧🇷' },
+  { name: 'Chile', code: 'CL', region: 'América Latina', flag: '🇨🇱' },
+  { name: 'Colombia', code: 'CO', region: 'América Latina', flag: '🇨🇴' },
+  { name: 'Costa Rica', code: 'CR', region: 'América Latina', flag: '🇨🇷' },
+  { name: 'Ecuador', code: 'EC', region: 'América Latina', flag: '🇪🇨' },
+  { name: 'El Salvador', code: 'SV', region: 'América Latina', flag: '🇸🇻' },
+  { name: 'Guatemala', code: 'GT', region: 'América Latina', flag: '🇬🇹' },
+  { name: 'Honduras', code: 'HN', region: 'América Latina', flag: '🇭🇳' },
+  { name: 'México', code: 'MX', region: 'América Latina', flag: '🇲🇽' },
+  { name: 'Nicaragua', code: 'NI', region: 'América Latina', flag: '🇳🇮' },
+  { name: 'Panamá', code: 'PA', region: 'América Latina', flag: '🇵🇦' },
+  { name: 'Paraguay', code: 'PY', region: 'América Latina', flag: '🇵🇾' },
+  { name: 'Perú', code: 'PE', region: 'América Latina', flag: '🇵🇪' },
+  { name: 'República Dominicana', code: 'DO', region: 'América Latina', flag: '🇩🇴' },
+  { name: 'Uruguay', code: 'UY', region: 'América Latina', flag: '🇺🇾' },
+  { name: 'Venezuela', code: 'VE', region: 'América Latina', flag: '🇻🇪' },
+  
+  // Europa
+  { name: 'Alemania', code: 'DE', region: 'Europa', flag: '🇩🇪' },
+  { name: 'Austria', code: 'AT', region: 'Europa', flag: '🇦🇹' },
+  { name: 'Bélgica', code: 'BE', region: 'Europa', flag: '🇧🇪' },
+  { name: 'Bulgaria', code: 'BG', region: 'Europa', flag: '🇧🇬' },
+  { name: 'Croacia', code: 'HR', region: 'Europa', flag: '🇭🇷' },
+  { name: 'Dinamarca', code: 'DK', region: 'Europa', flag: '🇩🇰' },
+  { name: 'Eslovaquia', code: 'SK', region: 'Europa', flag: '🇸🇰' },
+  { name: 'Eslovenia', code: 'SI', region: 'Europa', flag: '🇸🇮' },
+  { name: 'España', code: 'ES', region: 'Europa', flag: '🇪🇸' },
+  { name: 'Estonia', code: 'EE', region: 'Europa', flag: '🇪🇪' },
+  { name: 'Finlandia', code: 'FI', region: 'Europa', flag: '🇫🇮' },
+  { name: 'Francia', code: 'FR', region: 'Europa', flag: '🇫🇷' },
+  { name: 'Grecia', code: 'GR', region: 'Europa', flag: '🇬🇷' },
+  { name: 'Hungría', code: 'HU', region: 'Europa', flag: '🇭🇺' },
+  { name: 'Irlanda', code: 'IE', region: 'Europa', flag: '🇮🇪' },
+  { name: 'Islandia', code: 'IS', region: 'Europa', flag: '🇮🇸' },
+  { name: 'Italia', code: 'IT', region: 'Europa', flag: '🇮🇹' },
+  { name: 'Letonia', code: 'LV', region: 'Europa', flag: '🇱🇻' },
+  { name: 'Lituania', code: 'LT', region: 'Europa', flag: '🇱🇹' },
+  { name: 'Luxemburgo', code: 'LU', region: 'Europa', flag: '🇱🇺' },
+  { name: 'Malta', code: 'MT', region: 'Europa', flag: '🇲🇹' },
+  { name: 'Noruega', code: 'NO', region: 'Europa', flag: '🇳🇴' },
+  { name: 'Países Bajos', code: 'NL', region: 'Europa', flag: '🇳🇱' },
+  { name: 'Polonia', code: 'PL', region: 'Europa', flag: '🇵🇱' },
+  { name: 'Portugal', code: 'PT', region: 'Europa', flag: '🇵🇹' },
+  { name: 'Reino Unido', code: 'GB', region: 'Europa', flag: '🇬🇧' },
+  { name: 'República Checa', code: 'CZ', region: 'Europa', flag: '🇨🇿' },
+  { name: 'Rumania', code: 'RO', region: 'Europa', flag: '🇷🇴' },
+  { name: 'Rusia', code: 'RU', region: 'Europa', flag: '🇷🇺' },
+  { name: 'Suecia', code: 'SE', region: 'Europa', flag: '🇸🇪' },
+  { name: 'Suiza', code: 'CH', region: 'Europa', flag: '🇨🇭' },
+  
+  // Asia
+  { name: 'China', code: 'CN', region: 'Asia', flag: '🇨🇳' },
+  { name: 'Corea del Sur', code: 'KR', region: 'Asia', flag: '🇰🇷' },
+  { name: 'Filipinas', code: 'PH', region: 'Asia', flag: '🇵🇭' },
+  { name: 'Hong Kong', code: 'HK', region: 'Asia', flag: '🇭🇰' },
+  { name: 'India', code: 'IN', region: 'Asia', flag: '🇮🇳' },
+  { name: 'Indonesia', code: 'ID', region: 'Asia', flag: '🇮🇩' },
+  { name: 'Japón', code: 'JP', region: 'Asia', flag: '🇯🇵' },
+  { name: 'Malasia', code: 'MY', region: 'Asia', flag: '🇲🇾' },
+  { name: 'Singapur', code: 'SG', region: 'Asia', flag: '🇸🇬' },
+  { name: 'Tailandia', code: 'TH', region: 'Asia', flag: '🇹🇭' },
+  { name: 'Taiwán', code: 'TW', region: 'Asia', flag: '🇹🇼' },
+  { name: 'Vietnam', code: 'VN', region: 'Asia', flag: '🇻🇳' },
+  
+  // América del Norte
+  { name: 'Canadá', code: 'CA', region: 'América del Norte', flag: '🇨🇦' },
+  { name: 'Estados Unidos', code: 'US', region: 'América del Norte', flag: '🇺🇸' },
+  
+  // Oceanía
+  { name: 'Australia', code: 'AU', region: 'Oceanía', flag: '🇦🇺' },
+  { name: 'Nueva Zelanda', code: 'NZ', region: 'Oceanía', flag: '🇳🇿' },
+  
+  // Oriente Medio
+  { name: 'Arabia Saudita', code: 'SA', region: 'Oriente Medio', flag: '🇸🇦' },
+  { name: 'Emiratos Árabes Unidos', code: 'AE', region: 'Oriente Medio', flag: '🇦🇪' },
+  { name: 'Israel', code: 'IL', region: 'Oriente Medio', flag: '🇮🇱' },
+  { name: 'Turquía', code: 'TR', region: 'Oriente Medio', flag: '🇹🇷' },
+  
+  // África
+  { name: 'Sudáfrica', code: 'ZA', region: 'África', flag: '🇿🇦' },
+  { name: 'Egipto', code: 'EG', region: 'África', flag: '🇪🇬' },
+  { name: 'Nigeria', code: 'NG', region: 'África', flag: '🇳🇬' },
+];
+
+export const SmartLocationSelector: React.FC<SmartLocationSelectorProps> = ({
+  value,
+  onChange,
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredCountries = useMemo(() => {
+    if (!searchQuery) return countries;
+    const query = searchQuery.toLowerCase();
+    return countries.filter(
+      (country) =>
+        country.name.toLowerCase().includes(query) ||
+        country.code.toLowerCase().includes(query) ||
+        country.region.toLowerCase().includes(query)
+    );
+  }, [searchQuery]);
+
+  const groupedCountries = useMemo(() => {
+    const grouped: Record<string, typeof countries> = {};
+    filteredCountries.forEach((country) => {
+      if (!grouped[country.region]) {
+        grouped[country.region] = [];
+      }
+      grouped[country.region].push(country);
+    });
+    return grouped;
+  }, [filteredCountries]);
+
+  const selectedCountry = countries.find((c) => c.name === value);
+
+  return (
+    <div className="relative w-full">
+      {/* Botón Principal */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg flex items-center justify-between hover:border-gray-400 dark:hover:border-gray-500 transition bg-white dark:bg-slate-800"
+      >
+        <div className="flex items-center gap-3">
+          {selectedCountry ? (
+            <>
+              <span className="text-2xl">{selectedCountry.flag}</span>
+              <div className="text-left">
+                <p className="text-sm font-medium text-gray-900 dark:text-white">
+                  {selectedCountry.name}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  {selectedCountry.region}
+                </p>
+              </div>
+            </>
+          ) : (
+            <>
+              <Globe className="text-gray-400" size={20} />
+              <span className="text-gray-500 dark:text-gray-400">Selecciona un país</span>
+            </>
+          )}
+        </div>
+        <Search size={20} className="text-gray-400" />
+      </button>
+
+      {/* Dropdown */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-800 border-2 border-gray-300 dark:border-gray-600 rounded-lg shadow-xl z-50 max-h-96 overflow-hidden flex flex-col"
+          >
+            {/* Barra de Búsqueda */}
+            <div className="sticky top-0 p-3 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-800">
+              <div className="flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-slate-700 rounded-lg">
+                <Search size={18} className="text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Busca un país o región..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="flex-1 bg-transparent outline-none text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                  autoFocus
+                />
+              </div>
+            </div>
+
+            {/* Lista de Países */}
+            <div className="overflow-y-auto flex-1">
+              {Object.entries(groupedCountries).map(([region, regionCountries]) => (
+                <div key={region}>
+                  <div className="sticky top-0 px-4 py-2 bg-gray-50 dark:bg-slate-700/50 border-b border-gray-200 dark:border-gray-700">
+                    <p className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
+                      {region}
+                    </p>
+                  </div>
+                  {regionCountries.map((country) => (
+                    <button
+                      key={country.code}
+                      onClick={() => {
+                        onChange(country.name);
+                        setIsOpen(false);
+                        setSearchQuery('');
+                      }}
+                      className={`w-full px-4 py-3 flex items-center gap-3 hover:bg-gray-100 dark:hover:bg-slate-700 transition text-left ${
+                        value === country.name
+                          ? 'bg-green-50 dark:bg-green-900/20 border-l-4 border-green-500'
+                          : ''
+                      }`}
+                    >
+                      <span className="text-2xl">{country.flag}</span>
+                      <div>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">
+                          {country.name}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          {country.code}
+                        </p>
+                      </div>
+                      {value === country.name && (
+                        <div className="ml-auto w-2 h-2 bg-green-500 rounded-full" />
+                      )}
+                    </button>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
