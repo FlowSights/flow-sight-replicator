@@ -1494,7 +1494,37 @@ const FlowsightAdsDashboard: React.FC = () => {
                 <BentoGridPremium />
               </div>
 
-              {/* Premium Ready to Launch Section */}
+              {/* Client Dashboard - Premium Delivery Center */}
+              <div id="client-dashboard" className="mt-12 pt-8 border-t border-white/10">
+                <ClientDashboard
+                  businessName={config.businessName}
+                  generatedAds={generatedAds}
+                  budget={config.budget}
+                  location={config.location}
+                  createdAt={new Date()}
+                  hasPaid={hasPaid}
+                  onDownloadKit={() => {
+                    if (hasPaid) {
+                      downloadPremiumCampaignKit({
+                        businessName: config.businessName,
+                        businessDescription: config.promote,
+                        targetAudience: config.idealCustomer,
+                        websiteUrl: config.websiteUrl,
+                        ads: generatedAds,
+                      });
+                      toast({
+                        title: '✅ Campaign Kit Premium Descargado',
+                        description: 'Tu estrategia de 15 páginas está lista',
+                      });
+                    } else {
+                      setShowPaymentModal(true);
+                    }
+                  }}
+                  onDownloadGuide={() => setIsGuideLightboxOpen(true)}
+                />
+              </div>
+
+              {/* Master Call-to-Action */}
               <div className="mt-12 pt-8 border-t border-white/10">
                 <PremiumReadyToLaunch
                   businessName={config.businessName}
@@ -1538,22 +1568,6 @@ const FlowsightAdsDashboard: React.FC = () => {
                   }}
                 />
               </div>
-
-              {/* Client Dashboard - Nuevo */}
-              {hasPaid && (
-                <div id="client-dashboard" className="mt-12 pt-8 border-t border-white/10">
-                  <ClientDashboard
-                    businessName={config.businessName}
-                    generatedAds={generatedAds}
-                    budget={config.budget}
-                    location={config.location}
-                    createdAt={new Date()}
-                    hasPaid={hasPaid}
-                    onDownloadKit={handleExportPDF}
-                    onDownloadGuide={() => setIsGuideLightboxOpen(true)}
-                  />
-                </div>
-              )}
 
               {/* Editable Platform Previews - Premium Gallery */}
               <div className="mt-12 pt-8 border-t border-white/10">
@@ -1603,11 +1617,10 @@ const FlowsightAdsDashboard: React.FC = () => {
         </AnimatePresence>
       </main>
 
-      {/* Apple Style Loading Screen */}
-      <AppleStyleLoadingScreen
+      {/* Premium Immersive Loading Screen */}
+      <PremiumLoadingScreen
         isVisible={isLoading}
-        currentStep={loadingStep}
-        totalSteps={4}
+        progress={loadingStep * 25}
       />
 
       {/* Mockup Lightbox */}

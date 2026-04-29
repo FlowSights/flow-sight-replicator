@@ -1,6 +1,20 @@
 import React, { useState } from 'react';
-import { Download, BarChart3, Zap, TrendingUp, Calendar, FileText } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { 
+  Download, 
+  BarChart3, 
+  Zap, 
+  TrendingUp, 
+  Calendar, 
+  FileText, 
+  Target, 
+  Users, 
+  CheckCircle2, 
+  ArrowRight,
+  Layout,
+  Globe,
+  DollarSign
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { GeneratedAd } from '@/types/ads';
 
 interface ClientDashboardProps {
@@ -41,230 +55,215 @@ export const ClientDashboard: React.FC<ClientDashboardProps> = ({
       : 0;
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-slate-900 to-slate-800 dark:from-slate-950 dark:to-slate-900 text-white rounded-xl p-8">
-        <h1 className="text-3xl font-bold mb-2">{businessName}</h1>
-        <p className="text-slate-300 mb-4">Tu Campaign Kit Premium está listo para usar</p>
-        <div className="flex flex-wrap gap-6 text-sm">
-          <div>
-            <p className="text-slate-400">Ubicación</p>
-            <p className="font-semibold">{location}</p>
+    <div className="space-y-10">
+      {/* Premium Header Section - Glassmorphism */}
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-white/5 p-10 backdrop-blur-3xl"
+      >
+        <div className="absolute -right-20 -top-20 h-80 w-80 rounded-full bg-emerald-500/10 blur-[100px]" />
+        <div className="absolute -left-20 -bottom-20 h-80 w-80 rounded-full bg-blue-500/5 blur-[100px]" />
+        
+        <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-10">
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-xs font-black text-emerald-500 uppercase tracking-[0.3em]">Campaign Active</span>
+            </div>
+            <h1 className="text-5xl font-black text-white tracking-tight">{businessName}</h1>
+            <p className="text-xl text-gray-400 font-medium">Tu Campaign Kit Premium está listo para escalar</p>
+            
+            <div className="flex flex-wrap gap-4 pt-4">
+              {[
+                { icon: Globe, label: location },
+                { icon: DollarSign, label: `$${budget}` },
+                { icon: Calendar, label: createdAt.toLocaleDateString('es-ES') },
+                { icon: Layout, label: `${generatedAds.length} Anuncios` },
+              ].map((item, i) => (
+                <div key={i} className="flex items-center gap-2.5 px-4 py-2 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
+                  <item.icon className="w-4 h-4 text-emerald-400" />
+                  <span className="text-sm font-bold text-gray-300">{item.label}</span>
+                </div>
+              ))}
+            </div>
           </div>
-          <div>
-            <p className="text-slate-400">Presupuesto</p>
-            <p className="font-semibold">${budget}</p>
+          
+          <div className="flex flex-col items-end gap-4">
+            <div className="p-6 rounded-[2rem] bg-emerald-500/10 border border-emerald-500/20 backdrop-blur-xl text-center min-w-[180px]">
+              <p className="text-xs font-black text-emerald-500 uppercase tracking-widest mb-1">Score Global</p>
+              <p className="text-5xl font-black text-white">{avgScore}<span className="text-2xl text-emerald-500/50">/100</span></p>
+            </div>
           </div>
-          <div>
-            <p className="text-slate-400">Creado</p>
-            <p className="font-semibold">{createdAt.toLocaleDateString('es-ES')}</p>
-          </div>
-          <div>
-            <p className="text-slate-400">Anuncios</p>
-            <p className="font-semibold">{generatedAds.length} listos</p>
-          </div>
+        </div>
+      </motion.div>
+
+      {/* Premium Tabs */}
+      <div className="flex justify-center">
+        <div className="inline-flex p-1.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl">
+          {[
+            { id: 'overview', label: 'Resumen', icon: BarChart3 },
+            { id: 'assets', label: 'Mis Activos', icon: Download },
+            { id: 'analytics', label: 'Rendimiento', icon: TrendingUp },
+          ].map(({ id, label, icon: Icon }) => (
+            <button
+              key={id}
+              onClick={() => setActiveTab(id as any)}
+              className={`px-8 py-3.5 rounded-xl font-bold flex items-center gap-3 transition-all duration-300 ${
+                activeTab === id
+                  ? 'bg-white text-black shadow-xl'
+                  : 'text-gray-400 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              <Icon size={20} />
+              {label}
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex gap-2 border-b border-gray-200 dark:border-gray-700">
-        {[
-          { id: 'overview', label: 'Resumen', icon: BarChart3 },
-          { id: 'assets', label: 'Mis Activos', icon: Download },
-          { id: 'analytics', label: 'Rendimiento', icon: TrendingUp },
-        ].map(({ id, label, icon: Icon }) => (
-          <button
-            key={id}
-            onClick={() => setActiveTab(id as any)}
-            className={`px-4 py-3 font-medium flex items-center gap-2 border-b-2 transition ${
-              activeTab === id
-                ? 'border-green-500 text-green-600 dark:text-green-400'
-                : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300'
-            }`}
-          >
-            <Icon size={18} />
-            {label}
-          </button>
-        ))}
-      </div>
+      {/* Content Area */}
+      <div className="min-h-[400px]">
+        <AnimatePresence mode="wait">
+          {/* Resumen Tab */}
+          {activeTab === 'overview' && (
+            <motion.div
+              key="overview"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="grid grid-cols-1 md:grid-cols-4 gap-6"
+            >
+              {/* Platform Distribution Cards */}
+              {[
+                { label: 'Meta Ads', value: platformCount.meta, color: 'blue' },
+                { label: 'Google Ads', value: platformCount.google, color: 'red' },
+                { label: 'TikTok Ads', value: platformCount.tiktok, color: 'pink' },
+                { label: 'LinkedIn Ads', value: platformCount.linkedin, color: 'indigo' },
+              ].map((stat, i) => (
+                <div key={i} className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-xl transition-all hover:border-white/20">
+                  <div className={`absolute -right-10 -top-10 h-32 w-32 rounded-full bg-${stat.color}-500/10 blur-2xl transition-all group-hover:bg-${stat.color}-500/20`} />
+                  <p className="text-xs font-black text-gray-500 uppercase tracking-widest mb-2">{stat.label}</p>
+                  <p className="text-4xl font-black text-white">{stat.value}</p>
+                  <div className="mt-4 flex items-center gap-2 text-emerald-400 text-xs font-bold">
+                    <CheckCircle2 className="w-3 h-3" />
+                    <span>Optimizado</span>
+                  </div>
+                </div>
+              ))}
 
-      {/* Contenido por Tab */}
-      <div>
-        {/* Resumen */}
-        {activeTab === 'overview' && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="space-y-6"
-          >
-            {/* Estadísticas */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {/* Next Steps Bento Box */}
+              <div className="md:col-span-4 rounded-[2.5rem] border border-white/10 bg-white/5 p-10 backdrop-blur-xl">
+                <div className="flex items-center gap-4 mb-10">
+                  <div className="p-3 rounded-2xl bg-emerald-500/20 border border-emerald-500/30">
+                    <Zap className="w-6 h-6 text-emerald-400" />
+                  </div>
+                  <h3 className="text-2xl font-black text-white tracking-tight">Hoja de Ruta de Implementación</h3>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
+                  {[
+                    { step: '01', title: 'Descarga Premium', desc: 'Obtén tu Campaign Kit en formato PDF profesional de 15 páginas.' },
+                    { step: '02', title: 'Revisión Visual', desc: 'Analiza la guía de implementación para evitar errores técnicos.' },
+                    { step: '03', title: 'Lanzamiento', desc: 'Sube tus anuncios optimizados y activa el rastreo de conversiones.' },
+                    { step: '04', title: 'Escalado IA', desc: 'Monitorea el rendimiento y ajusta presupuestos según resultados.' },
+                  ].map((item, i) => (
+                    <div key={i} className="relative group">
+                      <span className="text-6xl font-black text-white/5 absolute -top-8 -left-4 transition-all group-hover:text-white/10">{item.step}</span>
+                      <div className="relative z-10 space-y-3">
+                        <h4 className="text-lg font-bold text-white">{item.title}</h4>
+                        <p className="text-sm text-gray-400 leading-relaxed font-medium">{item.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Mis Activos Tab */}
+          {activeTab === 'assets' && (
+            <motion.div
+              key="assets"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="grid grid-cols-1 md:grid-cols-2 gap-8"
+            >
               {[
                 {
-                  label: 'Puntuación Promedio',
-                  value: `${avgScore}/100`,
-                  icon: Zap,
-                  color: 'from-yellow-400 to-orange-500',
+                  title: 'Campaign Kit Premium',
+                  desc: 'Informe estratégico de 15+ páginas con análisis, copys y guías.',
+                  icon: FileText,
+                  action: onDownloadKit,
+                  primary: true
                 },
                 {
-                  label: 'Anuncios Meta',
-                  value: platformCount.meta,
-                  icon: FileText,
-                  color: 'from-blue-400 to-blue-600',
-                },
-                {
-                  label: 'Anuncios Google',
-                  value: platformCount.google,
-                  icon: FileText,
-                  color: 'from-red-400 to-yellow-500',
-                },
-                {
-                  label: 'Anuncios TikTok',
-                  value: platformCount.tiktok,
-                  icon: FileText,
-                  color: 'from-black to-pink-600',
-                },
-              ].map((stat, i) => {
-                const Icon = stat.icon;
-                return (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: i * 0.1 }}
-                    className={`bg-gradient-to-br ${stat.color} text-white rounded-lg p-4 shadow-lg`}
-                  >
-                    <Icon size={20} className="mb-2 opacity-80" />
-                    <p className="text-xs opacity-90">{stat.label}</p>
-                    <p className="text-2xl font-bold mt-1">{stat.value}</p>
-                  </motion.div>
-                );
-              })}
-            </div>
-
-            {/* Próximos Pasos */}
-            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                <Zap size={20} className="text-blue-600" />
-                Próximos Pasos
-              </h3>
-              <ol className="space-y-3 text-sm text-gray-700 dark:text-gray-300">
-                <li className="flex gap-3">
-                  <span className="font-bold text-blue-600 flex-shrink-0">1</span>
-                  <span>
-                    <strong>Descarga tu Kit Premium</strong> - Incluye todos tus anuncios optimizados,
-                    guía de lanzamiento y métricas estimadas.
-                  </span>
-                </li>
-                <li className="flex gap-3">
-                  <span className="font-bold text-blue-600 flex-shrink-0">2</span>
-                  <span>
-                    <strong>Revisa la Guía Visual</strong> - Pasos claros para publicar en cada
-                    plataforma sin errores.
-                  </span>
-                </li>
-                <li className="flex gap-3">
-                  <span className="font-bold text-blue-600 flex-shrink-0">3</span>
-                  <span>
-                    <strong>Publica y Monitorea</strong> - Usa nuestros textos optimizados y
-                    monitorea el rendimiento.
-                  </span>
-                </li>
-                <li className="flex gap-3">
-                  <span className="font-bold text-blue-600 flex-shrink-0">4</span>
-                  <span>
-                    <strong>Optimiza</strong> - Ajusta según resultados y repite el proceso para
-                    mejores resultados.
-                  </span>
-                </li>
-              </ol>
-            </div>
-          </motion.div>
-        )}
-
-        {/* Mis Activos */}
-        {activeTab === 'assets' && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="space-y-4"
-          >
-            {!hasPaid ? (
-              <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-6 text-center">
-                <p className="text-gray-700 dark:text-gray-300 mb-4">
-                  Necesitas acceso premium para descargar tus activos
-                </p>
-                <button className="bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-2 rounded-lg font-semibold transition">
-                  Obtener Acceso Premium
-                </button>
-              </div>
-            ) : (
-              <>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {[
-                    {
-                      title: 'Campaign Kit Premium',
-                      description: 'PDF con todos tus anuncios, métricas y guía de lanzamiento',
-                      icon: Download,
-                      action: onDownloadKit,
-                      color: 'from-green-400 to-emerald-600',
-                    },
-                    {
-                      title: 'Guía Visual Paso a Paso',
-                      description: 'Instrucciones detalladas para publicar en cada plataforma',
-                      icon: FileText,
-                      action: onDownloadGuide,
-                      color: 'from-blue-400 to-blue-600',
-                    },
-                  ].map((asset, i) => {
-                    const Icon = asset.icon;
-                    return (
-                      <motion.div
-                        key={i}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: i * 0.1 }}
-                        className={`bg-gradient-to-br ${asset.color} text-white rounded-lg p-6 shadow-lg hover:shadow-xl transition cursor-pointer`}
-                        onClick={asset.action}
-                      >
-                        <Icon size={32} className="mb-3 opacity-80" />
-                        <h4 className="font-bold text-lg mb-1">{asset.title}</h4>
-                        <p className="text-sm opacity-90 mb-4">{asset.description}</p>
-                        <button className="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg font-semibold text-sm transition">
-                          Descargar Ahora
-                        </button>
-                      </motion.div>
-                    );
-                  })}
+                  title: 'Guía Visual de Implementación',
+                  desc: 'Instrucciones técnicas paso a paso para cada plataforma.',
+                  icon: Target,
+                  action: onDownloadGuide,
+                  primary: false
+                }
+              ].map((asset, i) => (
+                <div 
+                  key={i} 
+                  className={`group relative overflow-hidden rounded-[2.5rem] border p-10 backdrop-blur-xl transition-all duration-500 cursor-pointer ${
+                    asset.primary 
+                      ? 'bg-white border-white' 
+                      : 'bg-white/5 border-white/10 hover:border-white/20'
+                  }`}
+                  onClick={asset.action}
+                >
+                  <div className="flex flex-col h-full justify-between">
+                    <div>
+                      <div className={`mb-8 inline-flex p-4 rounded-3xl ${asset.primary ? 'bg-black' : 'bg-white/10'}`}>
+                        <asset.icon className={`w-8 h-8 ${asset.primary ? 'text-white' : 'text-emerald-400'}`} />
+                      </div>
+                      <h3 className={`text-3xl font-black mb-4 ${asset.primary ? 'text-black' : 'text-white'}`}>{asset.title}</h3>
+                      <p className={`text-lg font-medium leading-relaxed mb-10 ${asset.primary ? 'text-black/60' : 'text-gray-400'}`}>
+                        {asset.desc}
+                      </p>
+                    </div>
+                    <div className={`flex items-center gap-3 font-bold ${asset.primary ? 'text-black' : 'text-white'}`}>
+                      <span>Descargar Ahora</span>
+                      <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
+                    </div>
+                  </div>
                 </div>
-              </>
-            )}
-          </motion.div>
-        )}
+              ))}
+            </motion.div>
+          )}
 
-        {/* Rendimiento */}
-        {activeTab === 'analytics' && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="space-y-6"
-          >
-            <div className="bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900 rounded-lg p-8 text-center">
-              <TrendingUp size={48} className="mx-auto text-green-500 mb-4" />
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                Análisis de Rendimiento
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-6">
-                Una vez que publiques tus anuncios, aquí verás métricas en tiempo real como clics,
-                impresiones, conversiones y ROI.
-              </p>
-              <p className="text-sm text-gray-500 dark:text-gray-500">
-                💡 Tip: Usa la Guía Visual para asegurar que publicas correctamente y obtengas
-                los mejores resultados.
-              </p>
-            </div>
-          </motion.div>
-        )}
+          {/* Rendimiento Tab */}
+          {activeTab === 'analytics' && (
+            <motion.div
+              key="analytics"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="flex items-center justify-center h-full"
+            >
+              <div className="max-w-xl text-center space-y-8">
+                <div className="mx-auto w-24 h-24 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
+                  <TrendingUp className="w-10 h-10 text-emerald-400" />
+                </div>
+                <div className="space-y-4">
+                  <h3 className="text-3xl font-black text-white">Análisis en Tiempo Real</h3>
+                  <p className="text-xl text-gray-400 font-medium leading-relaxed">
+                    Una vez que tus anuncios estén activos, sincronizaremos tus métricas de Google, Meta, TikTok y LinkedIn aquí mismo.
+                  </p>
+                </div>
+                <div className="pt-6">
+                  <div className="inline-flex items-center gap-3 px-6 py-3 rounded-2xl bg-white/5 border border-white/10 text-gray-400 text-sm font-bold">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                    Sincronización API Disponible en Fase de Lanzamiento
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

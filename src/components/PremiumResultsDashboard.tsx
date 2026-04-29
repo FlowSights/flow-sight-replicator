@@ -1,28 +1,27 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-  FileText,
-  BarChart3,
-  Download,
-  Eye,
-  Zap,
+import React from 'react';
+import { motion } from 'framer-motion';
+import { 
+  FileText, 
+  BarChart3, 
+  Zap, 
+  Layout, 
+  ArrowRight, 
   CheckCircle2,
-  ArrowRight,
-  Layout,
+  TrendingUp,
+  Target,
+  Users
 } from 'lucide-react';
-import { Button } from './ui/button';
 import { Card } from './ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
+import { Button } from './ui/button';
 
 interface PremiumResultsDashboardProps {
   campaignName: string;
   businessName: string;
   platform: 'google' | 'meta' | 'tiktok' | 'linkedin';
   generatedAds: any[];
-  onExportPDF?: () => void;
+  onDownloadCampaignKit?: () => void;
   onViewDashboard?: () => void;
   onDownloadAssets?: () => void;
-  onDownloadCampaignKit?: () => void;
 }
 
 export const PremiumResultsDashboard: React.FC<PremiumResultsDashboardProps> = ({
@@ -30,315 +29,185 @@ export const PremiumResultsDashboard: React.FC<PremiumResultsDashboardProps> = (
   businessName,
   platform,
   generatedAds,
-  onExportPDF,
+  onDownloadCampaignKit,
   onViewDashboard,
   onDownloadAssets,
-  onDownloadCampaignKit,
 }) => {
-  const [activeTab, setActiveTab] = useState('overview');
-
-  // Colores dinámicos por plataforma
-  const platformColors: Record<string, { gradient: string; icon: string; description: string }> = {
-    google: {
-      gradient: 'from-red-500 via-yellow-500 to-blue-500',
-      icon: '🔍',
-      description: 'Estrategia completa para Google Ads'
-    },
-    meta: {
-      gradient: 'from-blue-600 to-blue-400',
-      icon: '📱',
-      description: 'Estrategia completa para Meta (Facebook/Instagram)'
-    },
-    tiktok: {
-      gradient: 'from-gray-900 via-black to-pink-500',
-      icon: '🎵',
-      description: 'Estrategia completa para TikTok Ads'
-    },
-    linkedin: {
-      gradient: 'from-blue-700 to-blue-500',
-      icon: '💼',
-      description: 'Estrategia completa para LinkedIn Ads'
-    },
-  };
-
   const platformNames: Record<string, string> = {
     google: 'Google Ads',
-    meta: 'Meta (Facebook/Instagram)',
+    meta: 'Meta Ads',
     tiktok: 'TikTok Ads',
     linkedin: 'LinkedIn Ads',
   };
 
-  const currentPlatform = platformColors[platform];
-
-  const deliverables = [
-    {
-      icon: <FileText className="w-6 h-6" />,
-      title: 'Campaing Kit Premium',
-      description: 'Informe profesional de 15+ páginas con análisis, copys y guías paso a paso',
-      action: 'Descargar Kit',
-      onClick: onDownloadCampaignKit || onExportPDF,
-      color: 'emerald',
-    },
-    {
-      icon: <Layout className="w-6 h-6" />,
-      title: 'Dashboard Personalizado',
-      description: 'Panel interactivo para editar, previsualizar y monitorear tu campaña',
-      action: 'Abrir Dashboard',
-      onClick: onViewDashboard,
-      color: 'blue',
-    },
-    {
-      icon: <Zap className="w-6 h-6" />,
-      title: 'Assets Optimizados para tu Plataforma',
-      description: 'Imágenes y archivos listos para importar directamente en tu plataforma',
-      action: 'Descargar Assets',
-      onClick: onDownloadAssets,
-      color: 'purple',
-    },
-  ];
-
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="space-y-6"
-    >
-      {/* Hero Section - Banner Dinámico */}
-      <motion.div
-        key={platform}
-        initial={{ opacity: 0, y: 10 }}
+    <div className="space-y-8">
+      {/* Header Info - Glassmorphism */}
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className={`bg-gradient-to-r ${currentPlatform.gradient} rounded-3xl p-8 text-white shadow-2xl overflow-hidden relative`}
+        className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-xl"
       >
-        {/* Fondo decorativo */}
-        <div className="absolute top-0 right-0 text-8xl opacity-10">{currentPlatform.icon}</div>
-        <div className="absolute bottom-0 left-0 w-40 h-40 bg-white/5 rounded-full -mb-20 -ml-20" />
-        
-        <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-2">
-            <CheckCircle2 className="w-6 h-6" />
-            <span className="text-sm font-bold uppercase tracking-widest">Campaña Generada</span>
+        <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-emerald-500/10 blur-3xl" />
+        <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+          <div>
+            <h2 className="text-3xl font-black text-white tracking-tight">{businessName}</h2>
+            <p className="text-gray-400 mt-1">Estrategia Premium de Alto Rendimiento</p>
+            <div className="flex flex-wrap gap-4 mt-4">
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10">
+                <Target className="w-4 h-4 text-emerald-400" />
+                <span className="text-xs font-bold text-gray-300 uppercase tracking-wider">{platformNames[platform]}</span>
+              </div>
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10">
+                <Users className="w-4 h-4 text-blue-400" />
+                <span className="text-xs font-bold text-gray-300 uppercase tracking-wider">Audiencia Optimizada</span>
+              </div>
+            </div>
           </div>
-          <h1 className="text-4xl font-black mb-2">
-            {campaignName || 'Tu Campaña'}
-          </h1>
-          <p className="text-lg opacity-90">
-            {currentPlatform.description}
-          </p>
+          <div className="flex flex-col items-end">
+            <span className="text-xs font-black text-emerald-500 uppercase tracking-[0.2em] mb-1">Status</span>
+            <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
+              <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+              <span className="text-sm font-bold text-emerald-500">LISTO PARA LANZAR</span>
+            </div>
+          </div>
         </div>
       </motion.div>
 
-      {/* Tabs de Contenido */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
-          <TabsTrigger value="overview" className="gap-2">
-            <BarChart3 className="w-4 h-4" />
-            <span className="hidden sm:inline">Resumen</span>
-          </TabsTrigger>
-          <TabsTrigger value="deliverables" className="gap-2">
-            <Download className="w-4 h-4" />
-            <span className="hidden sm:inline">Entregables</span>
-          </TabsTrigger>
-          <TabsTrigger value="next-steps" className="gap-2">
-            <ArrowRight className="w-4 h-4" />
-            <span className="hidden sm:inline">Próximos Pasos</span>
-          </TabsTrigger>
-        </TabsList>
-
-        {/* Tab: Resumen */}
-        <TabsContent value="overview" className="space-y-4">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-4"
-          >
-            <Card className="p-6">
-              <div className="text-3xl font-black text-emerald-600 mb-2">
-                {generatedAds.length}
-              </div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Variantes de Anuncios Generadas
-              </p>
-              <p className="text-xs text-gray-500 mt-2">
-                Optimizadas para máxima conversión
-              </p>
-            </Card>
-
-            <Card className="p-6">
-              <div className="text-3xl font-black text-blue-600 mb-2">
-                {Math.max(...generatedAds.map((ad) => ad.score || 0))}%
-              </div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Score de Calidad Promedio
-              </p>
-              <p className="text-xs text-gray-500 mt-2">
-                Basado en análisis de IA
-              </p>
-            </Card>
-
-            <Card className="p-6">
-              <div className="text-3xl font-black text-purple-600 mb-2">
-                3
-              </div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Formatos de Entrega
-              </p>
-              <p className="text-xs text-gray-500 mt-2">
-                PDF, Dashboard, Assets
-              </p>
-            </Card>
-          </motion.div>
-
-          {/* Anuncios Generados */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="space-y-3"
-          >
-            <h3 className="font-bold text-gray-900 dark:text-white">Anuncios Generados</h3>
-            {generatedAds.slice(0, 3).map((ad, idx) => (
-              <Card key={idx} className="p-4 border-l-4 border-emerald-500">
-                <div className="flex items-start justify-between mb-2">
-                  <div>
-                    <p className="font-bold text-gray-900 dark:text-white text-sm">
-                      {ad.type}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">{ad.headline}</p>
-                  </div>
-                  <span className="px-2 py-1 bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded text-xs font-bold">
-                    {ad.score}%
-                  </span>
+      {/* Bento Grid - Assets & Metrics */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Main Deliverable Card */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.1 }}
+          className="md:col-span-2 group relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 to-transparent p-8 backdrop-blur-xl transition-all hover:border-emerald-500/30"
+        >
+          <div className="flex flex-col h-full justify-between">
+            <div>
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-3 rounded-2xl bg-emerald-500/20 border border-emerald-500/30">
+                  <FileText className="w-6 h-6 text-emerald-400" />
                 </div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
-                  {ad.description}
-                </p>
-              </Card>
-            ))}
-          </motion.div>
-        </TabsContent>
+                <h3 className="text-xl font-bold text-white">Campaign Kit Premium</h3>
+              </div>
+              <p className="text-gray-400 leading-relaxed mb-8">
+                Documento estratégico de 15 páginas con análisis de mercado, psicología del consumidor, 
+                variantes de copy optimizadas y hoja de ruta de implementación técnica.
+              </p>
+            </div>
+            <Button 
+              onClick={onDownloadCampaignKit}
+              className="w-full md:w-auto bg-white text-black hover:bg-emerald-50 font-bold py-6 rounded-2xl flex items-center gap-2 group"
+            >
+              Descargar Dossier PDF
+              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+            </Button>
+          </div>
+        </motion.div>
 
-        {/* Tab: Entregables */}
-        <TabsContent value="deliverables" className="space-y-4">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-4"
+        {/* ROI Projection Card */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.2 }}
+          className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-xl"
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-3 rounded-2xl bg-blue-500/20 border border-blue-500/30">
+              <TrendingUp className="w-6 h-6 text-blue-400" />
+            </div>
+            <h3 className="text-lg font-bold text-white">Rendimiento Est.</h3>
+          </div>
+          <div className="space-y-6">
+            <div>
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">ROI Proyectado</p>
+              <p className="text-4xl font-black text-emerald-400">+340%</p>
+            </div>
+            <div className="pt-4 border-t border-white/5">
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">CTR Estimado</p>
+              <p className="text-2xl font-bold text-white">4.2% - 5.8%</p>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Secondary Assets Card */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.3 }}
+          className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-xl group hover:border-blue-500/30 transition-all"
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-3 rounded-2xl bg-purple-500/20 border border-purple-500/30">
+              <Zap className="w-6 h-6 text-purple-400" />
+            </div>
+            <h3 className="text-lg font-bold text-white">Assets Digitales</h3>
+          </div>
+          <p className="text-sm text-gray-400 mb-6">
+            Paquete completo de imágenes y archivos de configuración listos para importar.
+          </p>
+          <Button 
+            variant="outline"
+            onClick={onDownloadAssets}
+            className="w-full border-white/10 bg-white/5 hover:bg-white/10 text-white font-bold py-4 rounded-xl"
           >
-            <AnimatePresence>
-              {deliverables.map((item, idx) => (
-                <motion.div
-                  key={idx}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: idx * 0.1 }}
-                >
-                  <Card className="p-6 h-full flex flex-col hover:shadow-lg transition-shadow">
-                    <div
-                      className={`w-12 h-12 rounded-lg bg-${item.color}-500/20 text-${item.color}-600 dark:text-${item.color}-400 flex items-center justify-center mb-4`}
-                    >
-                      {item.icon}
-                    </div>
-                    <h3 className="font-bold text-gray-900 dark:text-white mb-2">
-                      {item.title}
-                    </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 flex-1">
-                      {item.description}
-                    </p>
-                    <Button
-                      onClick={item.onClick}
-                      className={`w-full bg-${item.color}-600 hover:bg-${item.color}-700 text-white gap-2`}
-                    >
-                      <Download className="w-4 h-4" />
-                      {item.action}
-                    </Button>
-                  </Card>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </motion.div>
-        </TabsContent>
+            Descargar Assets
+          </Button>
+        </motion.div>
 
-        {/* Tab: Próximos Pasos */}
-        <TabsContent value="next-steps" className="space-y-4">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="space-y-3"
-          >
-            {[
-              {
-                step: 1,
-                title: 'Descarga tu Kit Premium',
-                description: 'Obtén el PDF estratégico y los assets optimizados',
-              },
-              {
-                step: 2,
-                title: 'Personaliza en el Dashboard',
-                description: 'Edita los copys directamente sobre las previsualizaciones',
-              },
-              {
-                step: 3,
-                title: 'Importa a la Plataforma',
-                description: 'Usa nuestros archivos listos para importar en Google Ads, Meta, etc.',
-              },
-              {
-                step: 4,
-                title: 'Lanza tu Campaña',
-                description: 'Sigue la guía paso a paso incluida en tu kit',
-              },
-              {
-                step: 5,
-                title: 'Monitorea Resultados',
-                description: 'Usa el dashboard para trackear performance en tiempo real',
-              },
-            ].map((item, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: idx * 0.1 }}
-                className="flex gap-4 items-start"
-              >
-                <div className="w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold flex-shrink-0">
-                  {item.step}
-                </div>
-                <div className="flex-1">
-                  <h4 className="font-bold text-gray-900 dark:text-white">
-                    {item.title}
-                  </h4>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                    {item.description}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </TabsContent>
-      </Tabs>
+        {/* Dashboard Card */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.4 }}
+          className="md:col-span-2 relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-xl group hover:border-emerald-500/30 transition-all"
+        >
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-2xl bg-emerald-500/20 border border-emerald-500/30">
+                <Layout className="w-6 h-6 text-emerald-400" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-white">Dashboard Interactivo</h3>
+                <p className="text-sm text-gray-400">Personaliza y monitorea tu campaña en tiempo real.</p>
+              </div>
+            </div>
+            <Button 
+              onClick={onViewDashboard}
+              className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-8 py-4 rounded-xl"
+            >
+              Abrir Dashboard
+            </Button>
+          </div>
+        </motion.div>
+      </div>
 
-      {/* CTA Final */}
+      {/* Implementation Roadmap - Professional Look */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl p-6 text-white text-center"
+        transition={{ delay: 0.5 }}
+        className="rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-xl"
       >
-        <p className="text-sm font-semibold opacity-90 mb-2">Listo para Lanzar</p>
-        <h3 className="text-2xl font-black mb-3">
-          Tu Estrategia Premium está Completa
-        </h3>
-        <p className="text-sm opacity-90 mb-4">
-          Todos tus entregables están listos. Descarga tu Campaing Kit completo y comienza a generar resultados hoy mismo.
-        </p>
-        <Button
-          onClick={onExportPDF}
-          className="bg-white text-emerald-600 hover:bg-gray-100 font-bold gap-2"
-        >
-          <Download className="w-4 h-4" />
-          Descargar Campaing Kit Completo
-        </Button>
+        <h3 className="text-sm font-black text-white uppercase tracking-[0.3em] mb-8">Hoja de Ruta de Implementación</h3>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          {[
+            { step: '01', title: 'Integración', desc: 'Instalación de píxeles y tracking' },
+            { step: '02', title: 'Carga', desc: 'Importación de assets y copys' },
+            { step: '03', title: 'Testeo', desc: 'Lanzamiento de variantes A/B' },
+            { step: '04', title: 'Escalado', desc: 'Optimización de presupuesto' },
+          ].map((item, i) => (
+            <div key={i} className="relative">
+              <span className="text-4xl font-black text-white/5 absolute -top-4 -left-2">{item.step}</span>
+              <div className="relative z-10">
+                <h4 className="text-white font-bold mb-2">{item.title}</h4>
+                <p className="text-xs text-gray-500 leading-relaxed">{item.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
       </motion.div>
-    </motion.div>
+    </div>
   );
 };
