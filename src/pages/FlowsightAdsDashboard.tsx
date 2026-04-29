@@ -236,6 +236,9 @@ const FlowsightAdsDashboard: React.FC = () => {
   const handleExportPDF = () => {
     if (generatedAds.length === 0) return;
 
+    // Filtrar ads solo de la plataforma seleccionada
+    const platformAds = generatedAds.filter(ad => ad.platform === selectedPlatform);
+    
     const pdfData = {
       businessName: config.businessName,
       websiteUrl: config.websiteUrl,
@@ -244,7 +247,7 @@ const FlowsightAdsDashboard: React.FC = () => {
       idealCustomer: config.idealCustomer,
       budget: config.budget,
       platform: selectedPlatform,
-      ads: generatedAds.map((ad) => ({
+      ads: platformAds.map((ad) => ({
         type: ad.type,
         headline: ad.headline,
         description: ad.description,
@@ -256,20 +259,31 @@ const FlowsightAdsDashboard: React.FC = () => {
       userImage: config.userImage || undefined,
     };
 
+    if (platformAds.length === 0) {
+      toast({
+        title: '⚠️ No hay anuncios',
+        description: `No hay anuncios generados para ${selectedPlatform}`,
+      });
+      return;
+    }
+    
     downloadPremiumPDFV2(pdfData);
     toast({
       title: '✅ Campaing Kit Descargado',
-      description: 'Tu estrategia premium está lista',
+      description: `Kit personalizado para ${selectedPlatform} listo`,
     });
   };
 
   const handleDownloadAssets = () => {
     if (generatedAds.length === 0) return;
 
+    // Filtrar ads solo de la plataforma seleccionada
+    const platformAds = generatedAds.filter(ad => ad.platform === selectedPlatform);
+    
     const assetsData = {
       businessName: config.businessName,
       platform: selectedPlatform,
-      ads: generatedAds.map((ad) => ({
+      ads: platformAds.map((ad) => ({
         headline: ad.headline,
         description: ad.description,
         cta: ad.cta,
@@ -279,10 +293,18 @@ const FlowsightAdsDashboard: React.FC = () => {
       websiteUrl: config.websiteUrl,
     };
 
+    if (platformAds.length === 0) {
+      toast({
+        title: '⚠️ No hay assets',
+        description: `No hay anuncios para ${selectedPlatform}`,
+      });
+      return;
+    }
+    
     downloadAssetsPackage(assetsData);
     toast({
       title: '✅ Assets Descargados',
-      description: 'Archivos listos para importar en tu plataforma',
+      description: `Assets para ${selectedPlatform} listos para importar`,
     });
   };
 
@@ -1414,15 +1436,18 @@ const FlowsightAdsDashboard: React.FC = () => {
               />
 
               {/* Premium Results Dashboard */}
-              <PremiumResultsDashboard
-                campaignName={config.businessName}
-                businessName={config.businessName}
-                platform={selectedPlatform}
-                generatedAds={generatedAds}
-                onExportPDF={handleExportPDF}
-                onViewDashboard={handleViewDashboard}
-                onDownloadAssets={handleDownloadAssets}
-              />
+              <AnimatePresence mode="wait">
+                <PremiumResultsDashboard
+                  key={selectedPlatform}
+                  campaignName={config.businessName}
+                  businessName={config.businessName}
+                  platform={selectedPlatform}
+                  generatedAds={generatedAds}
+                  onExportPDF={handleExportPDF}
+                  onViewDashboard={handleViewDashboard}
+                  onDownloadAssets={handleDownloadAssets}
+                />
+              </AnimatePresence>
 
               {/* Simplified ROI Calculator */}
               <div className="mt-12 pt-8 border-t border-white/10">
