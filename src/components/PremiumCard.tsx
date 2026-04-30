@@ -17,9 +17,9 @@ export const PremiumCard = ({
   glassEffect = "medium",
 }: PremiumCardProps) => {
   const glassEffectClasses = {
-    light: "backdrop-blur-sm bg-card/40 border-border/30",
-    medium: "backdrop-blur-xl bg-card/50 border-border/50",
-    strong: "backdrop-blur-2xl bg-card/60 border-border/60",
+    light: "backdrop-blur-md bg-white/5 dark:bg-white/3 border border-white/20 dark:border-white/10 shadow-sm",
+    medium: "backdrop-blur-xl bg-white/8 dark:bg-white/5 border border-white/25 dark:border-white/15 shadow-lg shadow-black/10 dark:shadow-black/30",
+    strong: "backdrop-blur-2xl bg-white/12 dark:bg-white/8 border border-white/30 dark:border-white/20 shadow-2xl shadow-black/20 dark:shadow-black/40",
   };
 
   return (
@@ -31,21 +31,24 @@ export const PremiumCard = ({
       whileHover={
         hoverEffect
           ? {
-              y: -8,
-              boxShadow: "0 20px 60px -20px hsl(var(--primary) / 0.3)",
+              y: -12,
+              boxShadow: "0 30px 80px -20px rgba(16, 185, 129, 0.25)",
             }
           : undefined
       }
       className={`
-        relative rounded-2xl border transition-all duration-300
+        relative rounded-2xl transition-all duration-300 group
         ${glassEffectClasses[glassEffect]}
-        ${hoverEffect ? "cursor-pointer" : ""}
+        ${hoverEffect ? "cursor-pointer hover:shadow-emerald-500/20" : ""}
         ${className}
       `}
     >
       {/* EFECTO DE BORDE GRADIENTE AL HOVER */}
       {hoverEffect && (
-        <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+        <>
+          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+          <div className="absolute -inset-px rounded-2xl bg-gradient-to-br from-emerald-500/20 via-transparent to-transparent opacity-0 group-hover:opacity-50 blur-xl transition-opacity duration-300 pointer-events-none" />
+        </>
       )}
 
       {/* CONTENIDO */}
