@@ -10,6 +10,7 @@ interface Particle {
   duration: number;
   delay: number;
   color: string;
+  glowColor: string;
 }
 
 export const DataFlowVisualization = () => {
@@ -25,18 +26,29 @@ export const DataFlowVisualization = () => {
   const rotateY = useTransform(scrollYProgress, [0, 1], [-15, 15]);
 
   useEffect(() => {
-    const colors = ["#10b981", "#34d399", "#059669", "#6ee7b7"];
-    // Aumentamos el número de partículas para mayor densidad
-    const newParticles: Particle[] = Array.from({ length: 40 }, (_, i) => ({
-      id: i,
-      x: Math.random() * 120 - 60,
-      y: Math.random() * 120 - 60,
-      z: Math.random() * 200 - 100, // Mayor rango en Z para profundidad
-      size: Math.random() * 4 + 1,
-      duration: Math.random() * 8 + 10,
-      delay: Math.random() * 5,
-      color: colors[Math.floor(Math.random() * colors.length)],
-    }));
+    const colors = [
+      { base: "#10b981", glow: "rgba(16, 185, 129, 0.6)" },
+      { base: "#34d399", glow: "rgba(52, 211, 153, 0.6)" },
+      { base: "#059669", glow: "rgba(5, 150, 105, 0.6)" },
+      { base: "#6ee7b7", glow: "rgba(110, 231, 183, 0.6)" },
+      { base: "#ffffff", glow: "rgba(255, 255, 255, 0.4)" } // Partículas blancas para brillo extra
+    ];
+    
+    // Aumentamos a 70 partículas para una densidad óptima
+    const newParticles: Particle[] = Array.from({ length: 70 }, (_, i) => {
+      const colorSet = colors[Math.floor(Math.random() * colors.length)];
+      return {
+        id: i,
+        x: Math.random() * 140 - 70,
+        y: Math.random() * 140 - 70,
+        z: Math.random() * 240 - 120,
+        size: Math.random() * 5 + 1.5, // Un poco más grandes para notar el efecto esférico
+        duration: Math.random() * 10 + 12,
+        delay: Math.random() * 5,
+        color: colorSet.base,
+        glowColor: colorSet.glow,
+      };
+    });
     setParticles(newParticles);
   }, []);
 
@@ -57,10 +69,10 @@ export const DataFlowVisualization = () => {
       {/* CONTENEDOR DE LEVITACIÓN GLOBAL */}
       <motion.div
         animate={{
-          y: [0, -20, 0],
+          y: [0, -25, 0],
         }}
         transition={{
-          duration: 6,
+          duration: 7,
           repeat: Infinity,
           ease: "easeInOut"
         }}
@@ -71,76 +83,80 @@ export const DataFlowVisualization = () => {
           style={{ 
             rotateX, 
             rotateY,
-            x: mousePos.x * 40,
-            y: mousePos.y * 40,
+            x: mousePos.x * 50,
+            y: mousePos.y * 50,
           }}
-          className="relative w-72 h-72 md:w-[450px] md:h-[450px] preserve-3d"
+          className="relative w-72 h-72 md:w-[480px] md:h-[480px] preserve-3d"
         >
-          {/* NÚCLEO DE IA - EFECTO DE PROFUNDIDAD MEJORADO */}
+          {/* NÚCLEO DE IA - EFECTO VOLUMÉTRICO */}
           <motion.div
             animate={{
-              scale: [1, 1.08, 1],
-              rotateZ: [0, 5, 0],
+              scale: [1, 1.05, 1],
+              rotateZ: [0, 10, 0],
             }}
-            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute inset-[30%] rounded-full bg-gradient-to-br from-emerald-400 via-emerald-600 to-emerald-900 z-20 border-2 border-emerald-300/40 shadow-[0_0_80px_rgba(16,185,129,0.5)]"
-            style={{ transform: "translateZ(50px)" }}
+            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute inset-[32%] rounded-full bg-gradient-to-br from-emerald-300 via-emerald-500 to-emerald-900 z-20 border border-emerald-200/30 shadow-[0_0_100px_rgba(16,185,129,0.6)]"
+            style={{ transform: "translateZ(60px)" }}
           >
-            <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.3),transparent)]" />
-            <div className="absolute -inset-16 rounded-full bg-emerald-500/15 blur-[60px] pointer-events-none" />
+            {/* Reflejo especular para efecto 3D */}
+            <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_35%_35%,rgba(255,255,255,0.4),transparent_60%)]" />
+            <div className="absolute -inset-20 rounded-full bg-emerald-500/20 blur-[80px] pointer-events-none" />
           </motion.div>
 
-          {/* ANILLOS ORBITALES CON PERSPECTIVA */}
+          {/* ANILLOS ORBITALES */}
           {[0, 45, 90, 135].map((rotation, i) => (
             <motion.div
               key={i}
               animate={{ rotateZ: 360 }}
-              transition={{ duration: 20 + i * 8, repeat: Infinity, ease: "linear" }}
+              transition={{ duration: 25 + i * 10, repeat: Infinity, ease: "linear" }}
               style={{ 
                 rotateX: rotation, 
-                rotateY: rotation / 3,
+                rotateY: rotation / 4,
                 transformStyle: "preserve-3d"
               }}
-              className="absolute inset-0 rounded-full border-[1.5px] border-emerald-500/20"
+              className="absolute inset-0 rounded-full border-[1px] border-emerald-500/15"
             >
               <motion.div 
                 animate={{ 
-                  scale: [0.7, 1.3, 0.7],
-                  opacity: [0.4, 1, 0.4]
+                  scale: [0.8, 1.4, 0.8],
+                  opacity: [0.3, 0.8, 0.3]
                 }}
-                transition={{ duration: 4, repeat: Infinity, delay: i }}
-                className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-emerald-400 rounded-full shadow-[0_0_20px_rgba(52,211,153,0.9)]" 
-                style={{ transform: "translateZ(20px)" }}
+                transition={{ duration: 5, repeat: Infinity, delay: i }}
+                className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-emerald-300 shadow-[0_0_25px_rgba(52,211,153,1)]" 
+                style={{ 
+                  transform: "translateZ(30px)",
+                  background: "radial-gradient(circle at 30% 30%, #d1fae5, #10b981)"
+                }}
               />
             </motion.div>
           ))}
 
-          {/* NUBE DE PARTÍCULAS CON PROFUNDIDAD REAL (Z-INDEX & SCALE) */}
+          {/* NUBE DE PARTÍCULAS VOLUMÉTRICAS */}
           {particles.map((p) => {
-            // Calculamos la escala y opacidad basada en Z para simular profundidad
-            const scale = (p.z + 150) / 200; // Partículas más cerca (Z positivo) son más grandes
-            const opacity = (p.z + 150) / 300; // Partículas más cerca son más opacas
+            const scale = (p.z + 150) / 200;
+            const opacity = (p.z + 150) / 300;
 
             return (
               <motion.div
                 key={p.id}
                 animate={{
-                  x: [p.x + "%", (p.x + 8) + "%", p.x + "%"],
-                  y: [p.y + "%", (p.y - 8) + "%", p.y + "%"],
-                  rotateZ: [0, 360],
+                  x: [p.x + "%", (p.x + 10) + "%", p.x + "%"],
+                  y: [p.y + "%", (p.y - 10) + "%", p.y + "%"],
                 }}
                 transition={{
                   duration: p.duration,
                   repeat: Infinity,
                   delay: p.delay,
-                  ease: "linear"
+                  ease: "easeInOut"
                 }}
-                className="absolute rounded-full shadow-[0_0_10px_rgba(255,255,255,0.2)]"
+                className="absolute rounded-full"
                 style={{
                   width: p.size * scale,
                   height: p.size * scale,
-                  backgroundColor: p.color,
-                  opacity: opacity * 0.7,
+                  // Gradiente radial para efecto de esfera 3D
+                  background: `radial-gradient(circle at 30% 30%, #ffffff 0%, ${p.color} 40%, rgba(0,0,0,0.4) 100%)`,
+                  boxShadow: `0 0 ${p.size * 2}px ${p.glowColor}`,
+                  opacity: opacity * 0.8,
                   left: "50%",
                   top: "50%",
                   transform: `translateZ(${p.z}px)`,
@@ -150,9 +166,9 @@ export const DataFlowVisualization = () => {
             );
           })}
 
-          {/* LÍNEAS DE CONEXIÓN DINÁMICAS */}
-          <svg className="absolute inset-[-30%] w-[160%] h-[160%] pointer-events-none opacity-20">
-            {particles.slice(0, 8).map((p, i) => (
+          {/* LÍNEAS DE CONEXIÓN */}
+          <svg className="absolute inset-[-40%] w-[180%] h-[180%] pointer-events-none opacity-25">
+            {particles.slice(0, 12).map((p, i) => (
               <motion.line
                 key={i}
                 x1="50%"
@@ -160,19 +176,18 @@ export const DataFlowVisualization = () => {
                 x2={`${50 + p.x}%`}
                 y2={`${50 + p.y}%`}
                 stroke="url(#lineGradient)"
-                strokeWidth="0.8"
+                strokeWidth="0.6"
                 animate={{ 
-                  opacity: [0.1, 0.4, 0.1],
-                  strokeDashoffset: [0, -20]
+                  opacity: [0.05, 0.3, 0.05],
                 }}
-                transition={{ duration: 5, repeat: Infinity, delay: i }}
-                style={{ strokeDasharray: "5, 5" }}
+                transition={{ duration: 7, repeat: Infinity, delay: i }}
+                style={{ strokeDasharray: "3, 6" }}
               />
             ))}
             <defs>
               <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#10b981" stopOpacity="0" />
-                <stop offset="50%" stopColor="#34d399" stopOpacity="1" />
+                <stop offset="50%" stopColor="#34d399" stopOpacity="0.8" />
                 <stop offset="100%" stopColor="#059669" stopOpacity="0" />
               </linearGradient>
             </defs>
@@ -180,20 +195,20 @@ export const DataFlowVisualization = () => {
         </motion.div>
       </motion.div>
 
-      {/* ETIQUETA FLOTANTE MEJORADA */}
+      {/* ETIQUETA FLOTANTE */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1 }}
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 px-6 py-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 backdrop-blur-md shadow-[0_0_20px_rgba(16,185,129,0.2)]"
+        className="absolute bottom-0 left-1/2 -translate-x-1/2 px-6 py-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 backdrop-blur-md shadow-[0_0_30px_rgba(16,185,129,0.3)]"
       >
         <div className="flex items-center gap-3">
           <div className="relative">
-            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-ping absolute inset-0" />
-            <div className="w-2 h-2 rounded-full bg-emerald-500 relative" />
+            <div className="w-2 h-2 rounded-full bg-emerald-400 animate-ping absolute inset-0" />
+            <div className="w-2 h-2 rounded-full bg-emerald-400 relative" />
           </div>
-          <span className="text-[11px] font-bold tracking-[0.3em] uppercase text-emerald-500">
-            FlowSights Engine v2.0
+          <span className="text-[11px] font-bold tracking-[0.4em] uppercase text-emerald-400">
+            FlowSights Engine v2.1
           </span>
         </div>
       </motion.div>
