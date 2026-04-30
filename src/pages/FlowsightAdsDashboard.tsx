@@ -1076,46 +1076,86 @@ const FlowsightAdsDashboard: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Links del negocio */}
-                  <div className="space-y-3">
-                    <label className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest">Links del negocio <span className="normal-case font-normal text-gray-400">(opcionales — ayudan a la IA)</span></label>
-                    <div className="space-y-3">
-                      {/* Web */}
-                      <div className="relative flex items-center gap-3 bg-white dark:bg-white/5 rounded-2xl shadow-lg px-5 py-4 border border-gray-100 dark:border-white/5 focus-within:border-emerald-500/40 transition-all">
-                        <Globe2 className="w-5 h-5 text-gray-400 flex-shrink-0" />
-                        <Input
-                          value={config.websiteUrl}
-                          onChange={(e) => setConfig({ ...config, websiteUrl: e.target.value })}
-                          placeholder="https://tunegocio.com"
-                          className="border-none bg-transparent p-0 text-base shadow-none focus-visible:ring-0 placeholder:text-gray-400"
-                        />
+                  {/* Links del negocio - Rediseño Morphic Glass Premium */}
+                  <div className="space-y-6">
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em]">
+                        Presencia Digital <span className="ml-2 normal-case font-medium opacity-60">(Opcional)</span>
+                      </label>
+                      <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-200 dark:via-white/10 to-transparent mx-4" />
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {/* Web Card */}
+                      <div className={`group relative p-1 rounded-[22px] transition-all duration-500 ${config.websiteUrl ? 'bg-gradient-to-br from-emerald-500/20 to-teal-500/20' : 'bg-transparent'}`}>
+                        <div className="relative bg-white dark:bg-[#0a0a0a] border border-gray-100 dark:border-white/5 rounded-2xl p-4 transition-all group-focus-within:shadow-2xl group-focus-within:shadow-emerald-500/10 group-focus-within:border-emerald-500/30">
+                          <div className="flex items-center gap-3 mb-3">
+                            <div className={`p-2 rounded-lg transition-colors ${config.websiteUrl ? 'bg-emerald-500 text-white' : 'bg-gray-100 dark:bg-white/5 text-gray-400'}`}>
+                              <Globe2 className="w-4 h-4" />
+                            </div>
+                            <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Sitio Web</span>
+                          </div>
+                          <Input
+                            value={config.websiteUrl}
+                            onChange={(e) => setConfig({ ...config, websiteUrl: e.target.value })}
+                            placeholder="tunegocio.com"
+                            className="border-none bg-transparent p-0 h-auto text-sm shadow-none focus-visible:ring-0 placeholder:text-gray-300 dark:placeholder:text-gray-600 font-medium"
+                          />
+                        </div>
                       </div>
-                      {/* Instagram */}
-                      <div className="relative flex items-center gap-3 bg-white dark:bg-white/5 rounded-2xl shadow-lg px-5 py-4 border border-gray-100 dark:border-white/5 focus-within:border-pink-500/40 transition-all">
-                        <span className="w-5 h-5 text-pink-400 flex-shrink-0 font-bold text-sm flex items-center justify-center">IG</span>
-                        <Input
-                          value={config.instagramUrl}
-                          onChange={(e) => setConfig({ ...config, instagramUrl: e.target.value })}
-                          placeholder="https://instagram.com/tunegocio"
-                          className="border-none bg-transparent p-0 text-base shadow-none focus-visible:ring-0 placeholder:text-gray-400"
-                        />
+
+                      {/* Instagram Card */}
+                      <div className={`group relative p-1 rounded-[22px] transition-all duration-500 ${config.instagramUrl ? 'bg-gradient-to-br from-pink-500/20 to-purple-500/20' : 'bg-transparent'}`}>
+                        <div className="relative bg-white dark:bg-[#0a0a0a] border border-gray-100 dark:border-white/5 rounded-2xl p-4 transition-all group-focus-within:shadow-2xl group-focus-within:shadow-pink-500/10 group-focus-within:border-pink-500/30">
+                          <div className="flex items-center gap-3 mb-3">
+                            <div className={`p-2 rounded-lg transition-colors ${config.instagramUrl ? 'bg-gradient-to-br from-pink-500 to-purple-500 text-white' : 'bg-gray-100 dark:bg-white/5 text-gray-400'}`}>
+                              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                            </div>
+                            <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Instagram</span>
+                          </div>
+                          <Input
+                            value={config.instagramUrl}
+                            onChange={(e) => setConfig({ ...config, instagramUrl: e.target.value })}
+                            placeholder="@usuario"
+                            className="border-none bg-transparent p-0 h-auto text-sm shadow-none focus-visible:ring-0 placeholder:text-gray-300 dark:placeholder:text-gray-600 font-medium"
+                          />
+                        </div>
                       </div>
-                      {/* Facebook */}
-                      <div className="relative flex items-center gap-3 bg-white dark:bg-white/5 rounded-2xl shadow-lg px-5 py-4 border border-gray-100 dark:border-white/5 focus-within:border-blue-500/40 transition-all">
-                        <span className="w-5 h-5 text-blue-500 flex-shrink-0 font-bold text-sm flex items-center justify-center">FB</span>
-                        <Input
-                          value={config.facebookUrl}
-                          onChange={(e) => setConfig({ ...config, facebookUrl: e.target.value })}
-                          placeholder="https://facebook.com/tunegocio"
-                          className="border-none bg-transparent p-0 text-base shadow-none focus-visible:ring-0 placeholder:text-gray-400"
-                        />
+
+                      {/* LinkedIn/Other Card */}
+                      <div className={`group relative p-1 rounded-[22px] transition-all duration-500 ${config.facebookUrl ? 'bg-gradient-to-br from-blue-500/20 to-indigo-500/20' : 'bg-transparent'}`}>
+                        <div className="relative bg-white dark:bg-[#0a0a0a] border border-gray-100 dark:border-white/5 rounded-2xl p-4 transition-all group-focus-within:shadow-2xl group-focus-within:shadow-blue-500/10 group-focus-within:border-blue-500/30">
+                          <div className="flex items-center gap-3 mb-3">
+                            <div className={`p-2 rounded-lg transition-colors ${config.facebookUrl ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-white/5 text-gray-400'}`}>
+                              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                            </div>
+                            <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">LinkedIn</span>
+                          </div>
+                          <Input
+                            value={config.facebookUrl}
+                            onChange={(e) => setConfig({ ...config, facebookUrl: e.target.value })}
+                            placeholder="linkedin.com/in/..."
+                            className="border-none bg-transparent p-0 h-auto text-sm shadow-none focus-visible:ring-0 placeholder:text-gray-300 dark:placeholder:text-gray-600 font-medium"
+                          />
+                        </div>
                       </div>
                     </div>
-                    {(config.websiteUrl || config.instagramUrl || config.facebookUrl) && (
-                      <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1.5">
-                        <Check className="w-3.5 h-3.5" /> ¡Perfecto! La IA analizará tus links para personalizar mejor la campaña.
-                      </p>
-                    )}
+
+                    <AnimatePresence>
+                      {(config.websiteUrl || config.instagramUrl || config.facebookUrl) && (
+                        <motion.div 
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 10 }}
+                          className="flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-emerald-500/5 border border-emerald-500/10"
+                        >
+                          <Sparkles className="w-3.5 h-3.5 text-emerald-500" />
+                          <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-black uppercase tracking-widest">
+                            IA Optimizada: Analizando presencia digital para mayor precisión
+                          </p>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
 
                   <Button
