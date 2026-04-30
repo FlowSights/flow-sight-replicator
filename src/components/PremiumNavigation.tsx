@@ -60,24 +60,12 @@ export const PremiumNavigation = ({ navLinks, logo }: PremiumNavigationProps) =>
           </Link>
 
           {/* DESKTOP NAV - Oculto en móvil */}
-          <div className="hidden lg:flex items-center gap-2">
-            {/* FLOWSIGHT ADS PRIMERO */}
-            <a
-              href="/flowsight-ads"
-              className="px-4 py-2 text-sm font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors rounded-lg hover:bg-emerald-500/10"
-            >
-              🚀 Flowsight Ads
-            </a>
-            
-            {/* SEPARADOR */}
-            <div className="w-px h-6 bg-border/30" />
-            
-            {/* RESTO DE ENLACES */}
-            {navLinks.filter(link => link.label !== "Flowsight Ads").map((link) => (
+          <div className="hidden lg:flex items-center gap-1">
+            {navLinks.map((link) => (
               <a
                 key={link.label}
                 href={link.href}
-                className="px-3 py-2 text-sm font-medium text-foreground/70 hover:text-foreground transition-colors rounded-lg hover:bg-primary/10"
+                className="px-3 py-2 text-sm font-medium text-foreground/80 hover:text-foreground transition-colors rounded-lg hover:bg-primary/10"
               >
                 {link.label}
               </a>
@@ -86,19 +74,6 @@ export const PremiumNavigation = ({ navLinks, logo }: PremiumNavigationProps) =>
 
           {/* CONTROLES DERECHA */}
           <div className="flex items-center gap-3">
-            {/* PÍLDORA CENTRAL - PROBAR FLOWSIGHT ADS */}
-            <a
-              href="/flowsight-ads"
-              className="hidden md:flex items-center gap-2 px-6 py-2.5 rounded-full border border-emerald-500/40 bg-gradient-to-r from-emerald-500/15 to-emerald-500/5 backdrop-blur-xl hover:from-emerald-500/25 hover:to-emerald-500/15 transition-all duration-300 hover:border-emerald-500/60 hover:shadow-lg hover:shadow-emerald-500/20 group"
-            >
-              <span className="text-sm font-semibold bg-gradient-to-r from-emerald-600 to-emerald-500 dark:from-emerald-400 dark:to-emerald-300 bg-clip-text text-transparent group-hover:from-emerald-700 group-hover:to-emerald-600 dark:group-hover:from-emerald-300 dark:group-hover:to-emerald-200 transition-all">
-                Probar Flowsight Ads
-              </span>
-              <svg className="w-4 h-4 text-emerald-500 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </a>
-            
             <ThemeToggle />
             {/* MOBILE MENU BUTTON */}
             <button
