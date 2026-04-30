@@ -40,7 +40,7 @@ export const DataFlowVisualization = () => {
         x: Math.random() * 140 - 70,
         y: Math.random() * 140 - 70,
         z: Math.random() * 240 - 120,
-        size: 5, // Tamaño constante para todos los electrones
+        size: 6, // Tamaño constante
         duration: Math.random() * 8 + 10,
         delay: Math.random() * 5,
         color: colorSet.base,
@@ -83,11 +83,11 @@ export const DataFlowVisualization = () => {
           }}
           className="relative w-80 h-80 md:w-[500px] md:h-[500px] preserve-3d"
         >
-          {/* NÚCLEO DE IA - EFECTO DE SOL ESMERALDA */}
+          {/* NÚCLEO DE IA */}
           <motion.div
             animate={{ rotateZ: [0, 360] }}
             transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-            className="absolute inset-[32%] rounded-full z-20 border border-emerald-300/30 shadow-[0_0_100px_rgba(16,185,129,0.6)]"
+            className="absolute inset-[32%] rounded-full z-20 border-2 border-emerald-300/40 shadow-[0_0_100px_rgba(16,185,129,0.6)]"
             style={{ 
               transform: "translateZ(80px)",
               background: "radial-gradient(circle at 30% 30%, #ffffff 0%, #10b981 30%, #064e3b 100%)"
@@ -97,7 +97,7 @@ export const DataFlowVisualization = () => {
             <div className="absolute -inset-20 rounded-full bg-emerald-500/20 blur-[80px] pointer-events-none" />
           </motion.div>
 
-          {/* ANILLOS ORBITALES */}
+          {/* ANILLOS ORBITALES REFORZADOS */}
           {[0, 45, 90, 135].map((rotation, i) => (
             <motion.div
               key={i}
@@ -108,20 +108,23 @@ export const DataFlowVisualization = () => {
                 rotateY: rotation / 3,
                 transformStyle: "preserve-3d"
               }}
-              className="absolute inset-0 rounded-full border-[2px] border-emerald-500/30 dark:border-emerald-500/20"
+              className="absolute inset-0 rounded-full border-[3px] border-emerald-500/50 dark:border-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.2)]"
             >
-              {/* ELECTRÓN TIPO DESTELLO (Tamaño Constante) */}
+              {/* ELECTRÓN TIPO DESTELLO - CON BILLBOARDING */}
               <div 
-                className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center" 
-                style={{ transform: "translateZ(40px)" }}
+                className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center" 
+                style={{ 
+                  transform: `translateZ(40px) rotateX(${-rotation}deg) rotateY(${-rotation/3}deg)`,
+                  // El billboarding se logra contrarrestando la rotación del padre
+                }}
               >
                 {/* Núcleo del destello */}
-                <div className="w-2 h-2 bg-white rounded-full z-10 shadow-[0_0_10px_#fff]" />
+                <div className="w-2.5 h-2.5 bg-white rounded-full z-10 shadow-[0_0_15px_#fff]" />
                 {/* Aura de fuego/energía */}
                 <motion.div 
                   animate={{ 
-                    scale: [1, 1.5, 1],
-                    opacity: [0.7, 1, 0.7]
+                    scale: [1, 1.6, 1],
+                    opacity: [0.8, 1, 0.8]
                   }}
                   transition={{ duration: 0.8, repeat: Infinity, ease: "easeInOut" }}
                   className="absolute inset-0 rounded-full"
@@ -131,12 +134,12 @@ export const DataFlowVisualization = () => {
                   }}
                 />
                 {/* Resplandor exterior potente */}
-                <div className="absolute -inset-4 rounded-full bg-emerald-500/30 blur-md animate-pulse" />
+                <div className="absolute -inset-4 rounded-full bg-emerald-500/40 blur-md animate-pulse" />
               </div>
             </motion.div>
           ))}
 
-          {/* NUBE DE PARTÍCULAS TIPO DESTELLO (Tamaño Constante) */}
+          {/* NUBE DE PARTÍCULAS TIPO DESTELLO - CON BILLBOARDING */}
           {particles.map((p) => {
             const opacity = (p.z + 150) / 300;
 
@@ -159,19 +162,20 @@ export const DataFlowVisualization = () => {
                   height: p.size,
                   left: "50%",
                   top: "50%",
-                  transform: `translateZ(${p.z}px)`,
+                  // Billboarding: contrarrestamos la rotación del contenedor principal
+                  transform: `translateZ(${p.z}px) rotateX(var(--rotate-x, 0deg)) rotateY(var(--rotate-y, 0deg))`,
                   willChange: "transform, opacity",
-                  opacity: opacity * 0.9
+                  opacity: opacity * 0.95
                 }}
               >
                 {/* Núcleo de la partícula */}
                 <div 
-                  className="w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_8px_#fff]" 
+                  className="w-2 h-2 rounded-full bg-white shadow-[0_0_10px_#fff]" 
                   style={{ backgroundColor: p.color === "#ffffff" ? "#fff" : p.color }}
                 />
                 {/* Aura de la partícula */}
                 <div 
-                  className="absolute -inset-2 rounded-full blur-[3px]"
+                  className="absolute -inset-3 rounded-full blur-[4px]"
                   style={{ background: `radial-gradient(circle, ${p.glowColor} 0%, transparent 80%)` }}
                 />
               </motion.div>
@@ -179,7 +183,7 @@ export const DataFlowVisualization = () => {
           })}
 
           {/* LÍNEAS DE CONEXIÓN */}
-          <svg className="absolute inset-[-50%] w-[200%] h-[200%] pointer-events-none opacity-40">
+          <svg className="absolute inset-[-50%] w-[200%] h-[200%] pointer-events-none opacity-50">
             {particles.slice(0, 15).map((p, i) => (
               <motion.line
                 key={i}
@@ -188,16 +192,16 @@ export const DataFlowVisualization = () => {
                 x2={`${50 + p.x}%`}
                 y2={`${50 + p.y}%`}
                 stroke="url(#lineGradient)"
-                strokeWidth="1"
-                animate={{ opacity: [0.1, 0.4, 0.1] }}
+                strokeWidth="1.5"
+                animate={{ opacity: [0.2, 0.6, 0.2] }}
                 transition={{ duration: 6, repeat: Infinity, delay: i }}
-                style={{ strokeDasharray: "4, 8" }}
+                style={{ strokeDasharray: "5, 10" }}
               />
             ))}
             <defs>
               <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#10b981" stopOpacity="0" />
-                <stop offset="50%" stopColor="#34d399" stopOpacity="0.8" />
+                <stop offset="50%" stopColor="#34d399" stopOpacity="0.9" />
                 <stop offset="100%" stopColor="#064e3b" stopOpacity="0" />
               </linearGradient>
             </defs>
@@ -210,15 +214,15 @@ export const DataFlowVisualization = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1 }}
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 px-8 py-3 rounded-full border-2 border-emerald-500/40 bg-white/60 dark:bg-emerald-950/40 backdrop-blur-xl shadow-[0_15px_40px_rgba(0,0,0,0.15)] dark:shadow-[0_0_40px_rgba(16,185,129,0.4)]"
+        className="absolute bottom-0 left-1/2 -translate-x-1/2 px-8 py-3 rounded-full border-2 border-emerald-500/50 bg-white/70 dark:bg-emerald-950/50 backdrop-blur-xl shadow-[0_15px_40px_rgba(0,0,0,0.2)] dark:shadow-[0_0_40px_rgba(16,185,129,0.5)]"
       >
         <div className="flex items-center gap-4">
           <div className="relative">
             <div className="w-3 h-3 rounded-full bg-emerald-500 animate-ping absolute inset-0" />
             <div className="w-3 h-3 rounded-full bg-emerald-500 relative" />
           </div>
-          <span className="text-[12px] font-black tracking-[0.5em] uppercase text-emerald-700 dark:text-emerald-300">
-            FlowSights Engine v2.4
+          <span className="text-[12px] font-black tracking-[0.5em] uppercase text-emerald-800 dark:text-emerald-200">
+            FlowSights Engine v2.5
           </span>
         </div>
       </motion.div>
