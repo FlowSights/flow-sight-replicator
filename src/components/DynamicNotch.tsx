@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Menu } from "lucide-react";
+import { X, Menu, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ThemeToggle } from "./ThemeToggle";
 
@@ -101,7 +101,12 @@ export const DynamicNotch = ({ navLinks, logo }: DynamicNotchProps) => {
                     isCollapsed ? "text-[11px] px-2" : ""
                   }`}
                 >
-                  {link === navLinks[0] ? `🚀 ${link.label}` : link.label}
+                  <div className="flex items-center gap-1.5">
+                    {link === navLinks[0] && (
+                      <Sparkles className={`text-emerald-500 transition-all duration-500 ${isCollapsed ? "w-3 h-3" : "w-4 h-4"}`} />
+                    )}
+                    <span>{link.label}</span>
+                  </div>
                 </a>
               ))}
             </div>
