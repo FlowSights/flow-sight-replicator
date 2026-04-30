@@ -27,20 +27,20 @@ export const DataFlowVisualization = () => {
 
   useEffect(() => {
     const colors = [
-      { base: "#10b981", glow: "rgba(16, 185, 129, 0.8)" },
-      { base: "#059669", glow: "rgba(5, 150, 105, 0.8)" },
-      { base: "#34d399", glow: "rgba(52, 211, 153, 0.8)" },
-      { base: "#064e3b", glow: "rgba(6, 78, 59, 0.6)" }
+      { base: "#10b981", glow: "rgba(16, 185, 129, 0.9)" },
+      { base: "#34d399", glow: "rgba(52, 211, 153, 0.9)" },
+      { base: "#059669", glow: "rgba(5, 150, 105, 0.9)" },
+      { base: "#ffffff", glow: "rgba(255, 255, 255, 0.8)" }
     ];
     
-    const newParticles: Particle[] = Array.from({ length: 60 }, (_, i) => {
+    const newParticles: Particle[] = Array.from({ length: 50 }, (_, i) => {
       const colorSet = colors[i % colors.length];
       return {
         id: i,
         x: Math.random() * 140 - 70,
         y: Math.random() * 140 - 70,
         z: Math.random() * 240 - 120,
-        size: Math.random() * 6 + 2, // Partículas más grandes
+        size: 5, // Tamaño constante para todos los electrones
         duration: Math.random() * 8 + 10,
         delay: Math.random() * 5,
         color: colorSet.base,
@@ -64,26 +64,13 @@ export const DataFlowVisualization = () => {
       onMouseMove={handleMouseMove}
       className="relative w-full h-full flex items-center justify-center perspective-2000 select-none bg-transparent"
     >
-      {/* SOMBRA DE CONTACTO REFORZADA */}
-      <motion.div
-        animate={{
-          scale: [1, 1.15, 1],
-          opacity: [0.3, 0.45, 0.3],
-        }}
-        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute bottom-5 w-64 h-12 bg-emerald-900/20 dark:bg-emerald-900/40 blur-[50px] rounded-[100%] pointer-events-none"
-      />
+      {/* SOMBRA DE CONTACTO */}
+      <div className="absolute bottom-5 w-64 h-12 bg-emerald-900/20 dark:bg-emerald-900/40 blur-[50px] rounded-[100%] pointer-events-none" />
 
       {/* LEVITACIÓN GLOBAL */}
       <motion.div
-        animate={{
-          y: [0, -30, 0],
-        }}
-        transition={{
-          duration: 6,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
+        animate={{ y: [0, -30, 0] }}
+        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
         className="relative w-full h-full flex items-center justify-center"
       >
         {/* CONTENEDOR 3D PRINCIPAL */}
@@ -96,53 +83,61 @@ export const DataFlowVisualization = () => {
           }}
           className="relative w-80 h-80 md:w-[500px] md:h-[500px] preserve-3d"
         >
-          {/* NÚCLEO DE IA - MÁXIMA VISIBILIDAD */}
+          {/* NÚCLEO DE IA - EFECTO DE SOL ESMERALDA */}
           <motion.div
-            animate={{
-              scale: [1, 1.08, 1],
-              rotateZ: [0, 15, 0],
+            animate={{ rotateZ: [0, 360] }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            className="absolute inset-[32%] rounded-full z-20 border border-emerald-300/30 shadow-[0_0_100px_rgba(16,185,129,0.6)]"
+            style={{ 
+              transform: "translateZ(80px)",
+              background: "radial-gradient(circle at 30% 30%, #ffffff 0%, #10b981 30%, #064e3b 100%)"
             }}
-            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute inset-[30%] rounded-full bg-gradient-to-br from-emerald-400 via-emerald-600 to-emerald-950 z-20 border-2 border-emerald-300/50 shadow-[0_0_120px_rgba(16,185,129,0.5)] dark:shadow-[0_0_120px_rgba(16,185,129,0.7)]"
-            style={{ transform: "translateZ(80px)" }}
           >
-            <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.5),transparent_70%)]" />
-            <div className="absolute inset-0 rounded-full shadow-[inset_0_0_50px_rgba(0,0,0,0.4)]" />
-            <div className="absolute -inset-24 rounded-full bg-emerald-500/20 blur-[100px] pointer-events-none" />
+            <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_35%_35%,rgba(255,255,255,0.4),transparent_60%)]" />
+            <div className="absolute -inset-20 rounded-full bg-emerald-500/20 blur-[80px] pointer-events-none" />
           </motion.div>
 
-          {/* ANILLOS ORBITALES REFORZADOS (Grosor y Brillo) */}
+          {/* ANILLOS ORBITALES */}
           {[0, 45, 90, 135].map((rotation, i) => (
             <motion.div
               key={i}
               animate={{ rotateZ: 360 }}
-              transition={{ duration: 20 + i * 8, repeat: Infinity, ease: "linear" }}
+              transition={{ duration: 25 + i * 10, repeat: Infinity, ease: "linear" }}
               style={{ 
                 rotateX: rotation, 
                 rotateY: rotation / 3,
                 transformStyle: "preserve-3d"
               }}
-              className="absolute inset-0 rounded-full border-[2.5px] border-emerald-500/40 dark:border-emerald-500/25 shadow-[0_0_15px_rgba(16,185,129,0.2)]"
+              className="absolute inset-0 rounded-full border-[2px] border-emerald-500/30 dark:border-emerald-500/20"
             >
-              {/* Electrón Principal de la Órbita */}
-              <motion.div 
-                animate={{ 
-                  scale: [0.9, 1.5, 0.9],
-                  opacity: [0.6, 1, 0.6]
-                }}
-                transition={{ duration: 4, repeat: Infinity, delay: i }}
-                className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-5 rounded-full shadow-[0_0_30px_rgba(16,185,129,1)]" 
-                style={{ 
-                  transform: "translateZ(40px)",
-                  background: "radial-gradient(circle at 30% 30%, #ffffff, #10b981, #064e3b)"
-                }}
-              />
+              {/* ELECTRÓN TIPO DESTELLO (Tamaño Constante) */}
+              <div 
+                className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center" 
+                style={{ transform: "translateZ(40px)" }}
+              >
+                {/* Núcleo del destello */}
+                <div className="w-2 h-2 bg-white rounded-full z-10 shadow-[0_0_10px_#fff]" />
+                {/* Aura de fuego/energía */}
+                <motion.div 
+                  animate={{ 
+                    scale: [1, 1.5, 1],
+                    opacity: [0.7, 1, 0.7]
+                  }}
+                  transition={{ duration: 0.8, repeat: Infinity, ease: "easeInOut" }}
+                  className="absolute inset-0 rounded-full"
+                  style={{ 
+                    background: "radial-gradient(circle, #34d399 0%, rgba(16, 185, 129, 0) 70%)",
+                    filter: "blur(2px)"
+                  }}
+                />
+                {/* Resplandor exterior potente */}
+                <div className="absolute -inset-4 rounded-full bg-emerald-500/30 blur-md animate-pulse" />
+              </div>
             </motion.div>
           ))}
 
-          {/* NUBE DE PARTÍCULAS VOLUMÉTRICAS (Más grandes y contrastadas) */}
+          {/* NUBE DE PARTÍCULAS TIPO DESTELLO (Tamaño Constante) */}
           {particles.map((p) => {
-            const scale = (p.z + 150) / 200;
             const opacity = (p.z + 150) / 300;
 
             return (
@@ -158,23 +153,32 @@ export const DataFlowVisualization = () => {
                   delay: p.delay,
                   ease: "easeInOut"
                 }}
-                className="absolute rounded-full"
+                className="absolute flex items-center justify-center"
                 style={{
-                  width: p.size * scale,
-                  height: p.size * scale,
-                  background: `radial-gradient(circle at 30% 30%, #ffffff 0%, ${p.color} 45%, rgba(0,0,0,0.6) 100%)`,
-                  boxShadow: `0 ${p.size/2}px ${p.size}px rgba(0,0,0,0.2), 0 0 ${p.size * 2.5}px ${p.glowColor}`,
-                  opacity: opacity * 0.9,
+                  width: p.size,
+                  height: p.size,
                   left: "50%",
                   top: "50%",
                   transform: `translateZ(${p.z}px)`,
-                  willChange: "transform, opacity"
+                  willChange: "transform, opacity",
+                  opacity: opacity * 0.9
                 }}
-              />
+              >
+                {/* Núcleo de la partícula */}
+                <div 
+                  className="w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_8px_#fff]" 
+                  style={{ backgroundColor: p.color === "#ffffff" ? "#fff" : p.color }}
+                />
+                {/* Aura de la partícula */}
+                <div 
+                  className="absolute -inset-2 rounded-full blur-[3px]"
+                  style={{ background: `radial-gradient(circle, ${p.glowColor} 0%, transparent 80%)` }}
+                />
+              </motion.div>
             );
           })}
 
-          {/* LÍNEAS DE CONEXIÓN MÁS VISIBLES */}
+          {/* LÍNEAS DE CONEXIÓN */}
           <svg className="absolute inset-[-50%] w-[200%] h-[200%] pointer-events-none opacity-40">
             {particles.slice(0, 15).map((p, i) => (
               <motion.line
@@ -184,10 +188,8 @@ export const DataFlowVisualization = () => {
                 x2={`${50 + p.x}%`}
                 y2={`${50 + p.y}%`}
                 stroke="url(#lineGradient)"
-                strokeWidth="1.2"
-                animate={{ 
-                  opacity: [0.15, 0.5, 0.15],
-                }}
+                strokeWidth="1"
+                animate={{ opacity: [0.1, 0.4, 0.1] }}
                 transition={{ duration: 6, repeat: Infinity, delay: i }}
                 style={{ strokeDasharray: "4, 8" }}
               />
@@ -195,7 +197,7 @@ export const DataFlowVisualization = () => {
             <defs>
               <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#10b981" stopOpacity="0" />
-                <stop offset="50%" stopColor="#059669" stopOpacity="0.9" />
+                <stop offset="50%" stopColor="#34d399" stopOpacity="0.8" />
                 <stop offset="100%" stopColor="#064e3b" stopOpacity="0" />
               </linearGradient>
             </defs>
@@ -203,7 +205,7 @@ export const DataFlowVisualization = () => {
         </motion.div>
       </motion.div>
 
-      {/* ETIQUETA FLOTANTE REFORZADA */}
+      {/* ETIQUETA */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -216,7 +218,7 @@ export const DataFlowVisualization = () => {
             <div className="w-3 h-3 rounded-full bg-emerald-500 relative" />
           </div>
           <span className="text-[12px] font-black tracking-[0.5em] uppercase text-emerald-700 dark:text-emerald-300">
-            FlowSights Engine v2.3
+            FlowSights Engine v2.4
           </span>
         </div>
       </motion.div>
