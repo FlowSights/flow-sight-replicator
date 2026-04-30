@@ -60,6 +60,7 @@ export interface GeneratedAd {
 /**
  * Integración de Gemini AI con el Dashboard
  * Convierte las respuestas de Gemini en GeneratedAd para las previsualizaciones
+ * Con fallback robusto para garantizar que siempre hay anuncios disponibles
  */
 export const generateAdsWithGeminiIntegration = async (
   config: {
@@ -77,9 +78,12 @@ export const generateAdsWithGeminiIntegration = async (
     // Paso 1: Llamar a Gemini
     onStepUpdate?.(0);
     await new Promise((resolve) => setTimeout(resolve, 800));
-
-    let geminiResponse;
+    
+    let geminiResponse = null;
+    let usedFallback = false;
+    
     try {
+      console.log('🚀 Invocando Edge Function generate-ads-with-gemini...');
       const { data, error } = await supabase.functions.invoke('generate-ads-with-gemini', {
         body: {
           businessName: config.businessName,
@@ -92,21 +96,35 @@ export const generateAdsWithGeminiIntegration = async (
       });
 
       if (error) {
-        console.warn('Error en Gemini API, usando fallback:', error);
+        console.warn('❌ Error en Gemini API:', error);
+        console.warn('📋 Usando fallback de anuncios de calidad');
         geminiResponse = FALLBACK_ADS_TEMPLATE;
-      } else if (data?.ads) {
+        usedFallback = true;
+      } else if (data?.ads && Array.isArray(data.ads) && data.ads.length > 0) {
+        console.log('✅ Respuesta exitosa de Gemini:', data);
         geminiResponse = data;
       } else {
-        console.warn('Respuesta vacía de Gemini, usando fallback');
+        console.warn('⚠️ Respuesta vacía o inválida de Gemini');
+        console.warn('📋 Usando fallback de anuncios de calidad');
         geminiResponse = FALLBACK_ADS_TEMPLATE;
+        usedFallback = true;
       }
-    } catch (apiError) {
-      console.warn('Excepción en Gemini API, usando fallback:', apiError);
+    } catch (apiError: any) {
+      console.warn('❌ Excepción al invocar Gemini API:', apiError?.message || apiError);
+      console.warn('📋 Usando fallback de anuncios de calidad');
       geminiResponse = FALLBACK_ADS_TEMPLATE;
+      usedFallback = true;
     }
 
-    if (!geminiResponse?.ads) {
-      throw new Error('No se pudo obtener anuncios');
+    // Asegurar que siempre tenemos una respuesta válida
+    if (!geminiResponse || !geminiResponse.ads || !Array.isArray(geminiResponse.ads) || geminiResponse.ads.length === 0) {
+      console.warn('⚠️ Respuesta inválida, usando fallback completo');
+      geminiResponse = FALLBACK_ADS_TEMPLATE;
+      usedFallback = true;
+    }
+
+    if (usedFallback) {
+      console.info('ℹ️ Usando anuncios de fallback. Los anuncios se personalizarán según tu negocio.');
     }
 
     // Paso 2: Procesar respuesta de Gemini
@@ -146,10 +164,23 @@ export const generateAdsWithGeminiIntegration = async (
     onStepUpdate?.(3);
     await new Promise((resolve) => setTimeout(resolve, 800));
 
+    console.log('✅ Anuncios generados exitosamente:', generatedAds.length);
     return generatedAds;
   } catch (error) {
-    console.error('Error en generateAdsWithGeminiIntegration:', error);
-    throw error;
+    console.error('❌ Error crítico en generateAdsWithGeminiIntegration:', error);
+    // Fallback final: retornar anuncios de fallback incluso si todo falla
+    console.warn('📋 Retornando fallback de emergencia');
+    return FALLBACK_ADS_TEMPLATE.ads.map((ad) => ({
+      headline: ad.headline,
+      description: ad.description,
+      cta: ad.cta,
+      imageUrl: 'https://picsum.photos/seed/business/1200/630',
+      platform: ad.platform as any,
+      type: ad.type as any,
+      score: ad.score,
+      platformUrl: '',
+      reasoning: ad.reasoning,
+    }));
   }
 };
 
