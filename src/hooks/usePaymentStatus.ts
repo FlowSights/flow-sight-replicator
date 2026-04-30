@@ -34,9 +34,9 @@ export const usePaymentStatus = () => {
           return;
         }
 
-        // Lógica de Cuenta Master para el Creador
-        const MASTER_EMAIL = 'spineda2014.123@gmail.com';
-        if (session.user.email === MASTER_EMAIL) {
+        // Lógica de Cuenta Master para el Creador (múltiples cuentas autorizadas)
+        const MASTER_EMAILS = ['spineda2014.123@gmail.com', 'spinedaram2000@gmail.com'];
+        if (MASTER_EMAILS.includes(session.user.email || '')) {
           setHasPaid(true);
           setIsLoading(false);
           return;
