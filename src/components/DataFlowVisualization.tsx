@@ -21,18 +21,18 @@ export const DataFlowVisualization = () => {
     offset: ["start end", "end start"]
   });
 
-  const rotateX = useTransform(scrollYProgress, [0, 1], [15, -15]);
-  const rotateY = useTransform(scrollYProgress, [0, 1], [-15, 15]);
+  const rotateX = useTransform(scrollYProgress, [0, 1], [10, -10]);
+  const rotateY = useTransform(scrollYProgress, [0, 1], [-10, 10]);
 
   useEffect(() => {
-    const colors = ["#10b981", "#34d399", "#6ee7b7", "#059669"];
-    const newParticles: Particle[] = Array.from({ length: 25 }, (_, i) => ({
+    const colors = ["#10b981", "#34d399", "#059669"];
+    const newParticles: Particle[] = Array.from({ length: 20 }, (_, i) => ({
       id: i,
       x: Math.random() * 100 - 50,
       y: Math.random() * 100 - 50,
       z: Math.random() * 100 - 50,
-      size: Math.random() * 4 + 1,
-      duration: Math.random() * 5 + 5,
+      size: Math.random() * 3 + 1,
+      duration: Math.random() * 5 + 7,
       delay: Math.random() * 2,
       color: colors[Math.floor(Math.random() * colors.length)],
     }));
@@ -51,64 +51,60 @@ export const DataFlowVisualization = () => {
     <div 
       ref={containerRef}
       onMouseMove={handleMouseMove}
-      className="relative w-full h-[500px] md:h-[700px] flex items-center justify-center perspective-1000 select-none"
+      className="relative w-full h-full flex items-center justify-center perspective-1000 select-none bg-transparent"
     >
-      {/* EFECTO DE LUZ AMBIENTAL */}
-      <div className="absolute inset-0 bg-radial-gradient from-emerald-500/10 via-transparent to-transparent opacity-60 pointer-events-none" />
-
-      {/* CONTENEDOR 3D PRINCIPAL */}
+      {/* CONTENEDOR 3D PRINCIPAL - SIN FONDOS SÓLIDOS */}
       <motion.div
         style={{ 
           rotateX, 
           rotateY,
-          x: mousePos.x * 40,
-          y: mousePos.y * 40,
+          x: mousePos.x * 30,
+          y: mousePos.y * 30,
         }}
-        className="relative w-80 h-80 md:w-[450px] md:h-[450px] preserve-3d"
+        className="relative w-72 h-72 md:w-[400px] md:h-[400px] preserve-3d"
       >
-        {/* NÚCLEO DE IA - EFECTO WOW */}
+        {/* NÚCLEO DE IA - REFINADO Y TRANSLÚCIDO */}
         <motion.div
           animate={{
-            scale: [1, 1.1, 1],
-            boxShadow: [
-              "0 0 40px 10px rgba(16, 185, 129, 0.3)",
-              "0 0 80px 20px rgba(16, 185, 129, 0.5)",
-              "0 0 40px 10px rgba(16, 185, 129, 0.3)"
-            ]
+            scale: [1, 1.05, 1],
+            opacity: [0.7, 0.9, 0.7],
           }}
-          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute inset-1/4 rounded-full bg-gradient-to-br from-emerald-400 via-emerald-600 to-emerald-900 z-20"
+          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute inset-1/4 rounded-full bg-gradient-to-br from-emerald-400/40 via-emerald-600/30 to-emerald-900/40 backdrop-blur-sm z-20 border border-emerald-500/20"
         >
-          {/* Brillo interno */}
-          <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.4),transparent)]" />
+          {/* Brillo interno suave */}
+          <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.2),transparent)]" />
+          
+          {/* Aura de resplandor sutil */}
+          <div className="absolute -inset-10 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
         </motion.div>
 
-        {/* ANILLOS ORBITALES 3D */}
-        {[0, 45, 90, 135].map((rotation, i) => (
+        {/* ANILLOS ORBITALES 3D - MÁS FINOS */}
+        {[0, 60, 120].map((rotation, i) => (
           <motion.div
             key={i}
             animate={{ rotateZ: 360 }}
-            transition={{ duration: 15 + i * 5, repeat: Infinity, ease: "linear" }}
-            style={{ rotateX: rotation, rotateY: rotation / 2 }}
-            className="absolute inset-0 rounded-full border border-emerald-500/20 preserve-3d"
+            transition={{ duration: 20 + i * 8, repeat: Infinity, ease: "linear" }}
+            style={{ rotateX: rotation, rotateY: rotation / 3 }}
+            className="absolute inset-0 rounded-full border border-emerald-500/10 preserve-3d"
           >
             <motion.div 
-              animate={{ scale: [0.8, 1.2, 0.8] }}
-              transition={{ duration: 3, repeat: Infinity, delay: i }}
-              className="absolute top-0 left-1/2 w-3 h-3 bg-emerald-400 rounded-full shadow-[0_0_15px_rgba(52,211,153,0.8)]" 
+              animate={{ scale: [0.9, 1.1, 0.9], opacity: [0.3, 0.6, 0.3] }}
+              transition={{ duration: 4, repeat: Infinity, delay: i }}
+              className="absolute top-0 left-1/2 w-2 h-2 bg-emerald-400/60 rounded-full blur-[1px]" 
             />
           </motion.div>
         ))}
 
-        {/* NUBE DE PARTÍCULAS DE DATOS */}
+        {/* NUBE DE PARTÍCULAS DE DATOS - MÁS SUTILES */}
         {particles.map((p) => (
           <motion.div
             key={p.id}
             animate={{
-              x: [p.x + "%", (p.x + 10) + "%", p.x + "%"],
-              y: [p.y + "%", (p.y - 10) + "%", p.y + "%"],
-              z: [p.z, p.z + 50, p.z],
-              opacity: [0.2, 0.8, 0.2],
+              x: [p.x + "%", (p.x + 5) + "%", p.x + "%"],
+              y: [p.y + "%", (p.y - 5) + "%", p.y + "%"],
+              z: [p.z, p.z + 30, p.z],
+              opacity: [0.1, 0.5, 0.1],
             }}
             transition={{
               duration: p.duration,
@@ -116,64 +112,49 @@ export const DataFlowVisualization = () => {
               delay: p.delay,
               ease: "easeInOut"
             }}
-            className="absolute rounded-full blur-[1px]"
+            className="absolute rounded-full"
             style={{
               width: p.size,
               height: p.size,
               backgroundColor: p.color,
-              boxShadow: `0 0 10px ${p.color}`,
+              opacity: 0.4,
               left: "50%",
               top: "50%",
             }}
           />
         ))}
 
-        {/* LÍNEAS DE CONEXIÓN NEURALES */}
-        <svg className="absolute inset-[-50%] w-[200%] h-[200%] pointer-events-none opacity-20">
-          <defs>
-            <filter id="glow">
-              <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
-              <feMerge>
-                <feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/>
-              </feMerge>
-            </filter>
-          </defs>
-          {particles.slice(0, 8).map((p, i) => (
+        {/* LÍNEAS DE CONEXIÓN NEURALES - MUY TENUES */}
+        <svg className="absolute inset-[-20%] w-[140%] h-[140%] pointer-events-none opacity-10">
+          {particles.slice(0, 6).map((p, i) => (
             <motion.line
               key={i}
               x1="50%"
               y1="50%"
               x2={`${50 + p.x}%`}
               y2={`${50 + p.y}%`}
-              stroke="url(#line-grad)"
-              strokeWidth="1"
-              filter="url(#glow)"
-              animate={{ strokeDashoffset: [0, 100], opacity: [0.1, 0.4, 0.1] }}
-              transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
-              style={{ strokeDasharray: "5, 5" }}
+              stroke="currentColor"
+              className="text-emerald-500"
+              strokeWidth="0.5"
+              animate={{ opacity: [0.05, 0.2, 0.05] }}
+              transition={{ duration: 6, repeat: Infinity, delay: i }}
+              style={{ strokeDasharray: "4, 4" }}
             />
           ))}
-          <linearGradient id="line-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#10b981" />
-            <stop offset="100%" stopColor="transparent" />
-          </linearGradient>
         </svg>
       </motion.div>
 
-      {/* EFECTO DE PROFUNDIDAD DE CAMPO (BLUR EN LOS BORDES) */}
-      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_30%,rgba(0,0,0,0.2)_100%)] dark:bg-[radial-gradient(circle_at_center,transparent_30%,rgba(0,0,0,0.4)_100%)]" />
-      
-      {/* ETIQUETA FLOTANTE PREMIUM */}
+      {/* ETIQUETA FLOTANTE PREMIUM - MÁS DISCRETA */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1 }}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 px-6 py-2 rounded-full border border-emerald-500/30 bg-emerald-500/5 backdrop-blur-md"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.5 }}
+        className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full border border-emerald-500/20 bg-emerald-500/5 backdrop-blur-sm"
       >
         <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-xs font-medium tracking-widest uppercase text-emerald-500/80">
-            Neural Data Engine Active
+          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500/50 animate-pulse" />
+          <span className="text-[10px] font-medium tracking-[0.2em] uppercase text-emerald-500/60">
+            Neural Engine
           </span>
         </div>
       </motion.div>
