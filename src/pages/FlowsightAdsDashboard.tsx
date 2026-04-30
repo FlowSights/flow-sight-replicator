@@ -391,7 +391,7 @@ const FlowsightAdsDashboard: React.FC = () => {
                       <div className="relative bg-white dark:bg-[#0a0a0a] border border-gray-100 dark:border-white/5 rounded-2xl p-4 transition-all group-focus-within:shadow-2xl group-focus-within:shadow-blue-500/10 group-focus-within:border-blue-500/30">
                         <div className="flex items-center gap-3 mb-3">
                           <div className={`p-2 rounded-lg transition-colors ${config.facebookUrl ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-white/5 text-gray-400'}`}>
-                            <Linkedin className="w-4 h-4" />
+                            <Users className="w-4 h-4" />
                           </div>
                           <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">LinkedIn</span>
                         </div>
