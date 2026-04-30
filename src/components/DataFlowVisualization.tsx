@@ -1,17 +1,20 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
 
-interface Electron {
+interface Particle {
   id: number;
-  orbitId: number;
-  speed: number;
+  x: number;
+  y: number;
+  z: number;
   size: number;
+  duration: number;
   delay: number;
   color: string;
+  glowColor: string;
 }
 
 export const DataFlowVisualization = () => {
-  const [electrons, setElectrons] = useState<Electron[]>([]);
+  const [particles, setParticles] = useState<Particle[]>([]);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -19,21 +22,34 @@ export const DataFlowVisualization = () => {
     offset: ["start end", "end start"]
   });
 
-  const rotateX = useTransform(scrollYProgress, [0, 1], [20, -20]);
-  const rotateY = useTransform(scrollYProgress, [0, 1], [-20, 20]);
+  const rotateX = useTransform(scrollYProgress, [0, 1], [15, -15]);
+  const rotateY = useTransform(scrollYProgress, [0, 1], [-15, 15]);
 
   useEffect(() => {
-    const colors = ["#10b981", "#34d399", "#6ee7b7", "#ffffff"];
-    // Creamos electrones para cada órbita
-    const newElectrons: Electron[] = Array.from({ length: 12 }, (_, i) => ({
-      id: i,
-      orbitId: i % 4, // 4 órbitas principales
-      speed: Math.random() * 2 + 2, // Velocidad de rotación
-      size: Math.random() * 4 + 3,
-      delay: Math.random() * -20,
-      color: colors[i % colors.length],
-    }));
-    setElectrons(newElectrons);
+    const colors = [
+      { base: "#10b981", glow: "rgba(16, 185, 129, 0.6)" },
+      { base: "#34d399", glow: "rgba(52, 211, 153, 0.6)" },
+      { base: "#059669", glow: "rgba(5, 150, 105, 0.6)" },
+      { base: "#6ee7b7", glow: "rgba(110, 231, 183, 0.6)" },
+      { base: "#ffffff", glow: "rgba(255, 255, 255, 0.4)" } // Partículas blancas para brillo extra
+    ];
+    
+    // Aumentamos a 70 partículas para una densidad óptima
+    const newParticles: Particle[] = Array.from({ length: 70 }, (_, i) => {
+      const colorSet = colors[Math.floor(Math.random() * colors.length)];
+      return {
+        id: i,
+        x: Math.random() * 140 - 70,
+        y: Math.random() * 140 - 70,
+        z: Math.random() * 240 - 120,
+        size: Math.random() * 5 + 1.5, // Un poco más grandes para notar el efecto esférico
+        duration: Math.random() * 10 + 12,
+        delay: Math.random() * 5,
+        color: colorSet.base,
+        glowColor: colorSet.glow,
+      };
+    });
+    setParticles(newParticles);
   }, []);
 
   const handleMouseMove = (e: React.MouseEvent) => {
@@ -50,122 +66,136 @@ export const DataFlowVisualization = () => {
       onMouseMove={handleMouseMove}
       className="relative w-full h-full flex items-center justify-center perspective-2000 select-none bg-transparent"
     >
-      {/* LEVITACIÓN GLOBAL */}
+      {/* CONTENEDOR DE LEVITACIÓN GLOBAL */}
       <motion.div
-        animate={{ y: [0, -20, 0] }}
-        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+        animate={{
+          y: [0, -25, 0],
+        }}
+        transition={{
+          duration: 7,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
         className="relative w-full h-full flex items-center justify-center"
       >
-        {/* CONTENEDOR 3D */}
+        {/* CONTENEDOR 3D PRINCIPAL */}
         <motion.div
           style={{ 
             rotateX, 
             rotateY,
-            x: mousePos.x * 40,
-            y: mousePos.y * 40,
+            x: mousePos.x * 50,
+            y: mousePos.y * 50,
           }}
-          className="relative w-72 h-72 md:w-[450px] md:h-[450px] preserve-3d"
+          className="relative w-72 h-72 md:w-[480px] md:h-[480px] preserve-3d"
         >
-          {/* NÚCLEO ATÓMICO (SOL DE DATOS) */}
-          <div className="absolute inset-[35%] preserve-3d" style={{ transform: "translateZ(20px)" }}>
-            <motion.div
-              animate={{ 
-                scale: [1, 1.1, 1],
-                boxShadow: [
-                  "0 0 40px rgba(16, 185, 129, 0.4)",
-                  "0 0 80px rgba(16, 185, 129, 0.7)",
-                  "0 0 40px rgba(16, 185, 129, 0.4)"
-                ]
-              }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              className="w-full h-full rounded-full bg-gradient-to-br from-emerald-300 via-emerald-500 to-emerald-800 border border-emerald-200/30 relative"
-            >
-              {/* Brillo interno */}
-              <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.5),transparent)]" />
-              {/* Aura */}
-              <div className="absolute -inset-10 rounded-full bg-emerald-500/20 blur-3xl pointer-events-none" />
-            </motion.div>
-          </div>
+          {/* NÚCLEO DE IA - EFECTO VOLUMÉTRICO */}
+          <motion.div
+            animate={{
+              scale: [1, 1.05, 1],
+              rotateZ: [0, 10, 0],
+            }}
+            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute inset-[32%] rounded-full bg-gradient-to-br from-emerald-300 via-emerald-500 to-emerald-900 z-20 border border-emerald-200/30 shadow-[0_0_100px_rgba(16,185,129,0.6)]"
+            style={{ transform: "translateZ(60px)" }}
+          >
+            {/* Reflejo especular para efecto 3D */}
+            <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_35%_35%,rgba(255,255,255,0.4),transparent_60%)]" />
+            <div className="absolute -inset-20 rounded-full bg-emerald-500/20 blur-[80px] pointer-events-none" />
+          </motion.div>
 
-          {/* ÓRBITAS Y ELECTRONES */}
-          {[
-            { rx: 70, ry: 0, rz: 0 },
-            { rx: 70, ry: 60, rz: 45 },
-            { rx: 70, ry: -60, rz: -45 },
-            { rx: 0, ry: 80, rz: 90 }
-          ].map((orbit, orbitIdx) => (
-            <div
-              key={orbitIdx}
-              className="absolute inset-0 preserve-3d"
-              style={{ 
-                transform: `rotateX(${orbit.rx}deg) rotateY(${orbit.ry}deg) rotateZ(${orbit.rz}deg)` 
-              }}
-            >
-              {/* El anillo de la órbita */}
-              <div className="absolute inset-0 rounded-full border border-emerald-500/20" />
-              
-              {/* Electrones en esta órbita */}
-              {electrons.filter(e => e.orbitId === orbitIdx).map((electron) => (
-                <motion.div
-                  key={electron.id}
-                  animate={{ rotateZ: [0, 360] }}
-                  transition={{ 
-                    duration: electron.speed, 
-                    repeat: Infinity, 
-                    ease: "linear",
-                    delay: electron.delay 
-                  }}
-                  className="absolute inset-0 preserve-3d"
-                >
-                  {/* El electrón propiamente dicho */}
-                  <div 
-                    className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 preserve-3d"
-                    style={{ transform: "rotateX(-90deg)" }} // Para que el electrón siempre mire al frente
-                  >
-                    {/* Cuerpo del electrón con brillo */}
-                    <div 
-                      className="rounded-full shadow-[0_0_15px_rgba(52,211,153,1)]"
-                      style={{ 
-                        width: electron.size, 
-                        height: electron.size,
-                        background: `radial-gradient(circle at 30% 30%, #ffffff, ${electron.color})`
-                      }}
-                    />
-                    {/* Estela de luz (Trail) */}
-                    <div 
-                      className="absolute top-1/2 left-1/2 -translate-x-1/2 w-1 h-12 bg-gradient-to-t from-emerald-500/0 to-emerald-400/40 blur-[1px]"
-                      style={{ transform: "rotate(180deg) translateY(6px)" }}
-                    />
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          ))}
-
-          {/* DESTELLOS DE DATOS ALEATORIOS (FOTONES) */}
-          {Array.from({ length: 15 }).map((_, i) => (
+          {/* ANILLOS ORBITALES */}
+          {[0, 45, 90, 135].map((rotation, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ 
-                opacity: [0, 0.8, 0],
-                scale: [0, 1, 0],
-                x: [Math.random() * 300 - 150, Math.random() * 300 - 150],
-                y: [Math.random() * 300 - 150, Math.random() * 300 - 150],
-                z: [Math.random() * 200 - 100, Math.random() * 200 - 100]
+              animate={{ rotateZ: 360 }}
+              transition={{ duration: 25 + i * 10, repeat: Infinity, ease: "linear" }}
+              style={{ 
+                rotateX: rotation, 
+                rotateY: rotation / 4,
+                transformStyle: "preserve-3d"
               }}
-              transition={{ 
-                duration: Math.random() * 3 + 2, 
-                repeat: Infinity, 
-                delay: Math.random() * 10 
-              }}
-              className="absolute w-1 h-1 bg-white rounded-full shadow-[0_0_8px_white]"
-            />
+              className="absolute inset-0 rounded-full border-[1px] border-emerald-500/15"
+            >
+              <motion.div 
+                animate={{ 
+                  scale: [0.8, 1.4, 0.8],
+                  opacity: [0.3, 0.8, 0.3]
+                }}
+                transition={{ duration: 5, repeat: Infinity, delay: i }}
+                className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-emerald-300 shadow-[0_0_25px_rgba(52,211,153,1)]" 
+                style={{ 
+                  transform: "translateZ(30px)",
+                  background: "radial-gradient(circle at 30% 30%, #d1fae5, #10b981)"
+                }}
+              />
+            </motion.div>
           ))}
+
+          {/* NUBE DE PARTÍCULAS VOLUMÉTRICAS */}
+          {particles.map((p) => {
+            const scale = (p.z + 150) / 200;
+            const opacity = (p.z + 150) / 300;
+
+            return (
+              <motion.div
+                key={p.id}
+                animate={{
+                  x: [p.x + "%", (p.x + 10) + "%", p.x + "%"],
+                  y: [p.y + "%", (p.y - 10) + "%", p.y + "%"],
+                }}
+                transition={{
+                  duration: p.duration,
+                  repeat: Infinity,
+                  delay: p.delay,
+                  ease: "easeInOut"
+                }}
+                className="absolute rounded-full"
+                style={{
+                  width: p.size * scale,
+                  height: p.size * scale,
+                  // Gradiente radial para efecto de esfera 3D
+                  background: `radial-gradient(circle at 30% 30%, #ffffff 0%, ${p.color} 40%, rgba(0,0,0,0.4) 100%)`,
+                  boxShadow: `0 0 ${p.size * 2}px ${p.glowColor}`,
+                  opacity: opacity * 0.8,
+                  left: "50%",
+                  top: "50%",
+                  transform: `translateZ(${p.z}px)`,
+                  willChange: "transform, opacity"
+                }}
+              />
+            );
+          })}
+
+          {/* LÍNEAS DE CONEXIÓN */}
+          <svg className="absolute inset-[-40%] w-[180%] h-[180%] pointer-events-none opacity-25">
+            {particles.slice(0, 12).map((p, i) => (
+              <motion.line
+                key={i}
+                x1="50%"
+                y1="50%"
+                x2={`${50 + p.x}%`}
+                y2={`${50 + p.y}%`}
+                stroke="url(#lineGradient)"
+                strokeWidth="0.6"
+                animate={{ 
+                  opacity: [0.05, 0.3, 0.05],
+                }}
+                transition={{ duration: 7, repeat: Infinity, delay: i }}
+                style={{ strokeDasharray: "3, 6" }}
+              />
+            ))}
+            <defs>
+              <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#10b981" stopOpacity="0" />
+                <stop offset="50%" stopColor="#34d399" stopOpacity="0.8" />
+                <stop offset="100%" stopColor="#059669" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+          </svg>
         </motion.div>
       </motion.div>
 
-      {/* ETIQUETA */}
+      {/* ETIQUETA FLOTANTE */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -178,7 +208,7 @@ export const DataFlowVisualization = () => {
             <div className="w-2 h-2 rounded-full bg-emerald-400 relative" />
           </div>
           <span className="text-[11px] font-bold tracking-[0.4em] uppercase text-emerald-400">
-            Atomic Data Engine v3.0
+            FlowSights Engine v2.1
           </span>
         </div>
       </motion.div>
