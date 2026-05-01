@@ -17,7 +17,7 @@ import {
   Upload as UploadIcon, X as XIcon, Sparkles as SparklesIcon,
   RefreshCw, Search, Activity, Eye, MousePointer, Camera,
   Moon, Sun, Building2, Link2, Globe2, CreditCard,
-  FileDown, ZoomIn
+  FileDown, ZoomIn, Edit2
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { LocationInput } from '@/components/LocationInput';
@@ -33,6 +33,7 @@ import { PaymentModal } from '@/components/PaymentModal';
 import { usePaymentStatus } from '@/hooks/usePaymentStatus';
 import { generateAdsWithGeminiIntegration } from '@/lib/dashboardIntegration';
 import { useToast } from '@/hooks/use-toast';
+import { MockupLightbox } from '@/components/MockupLightbox';
 
 type HeroStat = { value: number; suffix: string; prefix?: string; label: string; decimals?: number };
 
@@ -88,7 +89,7 @@ const FlowsightAdsDashboard: React.FC = () => {
   const [showInactivityModal, setShowInactivityModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [isGuideLightboxOpen, setIsGuideLightboxOpen] = useState(false);
-  const [isZoomOpen, setIsZoomOpen] = useState(false);
+  const [mockupLightboxOpen, setMockupLightboxOpen] = useState(false);
   const { hasPaid } = usePaymentStatus();
   
   useInactivityTimeoutStrict(() => {
@@ -211,28 +212,32 @@ const FlowsightAdsDashboard: React.FC = () => {
       border: "border-blue-500/30",
       accent: "bg-blue-600",
       text: "text-blue-500",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/7/7b/Meta_Platforms_Inc._logo.svg"
+      logo: "https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg",
+      name: "Meta (Facebook/Instagram)"
     },
     google: {
-      gradient: "from-red-500/10 via-yellow-500/10 to-blue-500/10",
-      border: "border-yellow-500/30",
-      accent: "bg-gradient-to-r from-red-500 via-yellow-500 to-blue-500",
-      text: "text-yellow-600",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_\"G\"_logo.svg"
+      gradient: "from-blue-500/10 via-red-500/10 to-yellow-500/10",
+      border: "border-blue-500/30",
+      accent: "bg-blue-500",
+      text: "text-blue-600",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_\"G\"_logo.svg",
+      name: "Google Ads"
     },
     tiktok: {
       gradient: "from-black/40 to-pink-500/20",
       border: "border-pink-500/30",
       accent: "bg-black",
       text: "text-pink-500",
-      logo: "https://upload.wikimedia.org/wikipedia/en/a/a9/TikTok_logo.svg"
+      logo: "https://upload.wikimedia.org/wikipedia/en/a/a9/TikTok_logo.svg",
+      name: "TikTok Ads"
     },
     linkedin: {
       gradient: "from-blue-800/20 to-blue-600/20",
       border: "border-blue-700/30",
       accent: "bg-blue-800",
       text: "text-blue-700",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png"
+      logo: "https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png",
+      name: "LinkedIn Ads"
     }
   };
 
@@ -527,6 +532,18 @@ const FlowsightAdsDashboard: React.FC = () => {
                   </div>
                   
                   <Slider value={[config.budget]} onValueChange={(val) => setConfig({...config, budget: val[0]})} max={5000} min={50} step={50} className="py-4" />
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t border-gray-100 dark:border-white/5">
+                    <div className="p-6 rounded-3xl bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/5">
+                      <AnimatedStat stat={{ value: config.budget * 12, suffix: "", prefix: "+", label: "Alcance Estimado" }} />
+                    </div>
+                    <div className="p-6 rounded-3xl bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/5">
+                      <AnimatedStat stat={{ value: config.budget * 0.8, suffix: "", prefix: "+", label: "Clicks Potenciales" }} />
+                    </div>
+                    <div className="p-6 rounded-3xl bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/5">
+                      <AnimatedStat stat={{ value: Math.floor(config.budget / 15), suffix: "", prefix: "+", label: "Conversiones IA" }} />
+                    </div>
+                  </div>
                 </div>
 
                 <div className="flex gap-4">
@@ -547,33 +564,30 @@ const FlowsightAdsDashboard: React.FC = () => {
         ) : (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-20">
             
-            {/* 1. GRID PRINCIPAL: RESULTADOS VISUALES */}
+            {/* 1. GRID PRINCIPAL: RESULTADOS VISUALES (SIGUIENDO REFERENCIA) */}
             <div className="max-w-6xl mx-auto space-y-10">
-              <div className="text-center space-y-4">
-                <h2 className="text-4xl md:text-5xl font-black text-gray-900 dark:text-white tracking-tight">
-                  Tu Estrategia <span className="text-emerald-500">Visual</span>
-                </h2>
-                <p className="text-gray-500 dark:text-gray-400 text-lg">Explora cómo se verá tu marca en las plataformas líderes.</p>
-              </div>
-
-              {/* Selector con Logos Oficiales */}
-              <div className="flex flex-wrap justify-center gap-6">
-                {(['meta', 'google', 'tiktok', 'linkedin'] as const).map((platform) => {
+              
+              {/* Pestañas Premium Grandes con Logos Oficiales */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {(['google', 'meta', 'tiktok', 'linkedin'] as const).map((platform) => {
                   const isActive = selectedPlatform === platform;
                   return (
                     <button
                       key={platform}
                       onClick={() => setSelectedPlatform(platform)}
-                      className={`relative flex items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-3xl transition-all duration-500 border-2 ${
+                      className={`relative flex items-center gap-4 p-6 rounded-[32px] transition-all duration-500 border-2 ${
                         isActive 
-                        ? `bg-white dark:bg-white/5 border-emerald-500 shadow-2xl shadow-emerald-500/20 scale-110` 
+                        ? `bg-white dark:bg-white/5 border-emerald-500 shadow-2xl shadow-emerald-500/20 scale-[1.02]` 
                         : 'bg-gray-50 dark:bg-white/5 border-transparent grayscale opacity-40 hover:grayscale-0 hover:opacity-100'
                       }`}
                     >
-                      <img src={platformStyles[platform].logo} alt={platform} className="w-10 h-10 md:w-12 md:h-12 object-contain" />
-                      {isActive && (
-                        <motion.div layoutId="active-pill" className="absolute -bottom-3 w-2 h-2 bg-emerald-500 rounded-full" />
-                      )}
+                      <div className="w-12 h-12 flex-shrink-0">
+                        <img src={platformStyles[platform].logo} alt={platform} className="w-full h-full object-contain" />
+                      </div>
+                      <div className="text-left">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Plataforma</p>
+                        <p className="text-sm font-black text-gray-900 dark:text-white truncate">{platformStyles[platform].name}</p>
+                      </div>
                     </button>
                   );
                 })}
@@ -591,14 +605,9 @@ const FlowsightAdsDashboard: React.FC = () => {
                   <div className="bg-white dark:bg-[#050505]/90 backdrop-blur-3xl rounded-[46px] p-8 md:p-12">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                       
-                      {/* Mockup con Zoom */}
+                      {/* Mockup con Botones de Acción */}
                       <div className="space-y-6">
-                        <div className="relative group cursor-zoom-in rounded-[32px] overflow-hidden shadow-2xl border border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-black/40 p-6 transition-transform duration-500 hover:scale-[1.02]">
-                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors z-10 flex items-center justify-center opacity-0 group-hover:opacity-100">
-                            <div className="bg-white/90 dark:bg-black/90 p-4 rounded-full shadow-2xl">
-                              <ZoomIn className="w-8 h-8 text-emerald-500" />
-                            </div>
-                          </div>
+                        <div className="relative group rounded-[32px] overflow-hidden shadow-2xl border border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-black/40 p-6">
                           <EditablePlatformPreview
                             platform={selectedPlatform}
                             headline={generatedAds.find(a => a.platform === selectedPlatform)?.headline || ''}
@@ -607,53 +616,40 @@ const FlowsightAdsDashboard: React.FC = () => {
                             imageUrl={config.userImage || ''}
                             businessName={config.businessName}
                           />
+                          <div className="absolute top-8 right-8 flex flex-col gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <Button size="icon" variant="secondary" onClick={() => setMockupLightboxOpen(true)} className="rounded-full shadow-xl">
+                              <Maximize2 className="w-4 h-4" />
+                            </Button>
+                            <Button size="icon" variant="secondary" className="rounded-full shadow-xl">
+                              <Edit2 className="w-4 h-4" />
+                            </Button>
+                          </div>
                         </div>
-                        <p className="text-center text-xs font-bold text-gray-400 uppercase tracking-widest">Pasa el mouse para ampliar detalles</p>
                       </div>
 
                       {/* Estrategia y Botones */}
                       <div className="space-y-10">
                         <div className="space-y-6">
-                          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 text-emerald-500 text-[10px] font-black uppercase tracking-widest">
-                            Análisis Estratégico
+                          <div className="flex items-center gap-3">
+                            <div className="px-3 py-1 rounded-full bg-blue-500 text-white text-[10px] font-black uppercase tracking-widest">Offer</div>
+                            <div className="flex items-center gap-1 text-yellow-500 font-black text-xs">
+                              <Sparkles className="w-3 h-3" /> 94/100
+                            </div>
                           </div>
                           <h4 className="text-4xl font-black text-gray-900 dark:text-white leading-tight">
-                            ¿Por qué <span className={platformStyles[selectedPlatform].text}>{selectedPlatform}</span>?
+                            Estrategia de <span className={platformStyles[selectedPlatform].text}>{platformStyles[selectedPlatform].name}</span>
                           </h4>
-                          <div className="p-8 rounded-[32px] bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/5 space-y-4">
+                          <div className="space-y-4">
                             <p className="text-lg text-gray-700 dark:text-gray-300 font-medium leading-relaxed">
-                              {selectedPlatform === 'meta' && "Ideal para captar atención visual y generar deseo inmediato en audiencias segmentadas por intereses y comportamientos."}
-                              {selectedPlatform === 'google' && "Perfecto para capturar la intención de búsqueda directa de usuarios que ya están buscando activamente tu solución."}
-                              {selectedPlatform === 'tiktok' && "La mejor opción para conectar con audiencias jóvenes a través de contenido auténtico, dinámico y de alto impacto viral."}
-                              {selectedPlatform === 'linkedin' && "Estrategia B2B de alta autoridad para conectar con tomadores de decisiones y profesionales en un entorno corporativo."}
+                              {selectedPlatform === 'meta' && "Tono visual y emocional diseñado específicamente para captar la atención en el feed de Instagram y Facebook, optimizando el CTR mediante segmentación psicográfica."}
+                              {selectedPlatform === 'google' && "Estrategia basada en intención de búsqueda directa, con copys optimizados para el Quality Score y máxima relevancia en la red de búsqueda."}
+                              {selectedPlatform === 'tiktok' && "Contenido nativo de alto impacto visual diseñado para el algoritmo 'For You', fomentando la interacción y el descubrimiento viral."}
+                              {selectedPlatform === 'linkedin' && "Tono formal y profesional diseñado específicamente para dueños de negocio y emprendedores que buscan networking de alto nivel."}
                             </p>
-                            <div className="pt-4 border-t border-gray-200 dark:border-white/10">
-                              <p className="text-xs font-black text-emerald-500 uppercase tracking-widest">Audiencia Objetivo</p>
-                              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{config.idealCustomer}</p>
-                            </div>
                           </div>
                         </div>
 
                         <div className="space-y-4">
-                          <Button 
-                            onClick={() => {
-                              if (hasPaid) {
-                                downloadPremiumCampaignKit({
-                                  businessName: config.businessName,
-                                  businessDescription: config.promote,
-                                  targetAudience: config.idealCustomer,
-                                  websiteUrl: config.websiteUrl,
-                                  ads: generatedAds.filter(a => a.platform === selectedPlatform),
-                                });
-                              } else {
-                                setShowPaymentModal(true);
-                              }
-                            }}
-                            className="w-full py-10 text-xl font-black bg-emerald-600 hover:bg-emerald-700 text-white rounded-3xl shadow-2xl shadow-emerald-500/40 transition-all hover:scale-[1.02]"
-                          >
-                            <FileDown className="w-6 h-6 mr-3" /> Descargar Campaign Kit (PDF)
-                          </Button>
-                          
                           <div className="grid grid-cols-2 gap-4">
                             <Button 
                               variant="outline"
@@ -663,16 +659,34 @@ const FlowsightAdsDashboard: React.FC = () => {
                               <Eye className="w-4 h-4 mr-2" /> Guía Visual
                             </Button>
                             <Button 
-                              variant="outline"
                               onClick={() => {
-                                const ad = generatedAds.find(a => a.platform === selectedPlatform);
-                                if (ad) window.open(ad.platformUrl, '_blank');
+                                if (hasPaid) {
+                                  downloadPremiumCampaignKit({
+                                    businessName: config.businessName,
+                                    businessDescription: config.promote,
+                                    targetAudience: config.idealCustomer,
+                                    websiteUrl: config.websiteUrl,
+                                    ads: generatedAds.filter(a => a.platform === selectedPlatform),
+                                  });
+                                } else {
+                                  setShowPaymentModal(true);
+                                }
                               }}
-                              className="py-8 rounded-2xl border-gray-200 dark:border-white/10 font-black uppercase tracking-widest text-xs hover:bg-gray-50 dark:hover:bg-white/5"
+                              className="py-8 text-xs font-black bg-blue-600 hover:bg-blue-700 text-white rounded-2xl shadow-xl transition-all"
                             >
-                              <Rocket className="w-4 h-4 mr-2" /> Lanza en {selectedPlatform}
+                              <Download className="w-4 h-4 mr-2" /> Descargar Kit
                             </Button>
                           </div>
+                          <Button 
+                            variant="outline"
+                            onClick={() => {
+                              const ad = generatedAds.find(a => a.platform === selectedPlatform);
+                              if (ad) window.open(ad.platformUrl, '_blank');
+                            }}
+                            className="w-full py-8 rounded-2xl border-gray-200 dark:border-white/10 font-black uppercase tracking-widest text-xs hover:bg-gray-50 dark:hover:bg-white/5"
+                          >
+                            <ExternalLink className="w-4 h-4 mr-2" /> Publicar en {platformStyles[selectedPlatform].name}
+                          </Button>
                         </div>
                       </div>
 
@@ -682,8 +696,8 @@ const FlowsightAdsDashboard: React.FC = () => {
               </AnimatePresence>
             </div>
 
-            {/* 2. SECCIÓN DE ENTREGA FINAL: FULL CAMPAIGN KIT */}
-            <div className="max-w-5xl mx-auto">
+            {/* 2. SECCIÓN DE ENTREGA FINAL: FULL CAMPAIGN KIT (MISMO TAMAÑO) */}
+            <div className="max-w-6xl mx-auto">
               <motion.div 
                 initial={{ y: 30, opacity: 0 }}
                 whileInView={{ y: 0, opacity: 1 }}
@@ -710,7 +724,7 @@ const FlowsightAdsDashboard: React.FC = () => {
                       onClick={handleDownloadMasterKit}
                       className="group relative h-24 px-12 rounded-3xl bg-emerald-600 hover:bg-emerald-700 text-white shadow-2xl shadow-emerald-500/40 transition-all hover:scale-105 active:scale-95 flex items-center gap-4"
                     >
-                      <Download className="w-8 h-8 group-hover:animate-bounce" />
+                      <FileDown className="w-8 h-8" />
                       <div className="text-left">
                         <p className="text-[10px] font-black uppercase tracking-widest opacity-70">Descarga Maestra</p>
                         <p className="text-xl font-black uppercase tracking-tight">Full Campaign Kit</p>
@@ -740,6 +754,13 @@ const FlowsightAdsDashboard: React.FC = () => {
         isOpen={isGuideLightboxOpen} 
         onClose={() => setIsGuideLightboxOpen(false)} 
         platform={selectedPlatform} 
+      />
+
+      <MockupLightbox
+        isOpen={mockupLightboxOpen}
+        onClose={() => setMockupLightboxOpen(false)}
+        ad={generatedAds.find(a => a.platform === selectedPlatform) || generatedAds[0]}
+        businessName={config.businessName}
       />
       
       <PaymentModal 
