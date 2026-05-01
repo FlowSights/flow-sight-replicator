@@ -25,7 +25,6 @@ import { LocationInput } from '@/components/LocationInput';
 import { motion, AnimatePresence } from 'framer-motion';
 import { EditablePlatformPreview } from '@/components/EditablePlatformPreview';
 import { VisualGuideLightbox } from '@/components/VisualGuideLightbox';
-import { useCountUp } from '@/hooks/useCountUp';
 import { PremiumLoadingScreen } from '@/components/PremiumLoadingScreen';
 import { downloadPremiumCampaignKit } from '@/lib/premiumCampaignKitGenerator';
 import { PaymentModal } from '@/components/PaymentModal';
@@ -33,7 +32,7 @@ import { usePaymentStatus } from '@/hooks/usePaymentStatus';
 import { generateAdsWithGeminiIntegration } from '@/lib/dashboardIntegration';
 import { useToast } from '@/hooks/use-toast';
 import { MockupLightbox } from '@/components/MockupLightbox';
-import { logger, formatError } from '@/lib/logger';
+import { logger } from '@/lib/logger';
 import { PlatformIcon, platformThemes, platformNames } from '@/components/PlatformIcons';
 
 interface GeneratedAd {
@@ -181,29 +180,111 @@ const FlowsightAdsDashboard: React.FC = () => {
         <AnimatePresence mode="wait">
           {!showResults ? (
             <motion.div key="form" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="max-w-3xl mx-auto">
-              {/* Form Steps (Simplificado para brevedad) */}
               <div className="text-center mb-12">
                 <h2 className="text-4xl md:text-5xl font-black mb-4 tracking-tight">Crea tu campaña <span className="text-emerald-500">maestra</span></h2>
-                <p className="text-gray-400 text-lg font-medium">Cuéntanos sobre tu negocio y nuestra IA diseñará una estrategia de alto nivel.</p>
+                <p className="text-gray-400 text-lg font-medium">Configuración paso a paso para tu estrategia de alto rendimiento.</p>
+                
+                {/* Stepper Visual */}
+                <div className="flex justify-center items-center gap-3 mt-8">
+                  {[1, 2, 3, 4].map((s) => (
+                    <div 
+                      key={s} 
+                      className={`h-1.5 rounded-full transition-all duration-500 ${
+                        s === step ? 'w-12 bg-emerald-500' : s < step ? 'w-6 bg-emerald-500/40' : 'w-6 bg-white/10'
+                      }`}
+                    />
+                  ))}
+                </div>
               </div>
 
               <div className="space-y-8">
-                {step === 1 && (
-                  <div className="space-y-6 bg-white/5 p-8 rounded-[32px] border border-white/5">
-                    <div className="space-y-2">
-                      <label className="text-xs font-black uppercase tracking-widest text-emerald-500">Nombre del Negocio</label>
-                      <Input placeholder="Ej: Café Miel Gourmet" className="py-7 bg-white/5 border-white/10 rounded-2xl text-lg font-bold" value={config.businessName} onChange={(e) => setConfig({ ...config, businessName: e.target.value })} />
-                    </div>
-                    <Button onClick={() => setStep(2)} disabled={!config.businessName} className="w-full py-8 text-xl font-black bg-emerald-500 hover:bg-emerald-600 rounded-2xl shadow-xl shadow-emerald-500/20">Continuar <ArrowRight className="ml-2 w-6 h-6" /></Button>
-                  </div>
-                )}
-                {/* Otros pasos... se mantienen similares pero con mejor estilo */}
-                {step > 1 && (
-                   <div className="space-y-6 bg-white/5 p-8 rounded-[32px] border border-white/5">
-                      <p className="text-center text-gray-400">Completando configuración...</p>
-                      <Button onClick={handleGenerate} className="w-full py-8 text-xl font-black bg-emerald-500 hover:bg-emerald-600 rounded-2xl shadow-xl shadow-emerald-500/20">Generar Ahora</Button>
-                   </div>
-                )}
+                <AnimatePresence mode="wait">
+                  {step === 1 && (
+                    <motion.div key="step1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6 bg-white/5 p-8 rounded-[32px] border border-white/5">
+                      <div className="space-y-2">
+                        <label className="text-xs font-black uppercase tracking-widest text-emerald-500">Nombre del Negocio</label>
+                        <Input placeholder="Ej: Café Miel Gourmet" className="py-7 bg-white/5 border-white/10 rounded-2xl text-lg font-bold" value={config.businessName} onChange={(e) => setConfig({ ...config, businessName: e.target.value })} />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-xs font-black uppercase tracking-widest text-emerald-500">Sitio Web / Landing Page</label>
+                        <div className="relative">
+                          <Globe className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                          <Input placeholder="https://tudominio.com" className="pl-12 py-7 bg-white/5 border-white/10 rounded-2xl text-lg font-bold" value={config.websiteUrl} onChange={(e) => setConfig({ ...config, websiteUrl: e.target.value })} />
+                        </div>
+                      </div>
+                      <Button onClick={() => setStep(2)} disabled={!config.businessName} className="w-full py-8 text-xl font-black bg-emerald-500 hover:bg-emerald-600 rounded-2xl transition-all shadow-xl shadow-emerald-500/20">Continuar <ArrowRight className="ml-2 w-6 h-6" /></Button>
+                    </motion.div>
+                  )}
+
+                  {step === 2 && (
+                    <motion.div key="step2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6 bg-white/5 p-8 rounded-[32px] border border-white/5">
+                      <div className="space-y-2">
+                        <label className="text-xs font-black uppercase tracking-widest text-emerald-500">¿Qué quieres promover?</label>
+                        <Textarea placeholder="Ej: Nuestra nueva membresía anual con 20% de descuento y acceso a todas las clases..." className="min-h-[120px] bg-white/5 border-white/10 rounded-2xl text-lg font-bold py-4" value={config.promote} onChange={(e) => setConfig({ ...config, promote: e.target.value })} />
+                      </div>
+                      <div className="flex gap-4">
+                        <Button variant="ghost" onClick={() => setStep(1)} className="flex-1 py-8 rounded-2xl font-bold">Atrás</Button>
+                        <Button onClick={() => setStep(3)} disabled={!config.promote} className="flex-[2] py-8 text-xl font-black bg-emerald-500 hover:bg-emerald-600 rounded-2xl shadow-xl shadow-emerald-500/20">Siguiente <ArrowRight className="ml-2 w-6 h-6" /></Button>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {step === 3 && (
+                    <motion.div key="step3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6 bg-white/5 p-8 rounded-[32px] border border-white/5">
+                      <div className="space-y-2">
+                        <label className="text-xs font-black uppercase tracking-widest text-emerald-500">Ubicación Objetivo</label>
+                        <LocationInput value={config.location} onChange={(val) => setConfig({ ...config, location: val })} />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-xs font-black uppercase tracking-widest text-emerald-500">Cliente Ideal</label>
+                        <Input placeholder="Ej: Dueños de negocios, 25-45 años, interesados en tecnología..." className="py-7 bg-white/5 border-white/10 rounded-2xl text-lg font-bold" value={config.idealCustomer} onChange={(e) => setConfig({ ...config, idealCustomer: e.target.value })} />
+                      </div>
+                      <div className="flex gap-4">
+                        <Button variant="ghost" onClick={() => setStep(2)} className="flex-1 py-8 rounded-2xl font-bold">Atrás</Button>
+                        <Button onClick={() => setStep(4)} disabled={!config.location || !config.idealCustomer} className="flex-[2] py-8 text-xl font-black bg-emerald-500 hover:bg-emerald-600 rounded-2xl shadow-xl shadow-emerald-500/20">Último paso <ArrowRight className="ml-2 w-6 h-6" /></Button>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {step === 4 && (
+                    <motion.div key="step4" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-8 bg-white/5 p-8 rounded-[32px] border border-white/5">
+                      <div className="space-y-4">
+                        <div className="flex justify-between items-end">
+                          <label className="text-xs font-black uppercase tracking-widest text-emerald-500">Presupuesto Diario (USD)</label>
+                          <span className="text-3xl font-black text-white">${config.budget}</span>
+                        </div>
+                        <Slider value={[config.budget]} min={5} max={500} step={5} onValueChange={(val) => setConfig({ ...config, budget: val[0] })} className="py-4" />
+                      </div>
+
+                      <div className="space-y-4">
+                        <label className="text-xs font-black uppercase tracking-widest text-emerald-500">Imagen de Referencia (Opcional)</label>
+                        <div onClick={() => fileInputRef.current?.click()} className="border-2 border-dashed border-white/10 rounded-[32px] p-10 flex flex-col items-center justify-center gap-4 hover:border-emerald-500/50 hover:bg-emerald-500/5 transition-all cursor-pointer group">
+                          {config.userImage ? (
+                            <div className="relative w-full aspect-video rounded-2xl overflow-hidden">
+                              <img src={config.userImage} alt="Preview" className="w-full h-full object-cover" />
+                              <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                <RefreshCw className="w-8 h-8 text-white animate-spin-slow" />
+                              </div>
+                            </div>
+                          ) : (
+                            <>
+                              <div className="p-6 bg-white/5 rounded-3xl group-hover:scale-110 transition-transform">
+                                <Upload className="w-10 h-10 text-emerald-500" />
+                              </div>
+                              <p className="font-bold text-gray-400">Sube una imagen de tu producto o servicio</p>
+                            </>
+                          )}
+                          <input type="file" ref={fileInputRef} onChange={handleImageUpload} accept="image/*" className="hidden" />
+                        </div>
+                      </div>
+
+                      <div className="flex gap-4 pt-4">
+                        <Button variant="ghost" onClick={() => setStep(3)} className="flex-1 py-8 rounded-2xl font-bold">Atrás</Button>
+                        <Button onClick={handleGenerate} className="flex-[2] py-8 text-xl font-black bg-emerald-500 hover:bg-emerald-600 rounded-2xl shadow-xl shadow-emerald-500/20 group">Generar Campaña Maestra <Zap className="ml-2 w-6 h-6 group-hover:animate-pulse" /></Button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </motion.div>
           ) : (
