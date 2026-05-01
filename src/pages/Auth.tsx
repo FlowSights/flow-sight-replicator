@@ -6,14 +6,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
 import { useAuth } from "@/contexts/AuthContext";
 import SEO from "@/components/SEO";
 import { ArrowLeft, Loader2, Mail, Lock, User as UserIcon } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import logo from "@/assets/logo.png";
 import { z } from "zod";
-import { useState, useEffect } from "react";
+import { logger, formatError } from "@/lib/logger";
 
 const signUpSchema = z.object({
   name: z.string().trim().min(2, "Mínimo 2 caracteres").max(100),
@@ -42,8 +41,6 @@ const Auth = () => {
     if (user) navigate(redirectTo, { replace: true });
   }, [user, redirectTo, navigate]);
 
-
-
   const handleEmail = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -55,6 +52,9 @@ const Auth = () => {
           setLoading(false);
           return;
         }
+        
+        logger.info("Iniciando registro por email", { email: parsed.data.email }, "Auth");
+        
         const { error } = await supabase.auth.signUp({
           email: parsed.data.email,
           password: parsed.data.password,
@@ -63,7 +63,13 @@ const Auth = () => {
             data: { full_name: parsed.data.name },
           },
         });
-        if (error) throw error;
+        
+        if (error) {
+          const structured = formatError(error);
+          logger.error("Error en registro Supabase", structured, "Auth");
+          throw error;
+        }
+        
         toast({ title: "¡Cuenta creada!", description: "Revisa tu correo para confirmar tu cuenta y luego inicia sesión." });
         setMode("signin");
       } else {
@@ -73,14 +79,22 @@ const Auth = () => {
           setLoading(false);
           return;
         }
+        
+        logger.info("Iniciando sesión por email", { email: parsed.data.email }, "Auth");
+        
         const { error } = await supabase.auth.signInWithPassword({
           email: parsed.data.email,
           password: parsed.data.password,
         });
-        if (error) throw error;
+        
+        if (error) {
+          const structured = formatError(error);
+          logger.error("Error en login Supabase", structured, "Auth");
+          throw error;
+        }
       }
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Error desconocido";
+    } catch (err: any) {
+      const msg = err?.message || "Error desconocido";
       toast({ title: "No pudimos completar la acción", description: msg, variant: "destructive" });
     } finally {
       setLoading(false);
@@ -89,15 +103,26 @@ const Auth = () => {
 
   const handleGoogleLogin = async () => {
     try {
+      logger.info("Iniciando OAuth con Google", { origin: window.location.origin }, "Auth");
+      
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
           redirectTo: window.location.origin + "/auth/callback",
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          }
         },
       });
-      if (error) throw error;
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Error al conectar con Google";
+      
+      if (error) {
+        const structured = formatError(error);
+        logger.error("Error al iniciar OAuth con Google", structured, "Auth");
+        throw error;
+      }
+    } catch (err: any) {
+      const msg = err?.message || "Error al conectar con Google";
       toast({ title: "Error de autenticación", description: msg, variant: "destructive" });
     }
   };
@@ -115,7 +140,6 @@ const Auth = () => {
         <nav className="container flex items-center justify-between h-20">
           <Link 
             to="/" 
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             className="flex items-center gap-2.5 font-display font-bold text-xl md:text-2xl hover:opacity-90 transition-opacity"
           >
             <img src={logo} alt="FlowSights logo" width={48} height={48} className="w-12 h-12 object-contain" />

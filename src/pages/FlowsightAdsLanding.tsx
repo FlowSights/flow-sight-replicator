@@ -10,6 +10,7 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from 'framer-motion';
 import { AppleLoader } from '@/components/AppleLoader';
+import { logger, formatError } from '@/lib/logger';
 
 const FlowsightAdsLanding: React.FC = () => {
   const [showLoader, setShowLoader] = useState(true);
@@ -31,13 +32,21 @@ const FlowsightAdsLanding: React.FC = () => {
     phone: '',
     address: '',
   });
-  const [resetEmail, setResetEmail] = useState('');
 
   useEffect(() => {
     const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        navigate('/flowsight-ads/dashboard');
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error) {
+          logger.error("Error al verificar sesión inicial", formatError(error), "AdsLanding");
+          return;
+        }
+        if (session) {
+          logger.info("Sesión activa detectada, redirigiendo al dashboard", { userId: session.user.id }, "AdsLanding");
+          navigate('/flowsight-ads/dashboard');
+        }
+      } catch (err) {
+        logger.error("Excepción al verificar sesión inicial", err, "AdsLanding");
       }
     };
     checkSession();
@@ -48,12 +57,18 @@ const FlowsightAdsLanding: React.FC = () => {
     setMessage('');
     setLoading(true);
     try {
+      logger.info("Iniciando sesión con contraseña (Ads)", { email: loginData.email }, "AdsLanding");
       const { data, error } = await supabase.auth.signInWithPassword({
         email: loginData.email,
         password: loginData.password,
       });
-      if (error) throw error;
+      if (error) {
+        const structured = formatError(error);
+        logger.error("Error en login con contraseña (Ads)", structured, "AdsLanding");
+        throw error;
+      }
       if (data.session) {
+        logger.info("Login exitoso (Ads)", { userId: data.user.id }, "AdsLanding");
         navigate('/flowsight-ads/dashboard');
       }
     } catch (error: any) {
@@ -66,23 +81,34 @@ const FlowsightAdsLanding: React.FC = () => {
 
   const handleLoginWithGoogle = async () => {
     try {
+      logger.info("Iniciando OAuth con Google (Ads)", { origin: window.location.origin }, "AdsLanding");
+      
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
-        options: { redirectTo: window.location.origin + '/auth/callback?source=ads' },
+        options: { 
+          redirectTo: window.location.origin + '/auth/callback?source=ads',
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          }
+        },
       });
-      if (error) throw error;
+      
+      if (error) {
+        const structured = formatError(error);
+        logger.error("Error al iniciar OAuth con Google (Ads)", structured, "AdsLanding");
+        throw error;
+      }
     } catch (error: any) {
       setMessageType('error');
       setMessage(error.message || 'Error al iniciar sesión con Google');
+      logger.error("Excepción en handleLoginWithGoogle (Ads)", error, "AdsLanding");
     }
   };
-
-
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validaciones de seguridad
     if (!registerData.fullName.trim() || registerData.fullName.length < 2) {
       setMessageType('error');
       setMessage('El nombre debe tener al menos 2 caracteres');
@@ -109,6 +135,7 @@ const FlowsightAdsLanding: React.FC = () => {
     
     setLoading(true);
     try {
+      logger.info("Iniciando registro de nuevo usuario (Ads)", { email: registerData.email }, "AdsLanding");
       const { error } = await supabase.auth.signUp({
         email: registerData.email,
         password: registerData.password,
@@ -117,13 +144,18 @@ const FlowsightAdsLanding: React.FC = () => {
             full_name: registerData.fullName.trim(),
             phone: registerData.phone.trim(),
           },
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          emailRedirectTo: `${window.location.origin}/auth/callback?source=ads`,
         },
       });
-      if (error) throw error;
+      
+      if (error) {
+        const structured = formatError(error);
+        logger.error("Error en registro (Ads)", structured, "AdsLanding");
+        throw error;
+      }
+      
       setMessageType('success');
       setMessage('¡Registro exitoso! Revisa tu correo para confirmar tu cuenta.');
-      // Limpiar formulario
       setRegisterData({ email: '', password: '', confirmPassword: '', fullName: '', phone: '', address: '' });
     } catch (error: any) {
       setMessageType('error');
@@ -157,7 +189,6 @@ const FlowsightAdsLanding: React.FC = () => {
       </header>
 
       <div className="flex-1 flex items-center justify-center p-6 relative overflow-hidden">
-        {/* Decorative Glows */}
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-500/10 blur-[120px] rounded-full pointer-events-none hidden dark:block" />
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/10 blur-[120px] rounded-full pointer-events-none hidden dark:block" />
 
@@ -254,57 +285,71 @@ const FlowsightAdsLanding: React.FC = () => {
                 </div>
               </form>
             ) : (
-              <form onSubmit={handleRegister} className="space-y-5">
+              <form onSubmit={handleRegister} className="space-y-4">
                 <div className="space-y-2">
                   <Label className="text-xs font-black uppercase tracking-widest text-gray-400">Nombre Completo</Label>
-                  <Input 
-                    className="py-6 rounded-xl border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-white/5" 
-                    placeholder="Tu nombre"
-                    value={registerData.fullName}
-                    onChange={(e) => setRegisterData({ ...registerData, fullName: e.target.value })}
-                    required
-                  />
+                  <div className="relative">
+                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Input 
+                      placeholder="Juan Pérez" 
+                      className="pl-12 py-6 rounded-xl border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-white/5 focus:ring-emerald-500" 
+                      value={registerData.fullName}
+                      onChange={(e) => setRegisterData({ ...registerData, fullName: e.target.value })}
+                      required
+                    />
+                  </div>
                 </div>
                 <div className="space-y-2">
                   <Label className="text-xs font-black uppercase tracking-widest text-gray-400">Email</Label>
-                  <Input 
-                    type="email" 
-                    className="py-6 rounded-xl border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-white/5" 
-                    placeholder="nombre@empresa.com"
-                    value={registerData.email}
-                    onChange={(e) => setRegisterData({ ...registerData, email: e.target.value })}
-                    required
-                  />
+                  <div className="relative">
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Input 
+                      type="email" 
+                      placeholder="nombre@empresa.com" 
+                      className="pl-12 py-6 rounded-xl border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-white/5 focus:ring-emerald-500" 
+                      value={registerData.email}
+                      onChange={(e) => setRegisterData({ ...registerData, email: e.target.value })}
+                      required
+                    />
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label className="text-xs font-black uppercase tracking-widest text-gray-400">Contraseña</Label>
-                  <Input 
-                    type="password" 
-                    className="py-6 rounded-xl border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-white/5" 
-                    value={registerData.password}
-                    onChange={(e) => setRegisterData({ ...registerData, password: e.target.value })}
-                    required
-                  />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-xs font-black uppercase tracking-widest text-gray-400">Contraseña</Label>
+                    <div className="relative">
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <Input 
+                        type="password" 
+                        className="pl-12 py-6 rounded-xl border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-white/5 focus:ring-emerald-500" 
+                        value={registerData.password}
+                        onChange={(e) => setRegisterData({ ...registerData, password: e.target.value })}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-xs font-black uppercase tracking-widest text-gray-400">Confirmar</Label>
+                    <div className="relative">
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <Input 
+                        type="password" 
+                        className="pl-12 py-6 rounded-xl border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-white/5 focus:ring-emerald-500" 
+                        value={registerData.confirmPassword}
+                        onChange={(e) => setRegisterData({ ...registerData, confirmPassword: e.target.value })}
+                        required
+                      />
+                    </div>
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label className="text-xs font-black uppercase tracking-widest text-gray-400">Confirmar Contraseña</Label>
-                  <Input 
-                    type="password" 
-                    className="py-6 rounded-xl border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-white/5" 
-                    value={registerData.confirmPassword}
-                    onChange={(e) => setRegisterData({ ...registerData, confirmPassword: e.target.value })}
-                    required
-                  />
-                </div>
-                <Button type="submit" className="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-8 text-lg font-black rounded-2xl shadow-xl shadow-emerald-500/20" disabled={loading}>
-                  {loading ? 'Creando cuenta...' : 'Registrarse'}
+                <Button type="submit" className="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-8 text-lg font-black rounded-2xl shadow-xl shadow-emerald-500/20 transition-all active:scale-[0.98]" disabled={loading}>
+                  {loading ? 'Creando cuenta...' : 'Crear Cuenta'}
                 </Button>
               </form>
             )}
           </Card>
         </div>
       </div>
-    </div>
+      </div>
     </>
   );
 };

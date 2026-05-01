@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { supabase } from '@/lib/supabaseClient';
 import { useToast } from '@/hooks/use-toast';
+import { logger, formatError } from '@/lib/logger';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
@@ -21,14 +22,23 @@ export const useStripeCheckout = () => {
   const initiateCheckout = async (options: CheckoutOptions) => {
     setLoading(true);
     setError(null);
+    logger.info("Iniciando proceso de checkout Stripe", { options }, "StripeHook");
 
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError) {
+        logger.error("Error al obtener sesión para checkout", formatError(sessionError), "StripeHook");
+        throw sessionError;
+      }
+
       if (!session) {
+        logger.warn("Intento de checkout sin sesión activa", null, "StripeHook");
         throw new Error('Debes iniciar sesión para realizar un pago');
       }
 
-      // 1. Llamar primero a la Edge Function para obtener la sesión de Stripe
+      // 1. Llamar a la Edge Function
+      logger.info("Invocando Edge Function create-checkout-session...", { userId: session.user.id }, "StripeHook");
       const { data, error: functionError } = await supabase.functions.invoke('create-checkout-session', {
         body: {
           ...options,
@@ -36,12 +46,21 @@ export const useStripeCheckout = () => {
         }
       });
 
-      if (functionError) throw functionError;
-      if (!data?.sessionId) throw new Error('No se pudo crear la sesión de Stripe');
+      if (functionError) {
+        const structured = formatError(functionError);
+        logger.error("Error en Edge Function create-checkout-session", structured, "StripeHook");
+        throw functionError;
+      }
 
-      // 2. Crear registro de pago en la tabla 'payments' con el sessionId ya obtenido
+      if (!data?.sessionId) {
+        logger.error("Respuesta de Edge Function sin sessionId", data, "StripeHook");
+        throw new Error('No se pudo crear la sesión de Stripe');
+      }
+
+      // 2. Registrar el pago pendiente
       const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(options.campaignId);
       
+      logger.info("Registrando pago pendiente en base de datos", { sessionId: data.sessionId }, "StripeHook");
       const { error: paymentError } = await supabase
         .from('payments')
         .insert({
@@ -54,26 +73,30 @@ export const useStripeCheckout = () => {
           metadata: { platform_hint: options.campaignId }
         });
 
-      if (paymentError) throw paymentError;
+      if (paymentError) {
+        const structured = formatError(paymentError);
+        logger.error("Error al insertar registro de pago", structured, "StripeHook");
+        throw paymentError;
+      }
 
-      // 4. Redirigir directamente a la URL de Stripe Checkout proporcionada por la Edge Function
+      // 3. Redirigir a Stripe
       if (data.url) {
+        logger.info("Redirigiendo a URL de Stripe Checkout", { url: data.url }, "StripeHook");
         window.location.href = data.url;
       } else {
-        // Fallback por si solo tenemos el sessionId (aunque la función ya devuelve la URL)
+        logger.warn("No se recibió URL de redirección, usando fallback de sessionId", null, "StripeHook");
         const stripe = await stripePromise;
         if (!stripe) throw new Error('No se pudo cargar Stripe');
-        
-        // Si redirectToCheckout falló, intentamos la redirección manual a la URL estándar de Stripe
         window.location.href = `https://checkout.stripe.com/pay/${data.sessionId}`;
       }
 
     } catch (err: any) {
-      console.error('Error en Checkout:', err);
-      setError(err.message);
+      const errorMessage = err.message || 'Error al iniciar el pago';
+      logger.error("Excepción en initiateCheckout", err, "StripeHook");
+      setError(errorMessage);
       toast({
         title: "Error al iniciar el pago",
-        description: err.message,
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
