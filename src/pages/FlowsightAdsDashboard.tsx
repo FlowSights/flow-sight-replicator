@@ -83,7 +83,7 @@ const FlowsightAdsDashboard: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  const [loadingStep, setLoadingStep] = useState(0);
+  const [loadingProgress, setLoadingProgress] = useState(0);
   const [generatedAds, setGeneratedAds] = useState<GeneratedAd[]>([]);
   const [showResults, setShowResults] = useState(false);
   const [showInactivityModal, setShowInactivityModal] = useState(false);
@@ -117,13 +117,6 @@ const FlowsightAdsDashboard: React.FC = () => {
     { label: "Tienda de Ropa Online", icon: "👕" },
     { label: "Servicios de Limpieza", icon: "✨" },
     { label: "Agencia de Viajes", icon: "✈️" }
-  ];
-
-  const loadingMessages = [
-    'Analizando tu modelo de negocio...',
-    'Consultando IA para generar copys únicos...',
-    'Optimizando textos para máxima conversión...',
-    'Estructurando tu Campaign Kit Premium...'
   ];
 
   const handleLogout = async () => {
@@ -162,29 +155,43 @@ const FlowsightAdsDashboard: React.FC = () => {
 
   const handleGenerate = async () => {
     setIsLoading(true);
-    setLoadingStep(0);
+    setLoadingProgress(0);
 
     try {
-      const ads = await generateAdsWithGeminiIntegration(config, (step) => {
-        setLoadingStep(step);
-      });
+      // Simular progreso para la pantalla de carga
+      const progressInterval = setInterval(() => {
+        setLoadingProgress(prev => {
+          if (prev >= 95) {
+            clearInterval(progressInterval);
+            return 95;
+          }
+          return prev + 5;
+        });
+      }, 300);
 
-      setGeneratedAds(ads);
-      setShowResults(true);
+      const ads = await generateAdsWithGeminiIntegration(config, () => {});
+      
+      clearInterval(progressInterval);
+      setLoadingProgress(100);
+      
+      setTimeout(() => {
+        setGeneratedAds(ads);
+        setShowResults(true);
+        setIsLoading(false);
+        toast({
+          title: '✨ Estrategia Maestra Lista',
+          description: 'Tu campaña ha sido optimizada por nuestra IA de alto rendimiento.',
+        });
+      }, 500);
 
-      toast({
-        title: '✨ Estrategia Maestra Lista',
-        description: 'Tu campaña ha sido optimizada por nuestra IA de alto rendimiento.',
-      });
     } catch (error: any) {
       console.error('Error generando anuncios:', error);
+      setIsLoading(false);
       toast({
         title: 'Error al generar anuncios',
         description: error.message || 'Por favor, intenta de nuevo',
         variant: 'destructive',
       });
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -206,7 +213,6 @@ const FlowsightAdsDashboard: React.FC = () => {
     }
   };
 
-  // Ultra-safe helper for platform styles
   const getPlatformStyle = (platform: string) => {
     const styles: Record<string, any> = {
       meta: {
@@ -249,7 +255,7 @@ const FlowsightAdsDashboard: React.FC = () => {
     <div className="min-h-screen bg-white dark:bg-[#050505] transition-colors selection:bg-emerald-500/30">
       <AnimatePresence>
         {isLoading && (
-          <PremiumLoadingScreen step={loadingStep} messages={loadingMessages} />
+          <PremiumLoadingScreen isVisible={isLoading} progress={loadingProgress} />
         )}
       </AnimatePresence>
 
@@ -278,249 +284,245 @@ const FlowsightAdsDashboard: React.FC = () => {
         {!showResults ? (
           <div className="max-w-3xl mx-auto">
             {step === 1 && (
-              <motion.div key="step1" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="space-y-10">
+              <motion.div key="step1" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-10">
                 <div className="space-y-4">
-                  <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 text-emerald-500 text-xs font-black uppercase tracking-widest">
-                    Fase 01: Identidad
-                  </div>
-                  <h1 className="text-5xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">
-                    ¿Cómo se llama tu <span className="text-emerald-500">negocio</span>?
-                  </h1>
-                  <p className="text-xl text-gray-500 dark:text-gray-400">Comencemos con lo básico para personalizar tu estrategia.</p>
-                </div>
-                
-                <div className="space-y-6">
-                  <div className="relative group">
-                    <Building2 className="absolute left-6 top-1/2 -translate-y-1/2 w-6 h-6 text-gray-400 group-focus-within:text-emerald-500 transition-colors" />
-                    <Input 
-                      value={config.businessName}
-                      onChange={(e) => setConfig({...config, businessName: e.target.value})}
-                      placeholder="Nombre de tu empresa o marca"
-                      className="h-20 pl-16 text-xl rounded-3xl border-gray-100 dark:border-white/5 bg-white dark:bg-white/5 shadow-xl focus:ring-emerald-500/20"
-                    />
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="relative group">
-                      <Globe2 className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-emerald-500 transition-colors" />
-                      <Input 
-                        value={config.websiteUrl}
-                        onChange={(e) => setConfig({...config, websiteUrl: e.target.value})}
-                        placeholder="Sitio Web (opcional)"
-                        className="h-16 pl-14 rounded-2xl border-gray-100 dark:border-white/5 bg-white dark:bg-white/5"
-                      />
-                    </div>
-                    <div className="relative group">
-                      <Camera className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-emerald-500 transition-colors" />
-                      <Input 
-                        value={config.instagramUrl}
-                        onChange={(e) => setConfig({...config, instagramUrl: e.target.value})}
-                        placeholder="Instagram (opcional)"
-                        className="h-16 pl-14 rounded-2xl border-gray-100 dark:border-white/5 bg-white dark:bg-white/5"
-                      />
-                    </div>
-                  </div>
+                  <h2 className="text-5xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">
+                    Cuéntanos de <span className="text-emerald-500">tu negocio</span>
+                  </h2>
+                  <p className="text-xl text-gray-500 dark:text-gray-400">La IA necesita entender tu esencia para crear una estrategia ganadora.</p>
                 </div>
 
-                <Button 
-                  disabled={!config.businessName}
-                  onClick={() => setStep(2)}
-                  className="w-full py-10 text-xl font-black bg-emerald-600 hover:bg-emerald-700 text-white rounded-3xl shadow-2xl shadow-emerald-500/40 disabled:opacity-40 disabled:cursor-not-allowed"
-                >
-                  Continuar <ArrowRight className="ml-2 w-6 h-6" />
-                </Button>
+                <div className="space-y-8">
+                  <div className="space-y-4">
+                    <label className="text-sm font-black uppercase tracking-widest text-gray-400">Nombre del Negocio</label>
+                    <Input 
+                      placeholder="Ej: FlowSights AI" 
+                      value={config.businessName}
+                      onChange={(e) => setConfig({ ...config, businessName: e.target.value })}
+                      className="py-8 px-6 text-xl rounded-3xl bg-gray-50 dark:bg-white/5 border-gray-100 dark:border-white/5 focus:ring-emerald-500"
+                    />
+                  </div>
+
+                  <div className="space-y-4">
+                    <label className="text-sm font-black uppercase tracking-widest text-gray-400">Presencia Digital (Opcional)</label>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className={`p-6 rounded-3xl border-2 transition-all ${config.websiteUrl ? 'border-emerald-500 bg-emerald-500/5' : 'border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-white/5'}`}>
+                        <Globe2 className={`w-6 h-6 mb-4 ${config.websiteUrl ? 'text-emerald-500' : 'text-gray-400'}`} />
+                        <Input 
+                          placeholder="Sitio Web" 
+                          value={config.websiteUrl}
+                          onChange={(e) => setConfig({ ...config, websiteUrl: e.target.value })}
+                          className="bg-transparent border-none p-0 focus:ring-0 text-sm font-bold"
+                        />
+                      </div>
+                      <div className={`p-6 rounded-3xl border-2 transition-all ${config.instagramUrl ? 'border-pink-500 bg-pink-500/5' : 'border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-white/5'}`}>
+                        <Camera className={`w-6 h-6 mb-4 ${config.instagramUrl ? 'text-pink-500' : 'text-gray-400'}`} />
+                        <Input 
+                          placeholder="Instagram" 
+                          value={config.instagramUrl}
+                          onChange={(e) => setConfig({ ...config, instagramUrl: e.target.value })}
+                          className="bg-transparent border-none p-0 focus:ring-0 text-sm font-bold"
+                        />
+                      </div>
+                      <div className={`p-6 rounded-3xl border-2 transition-all ${config.facebookUrl ? 'border-blue-600 bg-blue-600/5' : 'border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-white/5'}`}>
+                        <Users className={`w-6 h-6 mb-4 ${config.facebookUrl ? 'text-blue-600' : 'text-gray-400'}`} />
+                        <Input 
+                          placeholder="LinkedIn" 
+                          value={config.facebookUrl}
+                          onChange={(e) => setConfig({ ...config, facebookUrl: e.target.value })}
+                          className="bg-transparent border-none p-0 focus:ring-0 text-sm font-bold"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <Button 
+                    onClick={() => setStep(2)} 
+                    disabled={!config.businessName}
+                    className="w-full py-10 text-xl font-black bg-gray-900 dark:bg-white text-white dark:text-black rounded-3xl hover:scale-[1.02] transition-all"
+                  >
+                    Continuar <ArrowRight className="ml-2 w-6 h-6" />
+                  </Button>
+                </div>
               </motion.div>
             )}
 
             {step === 2 && (
-              <motion.div key="step2" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="space-y-10">
+              <motion.div key="step2" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-10">
                 <div className="space-y-4">
-                  <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 text-emerald-500 text-xs font-black uppercase tracking-widest">
-                    Fase 02: Propuesta
-                  </div>
-                  <h1 className="text-5xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">
-                    ¿Qué quieres <span className="text-emerald-500">promocionar</span>?
-                  </h1>
-                  <p className="text-xl text-gray-500 dark:text-gray-400">Describe tu producto, servicio o una oferta especial.</p>
+                  <h2 className="text-5xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">
+                    ¿Qué quieres <span className="text-emerald-500">promover?</span>
+                  </h2>
+                  <p className="text-xl text-gray-500 dark:text-gray-400">Describe tu producto, servicio o la oferta especial que tienes en mente.</p>
                 </div>
-                
-                <div className="space-y-6">
+
+                <div className="space-y-8">
                   <Textarea 
+                    placeholder="Ej: Estamos lanzando un nuevo curso de IA para emprendedores con un 50% de descuento por tiempo limitado..." 
                     value={config.promote}
-                    onChange={(e) => setConfig({...config, promote: e.target.value})}
-                    placeholder="Ej: Estamos lanzando una nueva colección de verano con 20% de descuento..."
-                    className="min-h-[200px] p-8 text-xl rounded-[40px] border-gray-100 dark:border-white/5 bg-white dark:bg-white/5 shadow-xl focus:ring-emerald-500/20 resize-none"
+                    onChange={(e) => setConfig({ ...config, promote: e.target.value })}
+                    className="min-h-[200px] p-8 text-xl rounded-[40px] bg-gray-50 dark:bg-white/5 border-gray-100 dark:border-white/5 focus:ring-emerald-500"
                   />
-                  
+
                   <div className="flex flex-wrap gap-3">
                     {suggestions.map((s) => (
-                      <button
+                      <button 
                         key={s.label}
-                        onClick={() => setConfig({...config, promote: s.label})}
-                        className="px-6 py-3 rounded-2xl bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-400 hover:bg-emerald-500 hover:text-white transition-all font-bold text-sm"
+                        onClick={() => setConfig({ ...config, promote: s.label })}
+                        className="px-6 py-3 rounded-full bg-gray-100 dark:bg-white/5 text-sm font-bold hover:bg-emerald-500 hover:text-white transition-all"
                       >
                         {s.icon} {s.label}
                       </button>
                     ))}
                   </div>
-                </div>
 
-                <div className="flex gap-4">
-                  <Button variant="ghost" onClick={() => setStep(1)} className="flex-1 py-10 text-xl font-bold rounded-3xl hover:bg-gray-100 dark:hover:bg-white/5">Atrás</Button>
-                  <Button 
-                    disabled={!config.promote}
-                    onClick={() => setStep(3)}
-                    className="flex-[2] py-10 text-xl font-black bg-emerald-600 hover:bg-emerald-700 text-white rounded-3xl shadow-2xl shadow-emerald-500/40 disabled:opacity-40 disabled:cursor-not-allowed"
-                  >
-                    Continuar
-                  </Button>
+                  <div className="flex gap-4">
+                    <Button variant="ghost" onClick={() => setStep(1)} className="flex-1 py-10 text-xl font-bold rounded-3xl">Atrás</Button>
+                    <Button 
+                      onClick={() => setStep(3)} 
+                      disabled={!config.promote}
+                      className="flex-[2] py-10 text-xl font-black bg-gray-900 dark:bg-white text-white dark:text-black rounded-3xl"
+                    >
+                      Siguiente <ArrowRight className="ml-2 w-6 h-6" />
+                    </Button>
+                  </div>
                 </div>
               </motion.div>
             )}
 
             {step === 3 && (
-              <motion.div key="step3" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="space-y-10">
+              <motion.div key="step3" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-10">
                 <div className="space-y-4">
-                  <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 text-emerald-500 text-xs font-black uppercase tracking-widest">
-                    Fase 03: Ubicación
-                  </div>
-                  <h1 className="text-5xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">
-                    ¿Dónde está tu <span className="text-emerald-500">audiencia</span>?
-                  </h1>
-                  <p className="text-xl text-gray-500 dark:text-gray-400">Define la ciudad, país o región donde quieres vender.</p>
-                </div>
-                
-                <div className="space-y-6">
-                  <div className="relative group">
-                    <MapPinIcon className="absolute left-6 top-1/2 -translate-y-1/2 w-6 h-6 text-gray-400 group-focus-within:text-emerald-500 transition-colors" />
-                    <LocationInput 
-                      value={config.location}
-                      onChange={(val) => setConfig({...config, location: val})}
-                      placeholder="Ej: Ciudad de México, Madrid, Todo el mundo..."
-                      className="h-20 pl-16 text-xl rounded-3xl border-gray-100 dark:border-white/5 bg-white dark:bg-white/5 shadow-xl focus:ring-emerald-500/20"
-                    />
-                  </div>
+                  <h2 className="text-5xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">
+                    ¿Dónde está <span className="text-emerald-500">tu audiencia?</span>
+                  </h2>
+                  <p className="text-xl text-gray-500 dark:text-gray-400">Define la ubicación geográfica y el perfil de tu cliente ideal.</p>
                 </div>
 
-                <div className="flex gap-4">
-                  <Button variant="ghost" onClick={() => setStep(2)} className="flex-1 py-10 text-xl font-bold rounded-3xl hover:bg-gray-100 dark:hover:bg-white/5">Atrás</Button>
-                  <Button 
-                    disabled={!config.location}
-                    onClick={() => setStep(4)}
-                    className="flex-[2] py-10 text-xl font-black bg-emerald-600 hover:bg-emerald-700 text-white rounded-3xl shadow-2xl shadow-emerald-500/40 disabled:opacity-40 disabled:cursor-not-allowed"
-                  >
-                    Continuar
-                  </Button>
+                <div className="space-y-8">
+                  <div className="space-y-4">
+                    <label className="text-sm font-black uppercase tracking-widest text-gray-400">Ubicación</label>
+                    <LocationInput 
+                      value={config.location}
+                      onChange={(val) => setConfig({ ...config, location: val })}
+                    />
+                  </div>
+
+                  <div className="space-y-4">
+                    <label className="text-sm font-black uppercase tracking-widest text-gray-400">Cliente Ideal</label>
+                    <Input 
+                      placeholder="Ej: Dueños de negocios, 25-45 años, interesados en tecnología..." 
+                      value={config.idealCustomer}
+                      onChange={(e) => setConfig({ ...config, idealCustomer: e.target.value })}
+                      className="py-8 px-6 text-xl rounded-3xl bg-gray-50 dark:bg-white/5 border-gray-100 dark:border-white/5"
+                    />
+                  </div>
+
+                  <div className="flex gap-4">
+                    <Button variant="ghost" onClick={() => setStep(2)} className="flex-1 py-10 text-xl font-bold rounded-3xl">Atrás</Button>
+                    <Button 
+                      onClick={() => setStep(4)} 
+                      disabled={!config.location || !config.idealCustomer}
+                      className="flex-[2] py-10 text-xl font-black bg-gray-900 dark:bg-white text-white dark:text-black rounded-3xl"
+                    >
+                      Siguiente <ArrowRight className="ml-2 w-6 h-6" />
+                    </Button>
+                  </div>
                 </div>
               </motion.div>
             )}
 
             {step === 4 && (
-              <motion.div key="step4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="space-y-10">
+              <motion.div key="step4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-10">
                 <div className="space-y-4">
-                  <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 text-emerald-500 text-xs font-black uppercase tracking-widest">
-                    Fase 04: Perfil
-                  </div>
-                  <h1 className="text-5xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">
-                    ¿Quién es tu <span className="text-emerald-500">cliente ideal</span>?
-                  </h1>
-                  <p className="text-xl text-gray-500 dark:text-gray-400">Describe a quién quieres llegar y sube una imagen de referencia.</p>
+                  <h2 className="text-5xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">
+                    Imagen de <span className="text-emerald-500">Campaña</span>
+                  </h2>
+                  <p className="text-xl text-gray-500 dark:text-gray-400">Sube una imagen de tu producto o deja que nuestra IA use una profesional de stock.</p>
                 </div>
-                
+
                 <div className="space-y-8">
-                  <Textarea 
-                    value={config.idealCustomer}
-                    onChange={(e) => setConfig({...config, idealCustomer: e.target.value})}
-                    placeholder="Ej: Mujeres de 25-40 años interesadas en moda sostenible y yoga..."
-                    className="min-h-[150px] p-8 text-xl rounded-[40px] border-gray-100 dark:border-white/5 bg-white dark:bg-white/5 shadow-xl focus:ring-emerald-500/20 resize-none"
-                  />
-
-                  <div className="relative group">
-                    <input type="file" ref={fileInputRef} onChange={handleImageUpload} accept="image/*" className="hidden" />
-                    {!config.userImage ? (
-                      <button onClick={() => fileInputRef.current?.click()} className="w-full py-12 border-2 border-dashed border-gray-200 dark:border-white/10 rounded-[40px] hover:border-emerald-500/50 hover:bg-emerald-500/5 transition-all group">
-                        <div className="flex flex-col items-center gap-4">
-                          <div className="p-4 bg-gray-100 dark:bg-white/5 rounded-2xl group-hover:scale-110 transition-transform">
-                            <UploadIcon className="w-8 h-8 text-gray-400 group-hover:text-emerald-500" />
-                          </div>
-                          <div className="text-center">
-                            <p className="text-lg font-bold text-gray-900 dark:text-white">Sube una imagen de referencia</p>
-                            <p className="text-sm text-gray-500">Ayuda a la IA a entender tu estética visual</p>
-                          </div>
-                        </div>
-                      </button>
-                    ) : (
-                      <div className="relative rounded-[40px] overflow-hidden group">
-                        <img src={config.userImage} alt="Referencia" className="w-full h-64 object-cover" />
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                          <Button variant="destructive" onClick={() => setConfig({...config, userImage: null})} className="rounded-full p-4">
-                            <XIcon className="w-6 h-6" />
-                          </Button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <div className="flex gap-4">
-                  <Button variant="ghost" onClick={() => setStep(3)} className="flex-1 py-10 text-xl font-bold rounded-3xl hover:bg-gray-100 dark:hover:bg-white/5">Atrás</Button>
-                  <Button 
-                    disabled={!config.idealCustomer || !config.userImage}
-                    onClick={() => { setStep(5); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                    className="flex-[2] py-10 text-xl font-black bg-emerald-600 hover:bg-emerald-700 text-white rounded-3xl shadow-2xl shadow-emerald-500/40 disabled:opacity-40 disabled:cursor-not-allowed"
+                  <div 
+                    onClick={() => fileInputRef.current?.click()}
+                    className="relative aspect-video rounded-[40px] border-4 border-dashed border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-white/5 flex flex-col items-center justify-center cursor-pointer hover:bg-emerald-500/5 hover:border-emerald-500/30 transition-all group overflow-hidden"
                   >
-                    Continuar
-                  </Button>
+                    {config.userImage ? (
+                      <>
+                        <img src={config.userImage} className="w-full h-full object-cover" alt="Preview" />
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all">
+                          <RefreshCw className="w-12 h-12 text-white animate-spin-slow" />
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="p-6 rounded-full bg-white dark:bg-white/10 shadow-xl mb-4 group-hover:scale-110 transition-all">
+                          <Upload className="w-10 h-10 text-emerald-500" />
+                        </div>
+                        <p className="text-xl font-black text-gray-900 dark:text-white">Subir Imagen Propia</p>
+                        <p className="text-gray-500 mt-2">O haz clic para cambiar</p>
+                      </>
+                    )}
+                    <input type="file" ref={fileInputRef} onChange={handleImageUpload} accept="image/*" className="hidden" />
+                  </div>
+
+                  <div className="flex gap-4">
+                    <Button variant="ghost" onClick={() => setStep(3)} className="flex-1 py-10 text-xl font-bold rounded-3xl">Atrás</Button>
+                    <Button 
+                      onClick={() => setStep(5)} 
+                      className="flex-[2] py-10 text-xl font-black bg-gray-900 dark:bg-white text-white dark:text-black rounded-3xl"
+                    >
+                      {config.userImage ? 'Usar mi imagen' : 'Usar imagen de IA'} <ArrowRight className="ml-2 w-6 h-6" />
+                    </Button>
+                  </div>
                 </div>
               </motion.div>
             )}
 
             {step === 5 && (
-              <motion.div key="step4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="space-y-10">
+              <motion.div key="step5" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-10">
                 <div className="space-y-4">
-                  <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 text-emerald-500 text-xs font-black uppercase tracking-widest">
-                    Fase 05: Inversión
-                  </div>
-                  <h1 className="text-5xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">
-                    ¿Cuál es tu <span className="text-emerald-500">presupuesto</span>?
-                  </h1>
-                  <p className="text-xl text-gray-500 dark:text-gray-400">Ajusta la inversión mensual para ver proyecciones.</p>
+                  <h2 className="text-5xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">
+                    Presupuesto <span className="text-emerald-500">Diario</span>
+                  </h2>
+                  <p className="text-xl text-gray-500 dark:text-gray-400">Ajusta tu inversión para ver el alcance potencial de tu campaña.</p>
                 </div>
-                
-                <div className="space-y-12 py-10 bg-white dark:bg-white/5 rounded-[40px] p-10 shadow-2xl">
-                  <div className="text-center space-y-2">
-                    <motion.span key={config.budget} initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-8xl font-black text-emerald-500 block">
-                      ${config.budget}
-                    </motion.span>
-                    <span className="text-2xl font-bold text-gray-400 uppercase tracking-widest">USD / MES</span>
-                  </div>
-                  
-                  <Slider value={[config.budget]} onValueChange={(val) => setConfig({...config, budget: val[0]})} max={5000} min={50} step={50} className="py-4" />
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t border-gray-100 dark:border-white/5">
-                    <div className="p-6 rounded-3xl bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/5">
+                <div className="space-y-12">
+                  <div className="p-12 rounded-[48px] bg-gray-900 text-white space-y-8 shadow-2xl shadow-emerald-500/20 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 p-8 opacity-10">
+                      <TrendingUp className="w-32 h-32" />
+                    </div>
+                    <div className="space-y-2 relative z-10">
+                      <p className="text-emerald-500 font-black uppercase tracking-[0.3em] text-xs">Inversión Recomendada</p>
+                      <h3 className="text-7xl font-black">${config.budget}<span className="text-2xl text-gray-500 ml-2">USD / día</span></h3>
+                    </div>
+                    <Slider 
+                      value={[config.budget]} 
+                      min={10} 
+                      max={1000} 
+                      step={10} 
+                      onValueChange={([val]) => setConfig({ ...config, budget: val })}
+                      className="py-4"
+                    />
+                    <div className="grid grid-cols-3 gap-6 pt-8 border-t border-white/10">
                       <AnimatedStat stat={{ value: config.budget * 12, suffix: "", prefix: "+", label: "Alcance Estimado" }} />
-                    </div>
-                    <div className="p-6 rounded-3xl bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/5">
                       <AnimatedStat stat={{ value: config.budget * 0.8, suffix: "", prefix: "+", label: "Clicks Potenciales" }} />
-                    </div>
-                    <div className="p-6 rounded-3xl bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/5">
                       <AnimatedStat stat={{ value: Math.floor(config.budget / 15), suffix: "", prefix: "+", label: "Conversiones IA" }} />
                     </div>
                   </div>
-                </div>
 
-                <div className="flex gap-4">
-                  <Button variant="ghost" onClick={() => setStep(4)} className="flex-1 py-10 text-xl font-bold rounded-3xl hover:bg-gray-100 dark:hover:bg-white/5">Atrás</Button>
-                  <motion.div className="flex-[2]" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                    <Button 
-                      onClick={handleGenerate}
-                      className="w-full py-10 text-xl font-black bg-emerald-600 hover:bg-emerald-700 text-white rounded-3xl shadow-2xl shadow-emerald-500/40 relative overflow-hidden group"
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />
-                      <Rocket className="w-6 h-6 mr-3" /> Generar Campaña IA
-                    </Button>
-                  </motion.div>
+                  <div className="flex gap-4">
+                    <Button variant="ghost" onClick={() => setStep(4)} className="flex-1 py-10 text-xl font-bold rounded-3xl hover:bg-gray-100 dark:hover:bg-white/5">Atrás</Button>
+                    <motion.div className="flex-[2]" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                      <Button 
+                        onClick={handleGenerate}
+                        className="w-full py-10 text-xl font-black bg-emerald-600 hover:bg-emerald-700 text-white rounded-3xl shadow-2xl shadow-emerald-500/40 relative overflow-hidden group"
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />
+                        <Rocket className="w-6 h-6 mr-3" /> Generar Campaña IA
+                      </Button>
+                    </motion.div>
+                  </div>
                 </div>
               </motion.div>
             )}
