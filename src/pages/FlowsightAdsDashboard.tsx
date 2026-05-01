@@ -17,7 +17,7 @@ import {
   Upload as UploadIcon, X as XIcon, Sparkles as SparklesIcon,
   RefreshCw, Search, Activity, Eye, MousePointer, Camera,
   Moon, Sun, Building2, Link2, Globe2, CreditCard,
-  FileDown, ZoomIn, Edit2
+  FileDown, ZoomIn, Edit2, BookOpen, Share2
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useTheme } from 'next-themes';
@@ -94,16 +94,7 @@ const FlowsightAdsDashboard: React.FC = () => {
   const [mockupLightboxOpen, setMockupLightboxOpen] = useState(false);
   const [currentMockupAdIndex, setCurrentMockupAdIndex] = useState(0);
 
-  useEffect(() => {
-    if (generatedAds.length > 0 && currentMockupAdIndex < generatedAds.length) {
-      setSelectedPlatform(generatedAds[currentMockupAdIndex].platform);
-    }
-  }, [currentMockupAdIndex, generatedAds]);
   const { hasPaid } = usePaymentStatus();
-
-  useInactivityTimeoutStrict(() => {
-    setShowInactivityModal(true);
-  });
 
   const [config, setConfig] = useState<CampaignConfig>({
     businessName: '',
@@ -118,15 +109,6 @@ const FlowsightAdsDashboard: React.FC = () => {
   });
 
   const [selectedPlatform, setSelectedPlatform] = useState<"google" | "meta" | "tiktok" | "linkedin">("meta");
-
-  const suggestions = [
-    { label: "Membresía de Gimnasio", icon: "💪" },
-    { label: "Consultoría de Negocios", icon: "📈" },
-    { label: "Restaurante Gourmet", icon: "🍳" },
-    { label: "Tienda de Ropa Online", icon: "👕" },
-    { label: "Servicios de Limpieza", icon: "✨" },
-    { label: "Agencia de Viajes", icon: "✈️" }
-  ];
 
   const handleLogout = async () => {
     try {
@@ -228,7 +210,6 @@ const FlowsightAdsDashboard: React.FC = () => {
 
   const handleDownloadMasterKit = () => {
     if (hasPaid) {
-      logger.info("Descargando Master Kit", { userId: user?.id }, "Dashboard");
       downloadPremiumCampaignKit({
         businessName: config.businessName,
         businessDescription: config.promote,
@@ -241,7 +222,6 @@ const FlowsightAdsDashboard: React.FC = () => {
         description: 'Tu paquete estratégico completo está listo.',
       });
     } else {
-      logger.info("Intento de descarga sin pago", null, "Dashboard");
       setShowPaymentModal(true);
     }
   };
@@ -249,33 +229,37 @@ const FlowsightAdsDashboard: React.FC = () => {
   const getPlatformStyle = (platform: string) => {
     const styles: Record<string, any> = {
       meta: {
-        gradient: "from-blue-600/20 to-blue-400/20",
-        border: "border-blue-500/30",
+        gradient: "from-blue-600 to-blue-800",
+        bg: "bg-blue-600/10",
+        border: "border-blue-600/30",
         accent: "bg-blue-600",
-        text: "text-blue-500",
+        text: "text-blue-600",
         logo: "https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg",
         name: "Meta (Facebook/Instagram)"
       },
       google: {
-        gradient: "from-blue-500/10 via-red-500/10 to-yellow-500/10",
-        border: "border-blue-500/30",
-        accent: "bg-blue-500",
-        text: "text-blue-600",
-        logo: "https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_\'G\'_logo.svg",
+        gradient: "from-red-500 via-yellow-500 to-blue-500",
+        bg: "bg-red-500/10",
+        border: "border-red-500/30",
+        accent: "bg-red-500",
+        text: "text-red-600",
+        logo: "https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_'G'_logo.svg",
         name: "Google Ads"
       },
       tiktok: {
-        gradient: "from-black/40 to-pink-500/20",
-        border: "border-pink-500/30",
+        gradient: "from-gray-900 to-black",
+        bg: "bg-gray-900/10",
+        border: "border-gray-900/30",
         accent: "bg-black",
-        text: "text-pink-500",
+        text: "text-gray-900",
         logo: "https://upload.wikimedia.org/wikipedia/en/a/a9/TikTok_logo.svg",
         name: "TikTok Ads"
       },
       linkedin: {
-        gradient: "from-blue-800/20 to-blue-600/20",
+        gradient: "from-blue-700 to-blue-900",
+        bg: "bg-blue-700/10",
         border: "border-blue-700/30",
-        accent: "bg-blue-800",
+        accent: "bg-blue-700",
         text: "text-blue-700",
         logo: "https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png",
         name: "LinkedIn Ads"
@@ -284,333 +268,252 @@ const FlowsightAdsDashboard: React.FC = () => {
     return styles[platform] || styles.meta;
   };
 
-  // Re-instanciar el usuario para el logger si es necesario
-  const [user, setUser] = useState<any>(null);
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setUser(data.user));
-  }, []);
-
   return (
-    <div className="min-h-screen bg-white dark:bg-[#050505] transition-colors selection:bg-emerald-500/30">
-      <AnimatePresence>
-        {isLoading && (
-          <PremiumLoadingScreen isVisible={isLoading} progress={loadingProgress} />
-        )}
-      </AnimatePresence>
-
-      <header className="sticky top-0 z-50 backdrop-blur-2xl bg-white/80 dark:bg-black/60 border-b border-gray-100 dark:border-white/5">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+    <div className="min-h-screen bg-[#050505] text-white selection:bg-emerald-500/30 font-sans">
+      <PremiumLoadingScreen isVisible={isLoading} progress={loadingProgress} />
+      
+      <header className="sticky top-0 z-40 backdrop-blur-2xl bg-black/60 border-b border-white/5">
+        <div className="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-emerald-500 rounded-xl shadow-lg shadow-emerald-500/20">
+            <div className="p-2 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl shadow-lg shadow-emerald-500/20">
               <Sparkles className="w-5 h-5 text-white" />
             </div>
-            <h1 className="text-2xl font-black font-display tracking-tight text-gray-900 dark:text-white">
-              Flowsight <span className="text-emerald-500">Ads</span>
-            </h1>
+            <h1 className="text-xl font-black tracking-tight">Flowsight <span className="text-emerald-500">Ads</span></h1>
           </div>
           <div className="flex items-center gap-4">
-            <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className="p-2.5 rounded-xl bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-400 hover:text-emerald-500 transition-all">
-              {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-            </button>
-            <Button variant="ghost" onClick={handleLogout} className="font-bold text-gray-500 dark:text-gray-400 hover:text-red-500 transition-all rounded-xl">
-              <LogOut className="w-5 h-5 mr-2" />
-              Salir
+            <Button variant="ghost" onClick={handleLogout} className="text-gray-400 hover:text-white font-bold gap-2">
+              <LogOut className="w-4 h-4" /> Salir
             </Button>
           </div>
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-6 py-20">
+      <main className="max-w-7xl mx-auto px-6 py-12">
         <AnimatePresence mode="wait">
           {!showResults ? (
-            <div className="max-w-2xl mx-auto">
-              {step === 1 && (
-                <motion.div key="step1" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-10">
-                  <div className="space-y-4">
-                    <h2 className="text-5xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">
-                      Bienvenido a la <span className="text-emerald-500">nueva era</span> de la publicidad digital
-                    </h2>
-                    <p className="text-xl text-gray-500 dark:text-gray-400">Empecemos por lo básico. ¿Cómo se llama tu negocio y dónde podemos encontrarlo en línea?</p>
-                  </div>
+            <motion.div key="form" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="max-w-3xl mx-auto">
+              <div className="text-center mb-12">
+                <h2 className="text-4xl md:text-5xl font-black mb-4 tracking-tight">Crea tu campaña <span className="text-emerald-500">maestra</span></h2>
+                <p className="text-gray-400 text-lg font-medium">Cuéntanos sobre tu negocio y nuestra IA diseñará una estrategia de alto rendimiento.</p>
+              </div>
 
-                  <div className="space-y-8">
-                    <div className="space-y-4">
-                      <label className="text-sm font-black uppercase tracking-widest text-gray-400">Nombre de tu Negocio</label>
-                      <Input
-                        placeholder="Ej: Flowsight"
-                        value={config.businessName}
-                        onChange={(e) => setConfig({ ...config, businessName: e.target.value })}
-                        className="py-8 px-6 text-xl rounded-3xl bg-gray-50 dark:bg-white/5 border-gray-100 dark:border-white/5 focus:ring-emerald-500"
-                      />
+              <div className="space-y-8">
+                {step === 1 && (
+                  <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6 bg-white/5 p-8 rounded-[32px] border border-white/5">
+                    <div className="space-y-2">
+                      <label className="text-xs font-black uppercase tracking-widest text-emerald-500">Nombre del Negocio</label>
+                      <Input placeholder="Ej: Café Miel Gourmet" className="py-7 bg-white/5 border-white/10 rounded-2xl text-lg font-bold" value={config.businessName} onChange={(e) => setConfig({ ...config, businessName: e.target.value })} />
                     </div>
-
-                    <div className="space-y-4">
-                      <label className="text-sm font-black uppercase tracking-widest text-gray-400">URL de tu Sitio Web</label>
-                      <Input
-                        placeholder="https://flowsight.com"
-                        value={config.websiteUrl}
-                        onChange={(e) => setConfig({ ...config, websiteUrl: e.target.value })}
-                        className="py-8 px-6 text-xl rounded-3xl bg-gray-50 dark:bg-white/5 border-gray-100 dark:border-white/5 focus:ring-emerald-500"
-                      />
+                    <div className="space-y-2">
+                      <label className="text-xs font-black uppercase tracking-widest text-emerald-500">Sitio Web / Landing Page</label>
+                      <div className="relative">
+                        <Globe className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                        <Input placeholder="https://tudominio.com" className="pl-12 py-7 bg-white/5 border-white/10 rounded-2xl text-lg font-bold" value={config.websiteUrl} onChange={(e) => setConfig({ ...config, websiteUrl: e.target.value })} />
+                      </div>
                     </div>
+                    <Button onClick={() => setStep(2)} disabled={!config.businessName} className="w-full py-8 text-xl font-black bg-emerald-500 hover:bg-emerald-600 rounded-2xl transition-all shadow-xl shadow-emerald-500/20">Continuar <ArrowRight className="ml-2 w-6 h-6" /></Button>
+                  </motion.div>
+                )}
 
-                    <div className="space-y-4">
-                      <label className="text-sm font-black uppercase tracking-widest text-gray-400">URL de tu Instagram (Opcional)</label>
-                      <Input
-                        placeholder="https://instagram.com/flowsight"
-                        value={config.instagramUrl}
-                        onChange={(e) => setConfig({ ...config, instagramUrl: e.target.value })}
-                        className="py-8 px-6 text-xl rounded-3xl bg-gray-50 dark:bg-white/5 border-gray-100 dark:border-white/5 focus:ring-emerald-500"
-                      />
+                {step === 2 && (
+                  <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6 bg-white/5 p-8 rounded-[32px] border border-white/5">
+                    <div className="space-y-2">
+                      <label className="text-xs font-black uppercase tracking-widest text-emerald-500">¿Qué quieres promover?</label>
+                      <Textarea placeholder="Ej: Nuestra nueva membresía anual con 20% de descuento y acceso a todas las clases..." className="min-h-[120px] bg-white/5 border-white/10 rounded-2xl text-lg font-bold py-4" value={config.promote} onChange={(e) => setConfig({ ...config, promote: e.target.value })} />
                     </div>
-
-                    <div className="space-y-4">
-                      <label className="text-sm font-black uppercase tracking-widest text-gray-400">URL de tu LinkedIn (Opcional)</label>
-                      <Input
-                        placeholder="https://linkedin.com/company/flowsight"
-                        value={config.linkedinUrl}
-                        onChange={(e) => setConfig({ ...config, linkedinUrl: e.target.value })}
-                        className="py-8 px-6 text-xl rounded-3xl bg-gray-50 dark:bg-white/5 border-gray-100 dark:border-white/5 focus:ring-emerald-500"
-                      />
-                    </div>
-
-                    <Button
-                      onClick={() => setStep(2)} 
-                      disabled={!config.businessName}
-                      className="w-full py-10 text-xl font-black bg-gray-900 dark:bg-white text-white dark:text-black rounded-3xl hover:scale-[1.02] transition-all"
-                    >
-                      Continuar <ArrowRight className="ml-2 w-6 h-6" />
-                    </Button>
-                  </div>
-                </motion.div>
-              )}
-
-              {step === 2 && (
-                <motion.div key="step2" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-10">
-                  <div className="space-y-4">
-                    <h2 className="text-5xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">
-                      ¿Qué quieres <span className="text-emerald-500">promover?</span>
-                    </h2>
-                    <p className="text-xl text-gray-500 dark:text-gray-400">Describe tu producto, servicio o la oferta especial que tienes en mente.</p>
-                  </div>
-
-                  <div className="space-y-8">
-                    <div className="space-y-4">
-                      <label className="text-sm font-black uppercase tracking-widest text-gray-400">¿Qué quieres promover?</label>
-                      <Textarea
-                        placeholder="Ej: Un nuevo gimnasio con clases de spinning y yoga para principiantes."
-                        value={config.promote}
-                        onChange={(e) => setConfig({ ...config, promote: e.target.value })}
-                        className="py-8 px-6 text-xl rounded-3xl bg-gray-50 dark:bg-white/5 border-gray-100 dark:border-white/5 focus:ring-emerald-500"
-                        rows={5}
-                      />
-                    </div>
-
-                    <div className="space-y-4">
-                      <label className="text-sm font-black uppercase tracking-widest text-gray-400">¿Dónde quieres promoverlo? (Opcional)</label>
-                      <LocationInput
-                        value={config.location}
-                        onChange={(location) => setConfig({ ...config, location })}
-                      />
-                    </div>
-
                     <div className="flex gap-4">
                       <Button variant="ghost" onClick={() => setStep(1)} className="flex-1 py-8 rounded-2xl font-bold">Atrás</Button>
-                      <Button 
-                        onClick={() => setStep(3)} 
-                        disabled={!config.promote}
-                        className="flex-[2] py-8 text-lg font-black bg-emerald-500 text-white rounded-2xl hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-500/20"
-                      >
-                        Siguiente paso
-                      </Button>
+                      <Button onClick={() => setStep(3)} disabled={!config.promote} className="flex-[2] py-8 text-xl font-black bg-emerald-500 hover:bg-emerald-600 rounded-2xl shadow-xl shadow-emerald-500/20">Siguiente <ArrowRight className="ml-2 w-6 h-6" /></Button>
                     </div>
-                  </div>
-                </motion.div>
-              )}
+                  </motion.div>
+                )}
 
-              {step === 3 && (
-                <motion.div key="step3" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-10">
-                  <div className="space-y-4">
-                    <h2 className="text-5xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">
-                      Tu <span className="text-emerald-500">audiencia ideal</span>
-                    </h2>
-                    <p className="text-xl text-gray-500 dark:text-gray-400">¿A quién quieres llegar? Define a tu cliente perfecto.</p>
-                  </div>
-
-                  <div className="space-y-8">
-                    <div className="space-y-4">
-                      <label className="text-sm font-black uppercase tracking-widest text-gray-400">Describe a tu cliente ideal</label>
-                      <Textarea
-                        placeholder="Ej: Personas de 25-45 años interesadas en fitness, bienestar y que viven en la zona metropolitana."
-                        value={config.idealCustomer}
-                        onChange={(e) => setConfig({ ...config, idealCustomer: e.target.value })}
-                        className="py-8 px-6 text-xl rounded-3xl bg-gray-50 dark:bg-white/5 border-gray-100 dark:border-white/5 focus:ring-emerald-500"
-                        rows={5}
-                      />
+                {step === 3 && (
+                  <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6 bg-white/5 p-8 rounded-[32px] border border-white/5">
+                    <div className="space-y-2">
+                      <label className="text-xs font-black uppercase tracking-widest text-emerald-500">Ubicación Objetivo</label>
+                      <LocationInput value={config.location} onChange={(val) => setConfig({ ...config, location: val })} />
                     </div>
-
-                    <div className="space-y-4">
-                      <div className="flex justify-between items-center">
-                        <label className="text-sm font-black uppercase tracking-widest text-gray-400">Presupuesto Diario (USD)</label>
-                        <span className="text-2xl font-black text-emerald-500">${config.budget}</span>
-                      </div>
-                      <Slider
-                        value={[config.budget]}
-                        onValueChange={(val) => setConfig({ ...config, budget: val[0] })}
-                        max={1000}
-                        step={10}
-                        className="py-4"
-                      />
+                    <div className="space-y-2">
+                      <label className="text-xs font-black uppercase tracking-widest text-emerald-500">Cliente Ideal</label>
+                      <Input placeholder="Ej: Dueños de negocios, 25-45 años, interesados en tecnología..." className="py-7 bg-white/5 border-white/10 rounded-2xl text-lg font-bold" value={config.idealCustomer} onChange={(e) => setConfig({ ...config, idealCustomer: e.target.value })} />
                     </div>
-
                     <div className="flex gap-4">
                       <Button variant="ghost" onClick={() => setStep(2)} className="flex-1 py-8 rounded-2xl font-bold">Atrás</Button>
-                      <Button 
-                        onClick={() => setStep(4)} 
-                        disabled={!config.idealCustomer}
-                        className="flex-[2] py-8 text-lg font-black bg-emerald-500 text-white rounded-2xl hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-500/20"
-                      >
-                        Casi listo
-                      </Button>
+                      <Button onClick={() => setStep(4)} disabled={!config.location || !config.idealCustomer} className="flex-[2] py-8 text-xl font-black bg-emerald-500 hover:bg-emerald-600 rounded-2xl shadow-xl shadow-emerald-500/20">Último paso <ArrowRight className="ml-2 w-6 h-6" /></Button>
                     </div>
-                  </div>
-                </motion.div>
-              )}
+                  </motion.div>
+                )}
 
-              {step === 4 && (
-                <motion.div key="step4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-10">
-                  <div className="space-y-4">
-                    <h2 className="text-5xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">
-                      El toque <span className="text-emerald-500">final</span>
-                    </h2>
-                    <p className="text-xl text-gray-500 dark:text-gray-400">Sube una imagen de tu producto o servicio para que nuestra IA pueda analizarla.</p>
-                  </div>
-
-                  <div className="space-y-8">
+                {step === 4 && (
+                  <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-8 bg-white/5 p-8 rounded-[32px] border border-white/5">
                     <div className="space-y-4">
-                      <label className="text-sm font-black uppercase tracking-widest text-gray-400">Imagen de Campaña</label>
-                      <div 
-                        onClick={() => fileInputRef.current?.click()}
-                        className={`group relative h-64 border-2 border-dashed rounded-[32px] transition-all cursor-pointer overflow-hidden flex flex-col items-center justify-center gap-4 ${config.userImage ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-500/5' : 'border-gray-200 dark:border-white/10 hover:border-emerald-500 hover:bg-gray-50 dark:hover:bg-white/5'}`}
-                      >
+                      <div className="flex justify-between items-end">
+                        <label className="text-xs font-black uppercase tracking-widest text-emerald-500">Presupuesto Diario (USD)</label>
+                        <span className="text-3xl font-black text-white">${config.budget}</span>
+                      </div>
+                      <Slider value={[config.budget]} min={5} max={500} step={5} onValueChange={(val) => setConfig({ ...config, budget: val[0] })} className="py-4" />
+                    </div>
+
+                    <div className="space-y-4">
+                      <label className="text-xs font-black uppercase tracking-widest text-emerald-500">Imagen de Referencia (Opcional)</label>
+                      <div onClick={() => fileInputRef.current?.click()} className="border-2 border-dashed border-white/10 rounded-[32px] p-10 flex flex-col items-center justify-center gap-4 hover:border-emerald-500/50 hover:bg-emerald-500/5 transition-all cursor-pointer group">
                         {config.userImage ? (
-                          <>
-                            <img src={config.userImage} alt="Preview" className="absolute inset-0 w-full h-full object-cover opacity-40" />
-                            <div className="relative z-10 flex flex-col items-center gap-2">
-                              <div className="p-4 bg-emerald-500 rounded-2xl shadow-xl">
-                                <Check className="w-8 h-8 text-white" />
-                              </div>
-                              <span className="font-black text-emerald-600 dark:text-emerald-400">Imagen lista para analizar</span>
-                              <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); setConfig({ ...config, userImage: null }); }} className="mt-2 text-red-500 hover:text-red-600 font-bold">Eliminar</Button>
+                          <div className="relative w-full aspect-video rounded-2xl overflow-hidden">
+                            <img src={config.userImage} alt="Preview" className="w-full h-full object-cover" />
+                            <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                              <RefreshCw className="w-8 h-8 text-white animate-spin-slow" />
                             </div>
-                          </>
+                          </div>
                         ) : (
                           <>
-                            <div className="p-6 bg-gray-100 dark:bg-white/5 rounded-3xl group-hover:bg-emerald-500/10 group-hover:text-emerald-500 transition-all">
-                              <Upload className="w-10 h-10" />
+                            <div className="p-6 bg-white/5 rounded-3xl group-hover:scale-110 transition-transform">
+                              <Upload className="w-10 h-10 text-emerald-500" />
                             </div>
-                            <div className="text-center">
-                              <p className="font-black text-gray-900 dark:text-white">Haz clic para subir imagen</p>
-                              <p className="text-sm text-gray-500">PNG, JPG o WEBP (Máx. 5MB)</p>
-                            </div>
+                            <p className="font-bold text-gray-400">Sube una imagen de tu producto o servicio</p>
                           </>
                         )}
                         <input type="file" ref={fileInputRef} onChange={handleImageUpload} accept="image/*" className="hidden" />
                       </div>
                     </div>
 
-                    <div className="flex gap-4">
+                    <div className="flex gap-4 pt-4">
                       <Button variant="ghost" onClick={() => setStep(3)} className="flex-1 py-8 rounded-2xl font-bold">Atrás</Button>
-                      <Button 
-                        onClick={handleGenerate} 
-                        className="flex-[2] py-8 text-xl font-black bg-emerald-500 text-white rounded-2xl hover:bg-emerald-600 transition-all shadow-xl shadow-emerald-500/20 group"
-                      >
-                        Generar Campaña Maestra <Zap className="ml-2 w-6 h-6 group-hover:animate-pulse" />
-                      </Button>
+                      <Button onClick={handleGenerate} className="flex-[2] py-8 text-xl font-black bg-emerald-500 hover:bg-emerald-600 rounded-2xl shadow-xl shadow-emerald-500/20 group">Generar Campaña Maestra <Zap className="ml-2 w-6 h-6 group-hover:animate-pulse" /></Button>
                     </div>
-                  </div>
-                </motion.div>
-              )}
-            </div>
+                  </motion.div>
+                )}
+              </div>
+            </motion.div>
           ) : (
             <motion.div key="results" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-12">
+              {/* Header de Resultados */}
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                 <div>
-                  <h2 className="text-4xl font-black text-gray-900 dark:text-white tracking-tight">Tu Estrategia <span className="text-emerald-500">Maestra</span></h2>
-                  <p className="text-lg text-gray-500 dark:text-gray-400 font-medium">Hemos optimizado tu campaña para máximo rendimiento en cada plataforma.</p>
+                  <h2 className="text-4xl font-black tracking-tight">Tu Estrategia <span className="text-emerald-500">Maestra</span></h2>
+                  <p className="text-lg text-gray-400 font-medium">Análisis y activos optimizados por IA de alto rendimiento.</p>
                 </div>
-                <div className="flex gap-3">
-                  <Button variant="outline" onClick={() => setShowResults(false)} className="rounded-2xl font-bold px-6 py-6 border-gray-200 dark:border-white/10">Editar datos</Button>
-                  <Button onClick={handleDownloadMasterKit} className="bg-emerald-500 hover:bg-emerald-600 text-white font-black px-8 py-6 rounded-2xl shadow-xl shadow-emerald-500/20 transition-all active:scale-[0.98] gap-2">
-                    <Download className="w-5 h-5" /> Descargar Kit Maestro
-                  </Button>
-                </div>
+                <Button variant="outline" onClick={() => setShowResults(false)} className="rounded-2xl font-bold px-6 py-6 border-white/10 hover:bg-white/5">
+                  <RefreshCw className="w-4 h-4 mr-2" /> Editar datos
+                </Button>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-                {/* Platform Selector */}
-                <div className="lg:col-span-3 space-y-3">
-                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4 ml-2">Selecciona Plataforma</p>
-                  {(['meta', 'google', 'tiktok', 'linkedin'] as const).map((platform) => {
+              {/* Contenedor Principal de Entrega */}
+              <div className="bg-[#0A0A0A] rounded-[40px] border border-white/5 p-8 lg:p-12 shadow-2xl relative overflow-hidden">
+                {/* Glow de fondo dinámico */}
+                <div className={`absolute -top-24 -right-24 w-96 h-96 blur-[120px] rounded-full opacity-20 transition-all duration-700 ${getPlatformStyle(selectedPlatform).bg}`} />
+                
+                {/* Selector de Plataformas Estilo Reference */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12 relative z-10">
+                  {(['google', 'meta', 'tiktok', 'linkedin'] as const).map((platform) => {
                     const style = getPlatformStyle(platform);
                     const isSelected = selectedPlatform === platform;
                     return (
                       <button
                         key={platform}
                         onClick={() => setSelectedPlatform(platform)}
-                        className={`w-full p-4 rounded-2xl flex items-center gap-4 transition-all border-2 ${isSelected ? `bg-white dark:bg-white/5 ${style.border} shadow-lg` : 'border-transparent text-gray-500 hover:bg-gray-50 dark:hover:bg-white/5'}`}
+                        className={`p-6 rounded-3xl flex items-center gap-4 transition-all border-2 group ${
+                          isSelected 
+                            ? `bg-gradient-to-br ${style.gradient} border-white/20 shadow-2xl scale-[1.02]` 
+                            : 'bg-white/5 border-transparent hover:bg-white/10 grayscale hover:grayscale-0'
+                        }`}
                       >
-                        <img src={style.logo} alt={platform} className="w-8 h-8 object-contain" />
-                        <span className={`font-black text-sm ${isSelected ? 'text-gray-900 dark:text-white' : ''}`}>{style.name.split(' ')[0]}</span>
-                        {isSelected && <div className={`ml-auto w-2 h-2 rounded-full ${style.accent}`} />}
+                        <div className="w-10 h-10 bg-white rounded-xl p-2 flex items-center justify-center shadow-lg">
+                          <img src={style.logo} alt={platform} className="w-full h-full object-contain" />
+                        </div>
+                        <div className="text-left">
+                          <p className={`text-[10px] font-black uppercase tracking-widest ${isSelected ? 'text-white/70' : 'text-gray-500'}`}>Plataforma</p>
+                          <p className={`font-black text-sm ${isSelected ? 'text-white' : 'text-gray-400'}`}>{style.name.split(' ')[0]}</p>
+                        </div>
                       </button>
                     );
                   })}
                 </div>
 
-                {/* Main Preview Area */}
-                <div className="lg:col-span-9 space-y-8">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {generatedAds.filter(ad => ad.platform === selectedPlatform).map((ad, i) => (
-                      <motion.div
-                        key={`${ad.platform}-${i}`}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.1 }}
-                      >
-                        <Card className="overflow-hidden border-gray-100 dark:border-white/5 bg-white dark:bg-white/[0.02] rounded-[32px] shadow-xl group">
-                          <div className="p-6 border-b border-gray-100 dark:border-white/5 flex justify-between items-center">
-                            <Badge variant="outline" className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 font-black px-3 py-1 rounded-full text-[10px] uppercase tracking-widest">{ad.type}</Badge>
-                            <div className="flex items-center gap-2">
-                              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Score IA:</span>
-                              <span className="text-sm font-black text-emerald-500">{ad.score}%</span>
-                            </div>
-                          </div>
-                          
-                          <div className="p-2">
+                {/* Grid de Mockup y Estrategia */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
+                  {/* Lado Izquierdo: Mockup */}
+                  <div className="space-y-6">
+                    {generatedAds.filter(ad => ad.platform === selectedPlatform).slice(0, 1).map((ad, i) => (
+                      <motion.div key={`${ad.platform}-${i}`} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="relative group">
+                        <div className="absolute -inset-4 bg-emerald-500/10 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <Card className="overflow-hidden border-white/10 bg-black/40 rounded-[32px] shadow-2xl backdrop-blur-sm relative">
+                          <div className="p-4">
                             <EditablePlatformPreview
                               ad={ad}
                               platform={ad.platform}
                               onUpdate={(updatedAd) => {
                                 const newAds = [...generatedAds];
-                                const index = newAds.findIndex(a => a.platform === ad.platform && a.type === ad.type);
-                                if (index !== -1) {
-                                  newAds[index] = { ...newAds[index], ...updatedAd };
+                                const idx = newAds.findIndex(a => a.platform === ad.platform && a.type === ad.type);
+                                if (idx !== -1) {
+                                  newAds[idx] = { ...newAds[idx], ...updatedAd };
                                   setGeneratedAds(newAds);
                                 }
                               }}
                             />
                           </div>
-
-                          <div className="p-6 bg-gray-50/50 dark:bg-white/[0.01] border-t border-gray-100 dark:border-white/5">
-                            <div className="flex items-center gap-2 mb-3">
-                              <Lightbulb className="w-4 h-4 text-emerald-500" />
-                              <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Razonamiento IA</span>
-                            </div>
-                            <p className="text-xs text-gray-500 dark:text-gray-400 font-medium leading-relaxed">{ad.reasoning}</p>
-                          </div>
                         </Card>
+                        <div className="mt-6 flex justify-center gap-4">
+                          <Button variant="ghost" size="sm" onClick={() => { setCurrentMockupAdIndex(generatedAds.indexOf(ad)); setMockupLightboxOpen(true); }} className="rounded-full bg-white/5 hover:bg-white/10 text-xs font-black uppercase tracking-widest px-6">
+                            <Maximize2 className="w-3 h-3 mr-2" /> Zoom Mockup
+                          </Button>
+                        </div>
                       </motion.div>
+                    ))}
+                  </div>
+
+                  {/* Lado Derecho: Estrategia y Botones */}
+                  <div className="space-y-10">
+                    {generatedAds.filter(ad => ad.platform === selectedPlatform).slice(0, 1).map((ad) => (
+                      <div key={ad.type} className="space-y-8">
+                        <div className="space-y-4">
+                          <div className="flex items-center gap-3">
+                            <Badge className="bg-emerald-500 text-black font-black px-4 py-1.5 rounded-full text-[10px] uppercase tracking-[0.2em]">{ad.type}</Badge>
+                            <div className="flex items-center gap-2 px-3 py-1.5 bg-yellow-500/10 rounded-full border border-yellow-500/20">
+                              <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
+                              <span className="text-xs font-black text-yellow-500">{ad.score}/100</span>
+                            </div>
+                          </div>
+                          <h3 className="text-4xl font-black tracking-tight leading-tight">Estrategia de <span className={getPlatformStyle(selectedPlatform).text}>{getPlatformStyle(selectedPlatform).name.split(' ')[0]} Ads</span></h3>
+                          <p className="text-lg text-gray-400 font-medium leading-relaxed">Tono optimizado específicamente para tu audiencia en esta plataforma.</p>
+                        </div>
+
+                        {/* Botones de Acción Estilo Reference */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <Button onClick={() => setIsGuideLightboxOpen(true)} variant="outline" className="py-8 rounded-2xl font-black uppercase tracking-widest text-xs gap-3 border-white/10 bg-white/5 hover:bg-white/10">
+                            <BookOpen className="w-5 h-5" /> Guía Visual
+                          </Button>
+                          <Button onClick={handleDownloadMasterKit} className="py-8 rounded-2xl font-black uppercase tracking-widest text-xs gap-3 bg-emerald-500 hover:bg-emerald-600 text-black shadow-xl shadow-emerald-500/20">
+                            <Download className="w-5 h-5" /> Descargar Kit
+                          </Button>
+                          <Button 
+                            onClick={() => {
+                              const urls: Record<string, string> = {
+                                meta: 'https://adsmanager.facebook.com',
+                                google: 'https://ads.google.com',
+                                tiktok: 'https://ads.tiktok.com',
+                                linkedin: 'https://www.linkedin.com/campaignmanager'
+                              };
+                              window.open(urls[selectedPlatform], '_blank');
+                            }}
+                            className="sm:col-span-2 py-8 rounded-2xl font-black uppercase tracking-widest text-xs gap-3 bg-white/5 hover:bg-white/10 border border-white/10"
+                          >
+                            <Share2 className="w-5 h-5" /> Publicar en {getPlatformStyle(selectedPlatform).name.split(' ')[0]} Ads
+                          </Button>
+                        </div>
+
+                        {/* Nota del Copy Estilo Reference */}
+                        <div className="p-8 rounded-[32px] bg-yellow-500/5 border border-yellow-500/10 relative overflow-hidden group">
+                          <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:scale-110 transition-transform">
+                            <Lightbulb className="text-yellow-500 w-12 h-12" />
+                          </div>
+                          <div className="flex items-center gap-2 mb-4">
+                            <Sparkles className="w-4 h-4 text-yellow-500" />
+                            <span className="text-[10px] font-black uppercase tracking-widest text-yellow-500">Razonamiento IA</span>
+                          </div>
+                          <p className="text-sm text-gray-300 font-medium leading-relaxed relative z-10">{ad.reasoning}</p>
+                        </div>
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -621,12 +524,18 @@ const FlowsightAdsDashboard: React.FC = () => {
       </main>
 
       <PaymentModal isOpen={showPaymentModal} onClose={() => setShowPaymentModal(false)} />
+      <VisualGuideLightbox isOpen={isGuideLightboxOpen} onClose={() => setIsGuideLightboxOpen(false)} platform={selectedPlatform} />
       <MockupLightbox 
         isOpen={mockupLightboxOpen} 
         onClose={() => setMockupLightboxOpen(false)}
         ads={generatedAds}
         currentIndex={currentMockupAdIndex}
-        onIndexChange={setCurrentMockupAdIndex}
+        onPrevious={() => setCurrentMockupAdIndex(prev => Math.max(0, prev - 1))}
+        onNext={() => setCurrentMockupAdIndex(prev => Math.min(generatedAds.length - 1, prev + 1))}
+        platform={selectedPlatform}
+        businessName={config.businessName}
+        hasPaid={hasPaid}
+        onPaymentRequired={() => setShowPaymentModal(true)}
       />
     </div>
   );

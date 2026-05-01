@@ -1,46 +1,33 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Edit2, Check, X, Download, FileText, Share2 } from 'lucide-react';
+import { Edit2, Check, X } from 'lucide-react';
 import { MetaPreview, GoogleAdsPreview, TikTokPreview, LinkedInPreview } from './PlatformPreviewsNative';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 
 interface EditablePlatformPreviewProps {
+  ad: {
+    headline: string;
+    description: string;
+    cta: string;
+    imageUrl?: string;
+    businessName?: string;
+    websiteUrl?: string;
+  };
   platform: 'meta' | 'google' | 'tiktok' | 'linkedin';
-  headline: string;
-  description: string;
-  cta: string;
-  imageUrl?: string;
-  businessName?: string;
-  websiteUrl?: string;
   onUpdate?: (updates: { headline: string; description: string; cta: string }) => void;
-  hasPaid?: boolean;
-  onDownloadKit?: () => void;
-  onDownloadGuide?: () => void;
-  onPublish?: () => void;
-  onPaymentRequired?: () => void;
 }
 
 export const EditablePlatformPreview: React.FC<EditablePlatformPreviewProps> = ({
+  ad,
   platform,
-  headline: initialHeadline,
-  description: initialDescription,
-  cta: initialCta,
-  imageUrl,
-  businessName,
-  websiteUrl,
   onUpdate,
-  hasPaid = false,
-  onDownloadKit,
-  onDownloadGuide,
-  onPublish,
-  onPaymentRequired,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [headline, setHeadline] = useState(initialHeadline);
-  const [description, setDescription] = useState(initialDescription);
-  const [cta, setCta] = useState(initialCta);
+  const [headline, setHeadline] = useState(ad.headline);
+  const [description, setDescription] = useState(ad.description);
+  const [cta, setCta] = useState(ad.cta);
 
   const handleSave = () => {
     onUpdate?.({
@@ -52,87 +39,66 @@ export const EditablePlatformPreview: React.FC<EditablePlatformPreviewProps> = (
   };
 
   const handleCancel = () => {
-    setHeadline(initialHeadline);
-    setDescription(initialDescription);
-    setCta(initialCta);
+    setHeadline(ad.headline);
+    setDescription(ad.description);
+    setCta(ad.cta);
     setIsEditing(false);
   };
 
   if (isEditing) {
     return (
       <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-white dark:bg-[#1a1a1a] rounded-2xl p-6 border border-emerald-500/20 shadow-xl"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="bg-white dark:bg-[#1a1a1a] rounded-3xl p-8 border border-emerald-500/20 shadow-2xl space-y-6"
       >
-        <h3 className="text-lg font-bold mb-4 text-gray-900 dark:text-white">
-          Editar Anuncio para {platform.toUpperCase()}
-        </h3>
+        <div className="flex justify-between items-center mb-2">
+          <h3 className="text-xl font-black text-gray-900 dark:text-white uppercase tracking-tight">
+            Editar Anuncio
+          </h3>
+          <Badge className="bg-emerald-500/10 text-emerald-500 border-none">{platform.toUpperCase()}</Badge>
+        </div>
 
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-              Titular
-            </label>
+        <div className="space-y-5">
+          <div className="space-y-2">
+            <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Titular</label>
             <Input
               value={headline}
               onChange={(e) => setHeadline(e.target.value)}
-              placeholder="Ingresa el titular del anuncio"
-              maxLength={platform === 'google' ? 30 : 60}
-              className="w-full"
+              placeholder="Titular"
+              maxLength={60}
+              className="bg-gray-50 dark:bg-white/5 border-none rounded-xl font-bold py-6"
             />
-            <p className="text-xs text-gray-500 mt-1">
-              {headline.length} / {platform === 'google' ? 30 : 60} caracteres
-            </p>
           </div>
 
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-              Descripción
-            </label>
+          <div className="space-y-2">
+            <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Descripción</label>
             <Textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Ingresa la descripción del anuncio"
-              maxLength={platform === 'google' ? 90 : 150}
-              rows={3}
-              className="w-full"
+              placeholder="Descripción"
+              maxLength={150}
+              rows={4}
+              className="bg-gray-50 dark:bg-white/5 border-none rounded-xl font-medium py-4"
             />
-            <p className="text-xs text-gray-500 mt-1">
-              {description.length} / {platform === 'google' ? 90 : 150} caracteres
-            </p>
           </div>
 
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-              Botón de Acción (CTA)
-            </label>
+          <div className="space-y-2">
+            <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Botón de Acción</label>
             <Input
               value={cta}
               onChange={(e) => setCta(e.target.value)}
-              placeholder="Ej: Comprar Ahora, Saber Más"
+              placeholder="CTA"
               maxLength={20}
-              className="w-full"
+              className="bg-gray-50 dark:bg-white/5 border-none rounded-xl font-black py-6"
             />
-            <p className="text-xs text-gray-500 mt-1">
-              {cta.length} / 20 caracteres
-            </p>
           </div>
 
           <div className="flex gap-3 pt-4">
-            <Button
-              onClick={handleSave}
-              className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white gap-2"
-            >
-              <Check className="w-4 h-4" />
-              Guardar Cambios
+            <Button onClick={handleSave} className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl py-6 font-black uppercase tracking-widest text-xs">
+              <Check className="w-4 h-4 mr-2" /> Guardar
             </Button>
-            <Button
-              onClick={handleCancel}
-              variant="outline"
-              className="flex-1 gap-2"
-            >
-              <X className="w-4 h-4" />
+            <Button onClick={handleCancel} variant="ghost" className="flex-1 rounded-xl py-6 font-bold text-gray-500">
               Cancelar
             </Button>
           </div>
@@ -141,123 +107,36 @@ export const EditablePlatformPreview: React.FC<EditablePlatformPreviewProps> = (
     );
   }
 
+  const PreviewComponent = {
+    meta: MetaPreview,
+    google: GoogleAdsPreview,
+    tiktok: TikTokPreview,
+    linkedin: LinkedInPreview,
+  }[platform];
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="relative"
-    >
-      {/* Botón de edición flotante */}
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="relative group">
       <button
         onClick={() => setIsEditing(true)}
-        className="absolute top-4 right-4 z-10 p-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full shadow-lg transition-all hover:scale-110"
-        title="Editar anuncio"
+        className="absolute top-4 right-4 z-20 p-3 bg-emerald-500 text-black rounded-2xl shadow-xl opacity-0 group-hover:opacity-100 transition-all hover:scale-110 active:scale-95"
       >
         <Edit2 className="w-4 h-4" />
       </button>
-
-      {/* Preview según plataforma */}
-      {platform === 'meta' && (
-        <MetaPreview
-          headline={headline}
-          description={description}
-          cta={cta}
-          imageUrl={imageUrl}
-          businessName={businessName}
-          websiteUrl={websiteUrl}
-        />
-      )}
-      {platform === 'google' && (
-        <GoogleAdsPreview
-          headline={headline}
-          description={description}
-          cta={cta}
-          imageUrl={imageUrl}
-          businessName={businessName}
-          websiteUrl={websiteUrl}
-        />
-      )}
-      {platform === 'tiktok' && (
-        <TikTokPreview
-          headline={headline}
-          description={description}
-          cta={cta}
-          imageUrl={imageUrl}
-          businessName={businessName}
-        />
-      )}
-      {platform === 'linkedin' && (
-        <LinkedInPreview
-          headline={headline}
-          description={description}
-          cta={cta}
-          imageUrl={imageUrl}
-          businessName={businessName}
-        />
-      )}
-
-      {/* Botones de descarga */}
-      {(onDownloadKit || onDownloadGuide || onPublish) && (
-        <div className="mt-4 flex flex-wrap gap-2">
-          {onDownloadKit && (
-            <Button
-              onClick={() => {
-                if (!hasPaid && onPaymentRequired) {
-                  onPaymentRequired();
-                } else {
-                  onDownloadKit();
-                }
-              }}
-              className={`text-sm gap-2 ${
-                !hasPaid
-                  ? 'bg-gray-400 cursor-not-allowed'
-                  : 'bg-green-600 hover:bg-green-700'
-              } text-white`}
-            >
-              <Download className="w-3 h-3" />
-              Campaign Kit
-            </Button>
-          )}
-          {onDownloadGuide && (
-            <Button
-              onClick={() => {
-                if (!hasPaid && onPaymentRequired) {
-                  onPaymentRequired();
-                } else {
-                  onDownloadGuide();
-                }
-              }}
-              className={`text-sm gap-2 ${
-                !hasPaid
-                  ? 'bg-gray-400 cursor-not-allowed'
-                  : 'bg-blue-600 hover:bg-blue-700'
-              } text-white`}
-            >
-              <FileText className="w-3 h-3" />
-              Guía de Lanzamiento
-            </Button>
-          )}
-          {onPublish && (
-            <Button
-              onClick={() => {
-                if (!hasPaid && onPaymentRequired) {
-                  onPaymentRequired();
-                } else {
-                  onPublish();
-                }
-              }}
-              className={`text-sm gap-2 ${
-                !hasPaid
-                  ? 'bg-gray-400 cursor-not-allowed'
-                  : 'bg-emerald-600 hover:bg-emerald-700'
-              } text-white`}
-            >
-              <Share2 className="w-3 h-3" />
-              Publicar
-            </Button>
-          )}
-        </div>
-      )}
+      
+      <PreviewComponent
+        headline={ad.headline}
+        description={ad.description}
+        cta={ad.cta}
+        imageUrl={ad.imageUrl}
+        businessName={ad.businessName}
+        websiteUrl={ad.websiteUrl}
+      />
     </motion.div>
   );
 };
+
+const Badge = ({ children, className }: { children: React.ReactNode; className?: string }) => (
+  <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${className}`}>
+    {children}
+  </span>
+);
