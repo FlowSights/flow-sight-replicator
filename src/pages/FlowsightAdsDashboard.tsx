@@ -241,6 +241,9 @@ const FlowsightAdsDashboard: React.FC = () => {
     }
   };
 
+  // Safe access to platform styles
+  const currentStyle = platformStyles[selectedPlatform] || platformStyles.meta;
+
   return (
     <div className="min-h-screen bg-white dark:bg-[#050505] transition-colors selection:bg-emerald-500/30">
       <AnimatePresence>
@@ -571,6 +574,7 @@ const FlowsightAdsDashboard: React.FC = () => {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {(['google', 'meta', 'tiktok', 'linkedin'] as const).map((platform) => {
                   const isActive = selectedPlatform === platform;
+                  const style = platformStyles[platform];
                   return (
                     <button
                       key={platform}
@@ -582,11 +586,11 @@ const FlowsightAdsDashboard: React.FC = () => {
                       }`}
                     >
                       <div className="w-12 h-12 flex-shrink-0">
-                        <img src={platformStyles[platform].logo} alt={platform} className="w-full h-full object-contain" />
+                        <img src={style?.logo} alt={platform} className="w-full h-full object-contain" />
                       </div>
                       <div className="text-left">
                         <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Plataforma</p>
-                        <p className="text-sm font-black text-gray-900 dark:text-white truncate">{platformStyles[platform].name}</p>
+                        <p className="text-sm font-black text-gray-900 dark:text-white truncate">{style?.name}</p>
                       </div>
                     </button>
                   );
@@ -600,7 +604,7 @@ const FlowsightAdsDashboard: React.FC = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
-                  className={`relative p-1 rounded-[48px] border-2 transition-colors duration-700 ${platformStyles[selectedPlatform].border} bg-gradient-to-br ${platformStyles[selectedPlatform].gradient}`}
+                  className={`relative p-1 rounded-[48px] border-2 transition-colors duration-700 ${currentStyle.border} bg-gradient-to-br ${currentStyle.gradient}`}
                 >
                   <div className="bg-white dark:bg-[#050505]/90 backdrop-blur-3xl rounded-[46px] p-8 md:p-12">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -637,7 +641,7 @@ const FlowsightAdsDashboard: React.FC = () => {
                             </div>
                           </div>
                           <h4 className="text-4xl font-black text-gray-900 dark:text-white leading-tight">
-                            Estrategia de <span className={platformStyles[selectedPlatform].text}>{platformStyles[selectedPlatform].name}</span>
+                            Estrategia de <span className={currentStyle.text}>{currentStyle.name}</span>
                           </h4>
                           <div className="space-y-4">
                             <p className="text-lg text-gray-700 dark:text-gray-300 font-medium leading-relaxed">
@@ -685,7 +689,7 @@ const FlowsightAdsDashboard: React.FC = () => {
                             }}
                             className="w-full py-8 rounded-2xl border-gray-200 dark:border-white/10 font-black uppercase tracking-widest text-xs hover:bg-gray-50 dark:hover:bg-white/5"
                           >
-                            <ExternalLink className="w-4 h-4 mr-2" /> Publicar en {platformStyles[selectedPlatform].name}
+                            <ExternalLink className="w-4 h-4 mr-2" /> Publicar en {currentStyle.name}
                           </Button>
                         </div>
                       </div>
@@ -787,4 +791,3 @@ const FlowsightAdsDashboard: React.FC = () => {
 };
 
 export default FlowsightAdsDashboard;
-// Force redeploy Thu Apr 30 20:23:53 EDT 2026
