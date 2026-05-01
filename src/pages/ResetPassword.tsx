@@ -21,22 +21,18 @@ const ResetPassword: React.FC = () => {
 
   useEffect(() => {
     const type = searchParams.get('type');
+    
     // Si es una recuperación de contraseña explícita
     if (type === 'recovery') {
       setIsResetting(true);
+      return;
     }
     
-    // Si hay un access_token en el hash (callback de Supabase), 
-    // no mostramos el error de "enlace inválido" inmediatamente
-    // ya que Supabase podría estar procesando la sesión
+    // Si hay un access_token en el hash, es un callback de Supabase.
+    // Si NO es de tipo recovery, es un login normal que cayó aquí.
+    // Lo redirigimos al callback oficial para que se procese correctamente.
     if (window.location.hash && window.location.hash.includes('access_token')) {
-      // Si detectamos un token pero no es recovery, probablemente es un login 
-      // que cayó aquí por error. Redirigimos al callback oficial.
-      if (type !== 'recovery') {
-        navigate('/auth/callback' + window.location.search + window.location.hash, { replace: true });
-      } else {
-        setIsResetting(true);
-      }
+      navigate('/auth/callback' + window.location.search + window.location.hash, { replace: true });
     }
   }, [searchParams, navigate]);
 
