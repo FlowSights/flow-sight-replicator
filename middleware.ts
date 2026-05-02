@@ -1,5 +1,5 @@
 export function middleware(request: Request) {
-  const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
+  const nonce = btoa(crypto.randomUUID());
   const vercelEnv = process.env.VERCEL_ENV || 'development'; // Default to development if not set
 
   let csp = `
