@@ -3,5 +3,11 @@
     "env": {
       "VERCEL_ENV": "$VERCEL_ENV"
     }
-  }
+  },
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }
