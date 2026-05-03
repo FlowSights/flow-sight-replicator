@@ -95,7 +95,7 @@ const AuthCallback = () => {
       <div className="text-center space-y-4">
         <AppleLoader onComplete={() => {}} />
         <p className="text-sm font-medium text-muted-foreground animate-pulse">
-          Verificando credenciales...
+          Listo. Vamos a conseguirte clientes.
         </p>
       </div>
     </div>
