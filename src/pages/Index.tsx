@@ -287,50 +287,53 @@ const Index = () => {
           <div className="flex flex-col lg:flex-row relative">
             
             {/* Left Column (Sticky) */}
-            <div className="lg:w-5/12 lg:sticky lg:top-0 h-auto lg:h-screen flex items-center pt-32 pb-16 lg:py-0">
-              <div className="max-w-xl relative z-10">
-                <motion.span 
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  viewport={{ once: true }}
-                  className="text-primary font-bold tracking-widest uppercase text-sm mb-6 block"
-                >
-                  El Problema
-                </motion.span>
-                <motion.h2 
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  className="font-display text-5xl md:text-7xl font-bold tracking-tighter leading-[1.05]"
-                >
-                  Tus datos te están <span className="text-primary">costando dinero.</span>
-                </motion.h2>
-                <motion.p 
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.2 }}
-                  className="mt-8 text-xl text-white/50 leading-relaxed font-medium"
-                >
-                  La mayoría pierde entre 15% y 25% de sus ingresos por procesos ciegos. Si no lo puedes ver, no lo puedes arreglar.
-                </motion.p>
-              </div>
+             <div className="lg:w-5/12 lg:sticky lg:top-0 h-auto lg:h-screen flex items-center pt-32 pb-16 lg:py-0">
+               {/* Background Glow for Sticky Side */}
+               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
+               
+               <div className="max-w-xl relative z-10">
+                 <motion.span 
+                   initial={{ opacity: 0 }}
+                   whileInView={{ opacity: 1 }}
+                   viewport={{ once: true }}
+                   className="text-primary font-bold tracking-widest uppercase text-sm mb-6 block"
+                 >
+                   El Problema
+                 </motion.span>
+                 <motion.h2 
+                   initial={{ opacity: 0, y: 20 }}
+                   whileInView={{ opacity: 1, y: 0 }}
+                   viewport={{ once: true }}
+                   className="font-display text-5xl md:text-7xl font-bold tracking-tighter leading-[1.05]"
+                 >
+                   Tus datos te están <span className="text-primary">costando dinero.</span>
+                 </motion.h2>
+                 <motion.p 
+                   initial={{ opacity: 0 }}
+                   whileInView={{ opacity: 1 }}
+                   viewport={{ once: true }}
+                   transition={{ delay: 0.2 }}
+                   className="mt-8 text-xl text-white/50 leading-relaxed font-medium"
+                 >
+                   La mayoría pierde entre 15% y 25% de sus ingresos por procesos ciegos. Si no lo puedes ver, no lo puedes arreglar.
+                 </motion.p>
+               </div>
 
-              {/* Decorative Visual to fill space */}
-              <div className="absolute bottom-10 left-0 right-0 hidden lg:flex justify-center opacity-20 pointer-events-none">
-                <motion.div
-                  animate={{ 
-                    y: [0, -20, 0],
-                    opacity: [0.3, 0.6, 0.3]
-                  }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                  className="relative"
-                >
-                  <Activity className="w-64 h-64 text-white/20" strokeWidth={0.5} />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
-                </motion.div>
-              </div>
-            </div>
+               {/* Decorative Visual - Brighter and with a glow */}
+               <div className="absolute bottom-10 left-0 right-0 hidden lg:flex justify-center pointer-events-none">
+                 <motion.div
+                   animate={{ 
+                     y: [0, -15, 0],
+                     opacity: [0.4, 0.8, 0.4]
+                   }}
+                   transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+                   className="relative"
+                 >
+                   <Activity className="w-64 h-64 text-white/30 drop-shadow-[0_0_30px_rgba(255,255,255,0.1)]" strokeWidth={0.5} />
+                   <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+                 </motion.div>
+               </div>
+             </div>
 
             {/* Right Column (Scrolling) */}
             <div className="lg:w-7/12 py-16 lg:py-32 lg:min-h-[200vh] flex flex-col justify-center">
@@ -338,22 +341,22 @@ const Index = () => {
                 {problems.map((p, i) => (
                   <motion.div
                     key={p.title}
-                    initial={{ opacity: 0, x: 50 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true, margin: "-20%" }}
-                    transition={{ duration: 0.6, ease: "easeOut" }}
-                    className="group"
+                    initial={{ opacity: 0, y: 40 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-10%" }}
+                    transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                    className="group relative"
                   >
-                    <div className="border-t border-white/10 pt-8 mt-8">
-                      <div className="flex items-start gap-6">
-                        <div className="w-12 h-12 shrink-0 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-primary">
-                          <span className="font-display font-bold text-lg">0{i+1}</span>
+                    <div className="p-10 rounded-[2rem] bg-white/[0.02] border border-white/5 hover:bg-white/[0.05] hover:border-white/10 transition-all duration-500">
+                      <div className="flex items-start gap-8">
+                        <div className="w-16 h-16 shrink-0 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform duration-500">
+                          <span className="font-display font-bold text-2xl">0{i+1}</span>
                         </div>
                         <div>
-                          <h3 className="font-display text-3xl md:text-4xl font-semibold tracking-tight text-white mb-4 group-hover:text-primary transition-colors">
+                          <h3 className="font-display text-3xl md:text-5xl font-bold tracking-tighter text-white mb-4 group-hover:text-primary transition-colors duration-500">
                             {p.title}
                           </h3>
-                          <p className="text-lg md:text-xl text-white/40 leading-relaxed font-medium">
+                          <p className="text-xl md:text-2xl text-white/40 leading-relaxed font-medium group-hover:text-white/60 transition-colors duration-500">
                             {p.desc}
                           </p>
                         </div>
