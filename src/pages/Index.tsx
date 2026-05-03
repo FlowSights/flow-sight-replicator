@@ -194,7 +194,8 @@ const Index = () => {
       originalRole: "Especialista en Control de Inventarios",
       desc: "Especialista en control de inventarios, manejo de operaciones y ventas", 
       tags: ["Control de inventarios", "Manejo de operaciones", "Ventas"], 
-      photo: oscarPhoto 
+      photo: oscarPhoto,
+      linkedin: "https://www.linkedin.com/in/oscar-zapata-5238a1333?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_contact_details%3B%2FSnQd1QJSzyM9G4NefLjvw%3D%3D"
     }
   ];
 
