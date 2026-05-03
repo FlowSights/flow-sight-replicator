@@ -24,6 +24,16 @@ import { supabase } from "./lib/supabaseClient";
 import { useEffect, useState } from "react";
 
 const queryClient = new QueryClient();
+const ADS_AUTH_INTENT_KEY = "flowsight_ads_auth_intent";
+
+const redirectToAdsDashboardIfNeeded = (session: any) => {
+  if (!session) return;
+  if (sessionStorage.getItem(ADS_AUTH_INTENT_KEY) !== "true") return;
+  if (window.location.pathname === "/flowsight-ads/dashboard") return;
+
+  sessionStorage.removeItem(ADS_AUTH_INTENT_KEY);
+  window.location.replace("/flowsight-ads/dashboard");
+};
 
 const App = () => {
   const [session, setSession] = useState<any>(null);
@@ -31,11 +41,13 @@ const App = () => {
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
+      redirectToAdsDashboardIfNeeded(session);
     });
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setSession(session);
+        redirectToAdsDashboardIfNeeded(session);
       }
     );
 

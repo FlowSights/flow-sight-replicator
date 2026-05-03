@@ -12,6 +12,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { AppleLoader } from '@/components/AppleLoader';
 import { logger, formatError } from '@/lib/logger';
 
+const ADS_AUTH_INTENT_KEY = "flowsight_ads_auth_intent";
+
 const FlowsightAdsLanding: React.FC = () => {
   const [showLoader, setShowLoader] = useState(true);
   const [isLogin, setIsLogin] = useState(true);
@@ -82,6 +84,7 @@ const FlowsightAdsLanding: React.FC = () => {
   const handleLoginWithGoogle = async () => {
     try {
       logger.info("Iniciando OAuth con Google (Ads)", { origin: window.location.origin }, "AdsLanding");
+      sessionStorage.setItem(ADS_AUTH_INTENT_KEY, "true");
       
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
@@ -100,6 +103,7 @@ const FlowsightAdsLanding: React.FC = () => {
         throw error;
       }
     } catch (error: any) {
+      sessionStorage.removeItem(ADS_AUTH_INTENT_KEY);
       setMessageType('error');
       setMessage(error.message || 'Error al iniciar sesión con Google');
       logger.error("Excepción en handleLoginWithGoogle (Ads)", error, "AdsLanding");
