@@ -80,3 +80,5 @@ const App = () => {
 };
 
 export default App;
+
+// Trigger new deployment after VITE_ env vars added
