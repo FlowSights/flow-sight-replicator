@@ -34,24 +34,36 @@ export const metaApi = {
   },
 
   /**
-   * Sube una imagen a Meta desde una URL o Base64
+   * Sube una imagen a Meta desde una URL o Blob
    */
   async uploadImage(accessToken: string, adAccountId: string, imageUrl: string): Promise<string> {
     try {
-      // Para este demo, si es una URL de Supabase/External, la enviamos directamente.
-      // Si es un Blob local, habría que convertirlo o subirlo como multipart.
-      // Meta acepta 'url' para subir desde una URL pública.
+      let response;
       
-      const response = await fetch(`${BASE_URL}/${adAccountId}/adimages`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          url: imageUrl,
-          access_token: accessToken,
-        }),
-      });
+      // Si es un Blob local (empieza con blob:), debemos subirlo como archivo (multipart/form-data)
+      if (imageUrl.startsWith('blob:')) {
+        const blob = await fetch(imageUrl).then(r => r.blob());
+        const formData = new FormData();
+        formData.append('filename', blob, `ad_image_${Date.now()}.png`);
+        formData.append('access_token', accessToken);
+
+        response = await fetch(`${BASE_URL}/${adAccountId}/adimages`, {
+          method: 'POST',
+          body: formData,
+        });
+      } else {
+        // Si es una URL pública, usamos el parámetro 'url'
+        response = await fetch(`${BASE_URL}/${adAccountId}/adimages`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            url: imageUrl,
+            access_token: accessToken,
+          }),
+        });
+      }
       
       const data = await response.json();
       
@@ -59,7 +71,6 @@ export const metaApi = {
         throw new Error(data.error.message || 'Error al subir imagen a Meta');
       }
       
-      // Retornar el hash de la imagen
       const hash = Object.values(data.images)[0] as any;
       return hash.hash;
     } catch (error) {

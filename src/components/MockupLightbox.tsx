@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, ChevronLeft, ChevronRight, Download, Share2, BookOpen, Maximize2, Sparkles, CheckCircle2, Loader2 } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, Download, Share2, BookOpen, Maximize2, Sparkles, CheckCircle2, Loader2, Zap } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import { PaymentModal } from '@/components/PaymentModal';
@@ -373,6 +373,11 @@ export const MockupLightbox: React.FC<MockupLightboxProps> = ({
                           <>
                             <Loader2 className="w-5 h-5 animate-spin" />
                             <span>Publicando en Meta...</span>
+                          </>
+                        ) : platform === 'meta' && META_CONFIG.accessToken && META_CONFIG.adAccountId ? (
+                          <>
+                            <Zap size={20} className="text-yellow-400 fill-yellow-400" />
+                            <span>Publicar con IA en Meta</span>
                           </>
                         ) : isCopied ? (
                           <motion.div
