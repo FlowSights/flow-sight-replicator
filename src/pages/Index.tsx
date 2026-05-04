@@ -968,7 +968,7 @@ const Index = () => {
                 </Button>
                 
                 <Button asChild variant="outline" size="lg" className="w-fit border-emerald-500/50 text-emerald-700 hover:bg-emerald-50 dark:text-emerald-400 dark:hover:bg-emerald-900/20">
-                  <Link to="/flowsight-ads-info" className="flex items-center gap-2">
+                  <Link to="/flowsight-ads" className="flex items-center gap-2">
                     <Sparkles className="w-5 h-5" />
                     Flowsight Ads (IA)
                   </Link>

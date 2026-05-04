@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabaseClient";
 import { AppleLoader } from "@/components/AppleLoader";
@@ -11,6 +11,16 @@ const AuthCallback = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const processed = useRef(false);
+  const [navTarget, setNavTarget] = useState<string | null>(null);
+  const [isAnimDone, setIsAnimDone] = useState(false);
+
+  // Navegar solo cuando AMBOS (auth y animación) estén listos
+  useEffect(() => {
+    if (navTarget && isAnimDone) {
+      logger.info("Navegación sincronizada ejecutada", { target: navTarget }, "AuthCallback");
+      navigate(navTarget, { replace: true });
+    }
+  }, [navTarget, isAnimDone, navigate]);
 
   useEffect(() => {
     // Evitar que el callback se procese múltiples veces (causa errores de intercambio de código)
@@ -35,7 +45,7 @@ const AuthCallback = () => {
           description: errorDescription || "No se pudo completar el inicio de sesión con Google.",
           variant: "destructive"
         });
-        navigate(isAds ? "/flowsight-ads" : "/auth", { replace: true });
+        setNavTarget(isAds ? "/flowsight-ads" : "/auth");
         return;
       }
 
@@ -46,8 +56,6 @@ const AuthCallback = () => {
         if (code) {
           const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
           if (exchangeError) {
-            // Si el código ya se usó, es posible que otra parte de la app ya tenga la sesión.
-            // No lanzamos el error inmediatamente, intentamos recuperar la sesión después.
             const structuredError = formatError(exchangeError, "Error al intercambiar código de autenticación");
             logger.warn("Supabase exchangeCodeForSession warning:", structuredError, "AuthCallback");
           }
@@ -68,7 +76,7 @@ const AuthCallback = () => {
         if (session) {
           sessionStorage.removeItem(ADS_AUTH_INTENT_KEY);
           logger.info("Sesión recuperada exitosamente", { userId: session.user.id, isAds }, "AuthCallback");
-          navigate(isAds ? "/flowsight-ads/dashboard" : "/", { replace: true });
+          setNavTarget(isAds ? "/flowsight-ads/dashboard" : "/");
           return;
         }
 
@@ -78,7 +86,7 @@ const AuthCallback = () => {
           if (user) {
             sessionStorage.removeItem(ADS_AUTH_INTENT_KEY);
             logger.info("Usuario ya autenticado (recuperado via getUser)", { userId: user.id, isAds }, "AuthCallback");
-            navigate(isAds ? "/flowsight-ads/dashboard" : "/", { replace: true });
+            setNavTarget(isAds ? "/flowsight-ads/dashboard" : "/");
             return;
           }
           
@@ -89,7 +97,7 @@ const AuthCallback = () => {
 
         // 6. Si no hay nada, redirigir a login
         logger.warn("No se encontró una sesión activa tras el callback", { isAds }, "AuthCallback");
-        navigate(isAds ? "/flowsight-ads" : "/auth", { replace: true });
+        setNavTarget(isAds ? "/flowsight-ads" : "/auth");
 
       } catch (err: any) {
         logger.error("Excepción crítica en AuthCallback:", err, "AuthCallback");
@@ -101,20 +109,25 @@ const AuthCallback = () => {
           variant: "destructive"
         });
 
-        navigate(isAds ? "/flowsight-ads" : "/auth", { replace: true });
+        setNavTarget(isAds ? "/flowsight-ads" : "/auth");
       }
     };
 
     handleAuthCallback();
-  }, [navigate, toast]);
+  }, [toast]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
+    <div className="min-h-screen flex items-center justify-center bg-[#050505]">
       <div className="text-center space-y-4">
-        <AppleLoader onComplete={() => {}} />
-        <p className="text-sm font-medium text-muted-foreground animate-pulse">
-          Listo. Vamos a conseguirte clientes.
-        </p>
+        <AppleLoader onComplete={() => setIsAnimDone(true)} />
+        <div className="relative pt-32">
+          <p className="text-emerald-500 font-display text-lg font-bold animate-pulse tracking-tight">
+            {navTarget ? "¡Todo listo! Entrando..." : "Verificando credenciales..."}
+          </p>
+          <p className="text-white/30 text-xs mt-2 uppercase tracking-[0.2em] font-medium">
+            Flowsight Intelligence
+          </p>
+        </div>
       </div>
     </div>
   );
