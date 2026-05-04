@@ -490,9 +490,19 @@ const FlowsightAdsDashboard: React.FC = () => {
             </div>
             <h1 className="text-xl font-black tracking-tight">Flowsight <span className="text-emerald-500">Ads</span></h1>
           </div>
-          <Button variant="ghost" onClick={handleLogout} className="text-gray-400 hover:text-white font-bold gap-2">
-            <LogOut className="w-4 h-4" /> Salir
-          </Button>
+          <div className="flex items-center gap-4">
+            <Button 
+              onClick={() => setIsMetaSettingsOpen(true)}
+              variant="outline" 
+              className="bg-white/5 border-white/10 hover:bg-white/10 text-white rounded-xl px-4 py-2 h-auto text-[10px] font-black uppercase tracking-widest gap-2 hidden md:flex"
+            >
+              <Settings2 className="w-3 h-3 text-[#0668E1]" />
+              Meta API
+            </Button>
+            <Button variant="ghost" onClick={handleLogout} className="text-gray-400 hover:text-white font-bold gap-2">
+              <LogOut className="w-4 h-4" /> Salir
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -501,16 +511,6 @@ const FlowsightAdsDashboard: React.FC = () => {
           {showPreview && !hasPaid ? (
             <motion.div key="preview" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="max-w-3xl mx-auto">
               <div className="text-center mb-16 relative">
-                <div className="flex justify-center mb-6">
-                  <Button 
-                    onClick={() => setIsMetaSettingsOpen(true)}
-                    variant="outline" 
-                    className="bg-white/5 border-white/10 hover:bg-white/10 text-white rounded-full px-6 py-2 h-auto text-[10px] font-black uppercase tracking-widest gap-2"
-                  >
-                    <Settings2 className="w-3 h-3 text-[#0668E1]" />
-                    Configurar Meta API
-                  </Button>
-                </div>
                 <motion.h2 initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-5xl font-black mb-4 tracking-tight">Tu campaña está <span className="text-emerald-500">lista</span></motion.h2>
                 <p className="text-gray-400 text-lg font-medium">Hemos generado 4 estrategias optimizadas para tu negocio</p>
               </div>
