@@ -40,7 +40,7 @@ const platformGuides: Record<string, PlatformGuide> = {
   meta: {
     platform: 'meta',
     platformName: 'Meta Ads (Facebook & Instagram)',
-    color: 'from-blue-500 to-blue-600',
+    color: 'from-[#0668E1] to-[#0047AB]',
     platformUrl: 'https://adsmanager.facebook.com/adsmanager/manage/campaigns',
     steps: [
       {
@@ -115,7 +115,7 @@ const platformGuides: Record<string, PlatformGuide> = {
   google: {
     platform: 'google',
     platformName: 'Google Ads',
-    color: 'from-red-500 to-yellow-500',
+    color: 'from-[#4285F4] via-[#EA4335] to-[#FBBC05]',
     platformUrl: 'https://ads.google.com/aw/campaigns/new',
     steps: [
       {
@@ -190,7 +190,7 @@ const platformGuides: Record<string, PlatformGuide> = {
   tiktok: {
     platform: 'tiktok',
     platformName: 'TikTok Ads',
-    color: 'from-gray-900 to-black',
+    color: 'from-black via-[#121212] to-[#FE2C55]',
     platformUrl: 'https://ads.tiktok.com/i18n/dashboard',
     steps: [
       {
@@ -265,7 +265,7 @@ const platformGuides: Record<string, PlatformGuide> = {
   linkedin: {
     platform: 'linkedin',
     platformName: 'LinkedIn Ads',
-    color: 'from-blue-700 to-blue-500',
+    color: 'from-[#0077B5] to-[#004182]',
     platformUrl: 'https://www.linkedin.com/campaignmanager/accounts',
     steps: [
       {
