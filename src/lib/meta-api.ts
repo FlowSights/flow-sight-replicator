@@ -2,15 +2,19 @@ const META_API_VERSION = 'v19.0';
 const BASE_URL = `https://graph.facebook.com/${META_API_VERSION}`;
 
 // Configuración de "Producción" desde variables de entorno
+const envToken = import.meta.env.VITE_META_ACCESS_TOKEN;
+const envAccountId = import.meta.env.VITE_META_AD_ACCOUNT_ID;
+
 export const META_CONFIG = {
-  accessToken: import.meta.env.VITE_META_ACCESS_TOKEN || localStorage.getItem('meta_access_token'),
-  adAccountId: import.meta.env.VITE_META_AD_ACCOUNT_ID || localStorage.getItem('meta_ad_account_id'),
+  accessToken: (envToken && envToken.length > 10) ? envToken : (localStorage.getItem('meta_access_token') || ''),
+  adAccountId: (envAccountId && envAccountId.length > 5) ? envAccountId : (localStorage.getItem('meta_ad_account_id') || ''),
 };
 
-console.log('Meta API Config Loaded:', {
-  hasToken: !!META_CONFIG.accessToken,
-  adAccountId: META_CONFIG.adAccountId,
-  tokenPreview: META_CONFIG.accessToken ? `${META_CONFIG.accessToken.substring(0, 8)}...` : 'none'
+console.log('🚀 [Meta API] Configuración Cargada:', {
+  tokenOrigen: (envToken && envToken.length > 10) ? 'Vercel/Env' : 'LocalStorage/None',
+  tieneToken: !!META_CONFIG.accessToken && META_CONFIG.accessToken.length > 10,
+  cuentaId: META_CONFIG.adAccountId || 'No detectada',
+  tokenLen: META_CONFIG.accessToken?.length || 0
 });
 
 export interface MetaAdAccount {
