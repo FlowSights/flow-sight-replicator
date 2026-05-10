@@ -564,7 +564,7 @@ const FlowsightAdsDashboard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#020202] text-white selection:bg-emerald-500/30 font-sans relative overflow-x-hidden">
+    <div className="min-h-screen bg-background text-foreground selection:bg-emerald-500/30 font-sans relative overflow-x-hidden transition-colors duration-500">
       {/* Cinematic Background Elements */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute top-0 inset-x-0 h-[500px] bg-gradient-to-b from-emerald-500/[0.03] to-transparent opacity-50" />
@@ -572,9 +572,12 @@ const FlowsightAdsDashboard: React.FC = () => {
         <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-teal-500/[0.03] blur-[100px] rounded-full" />
         <div className="absolute top-1/4 right-[15%] w-[300px] h-[300px] bg-cyan-500/[0.02] blur-[80px] rounded-full" />
         
-        {/* Subtle Grid Pattern */}
-        <div className="absolute inset-0 opacity-[0.03]" 
-             style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize: '40px 40px' }} />
+        {/* Subtle Grid Pattern - Theme Aware */}
+        <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05]" 
+             style={{ 
+               backgroundImage: `radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)`, 
+               backgroundSize: '40px 40px' 
+             }} />
       </div>
 
       <PremiumLoadingScreen 
@@ -714,7 +717,7 @@ const FlowsightAdsDashboard: React.FC = () => {
                         <Button 
                           onClick={() => setStep(2)} 
                           disabled={!config.promote.trim()} 
-                          className="h-24 px-16 rounded-[32px] bg-foreground text-background hover:opacity-90 font-black text-2xl gap-4 shadow-[0_20px_50px_rgba(0,0,0,0.3)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-20"
+                          className="h-24 px-16 rounded-[32px] bg-black dark:bg-white text-white dark:text-black hover:opacity-90 font-black text-2xl gap-4 shadow-[0_20px_50px_rgba(0,0,0,0.3)] dark:shadow-[0_20px_50px_rgba(255,255,255,0.1)] transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-20"
                         >
                           Siguiente <ArrowRight className="w-8 h-8" />
                         </Button>

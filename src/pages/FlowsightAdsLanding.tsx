@@ -345,7 +345,7 @@ const FlowsightAdsLanding: React.FC = () => {
                     <Button 
                       type="button" 
                       variant="outline" 
-                      className="w-full h-16 rounded-2xl border-border bg-card hover:bg-muted flex items-center justify-center gap-3 font-bold text-xs uppercase tracking-widest text-foreground transition-all" 
+                      className="w-full h-16 rounded-2xl border border-white/[0.1] bg-black dark:bg-white text-white dark:text-black hover:opacity-90 flex items-center justify-center gap-3 font-bold text-xs uppercase tracking-widest transition-all shadow-[0_10px_30px_rgba(0,0,0,0.2)]" 
                       onClick={handleLoginWithGoogle}
                     >
                       <svg className="w-5 h-5" viewBox="0 0 24 24">
