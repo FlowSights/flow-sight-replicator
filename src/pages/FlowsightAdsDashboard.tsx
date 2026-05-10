@@ -28,6 +28,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { EditablePlatformPreview } from '@/components/EditablePlatformPreview';
 import { VisualGuideLightbox } from '@/components/VisualGuideLightbox';
 import { PremiumLoadingScreen } from '@/components/PremiumLoadingScreen';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { downloadPremiumCampaignKit } from '@/lib/premiumCampaignKitGenerator';
 import { PaymentModal } from '@/components/PaymentModal';
 import { usePaymentStatus } from '@/hooks/usePaymentStatus';
