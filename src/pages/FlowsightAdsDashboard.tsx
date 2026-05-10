@@ -89,23 +89,27 @@ interface CampaignConfig {
 type ImageMode = 'copyonly' | 'image' | 'carousel' | 'video';
 
 const businessTypes = [
-  { icon: Store, label: 'Ecommerce / Tienda Online', keywords: ['tienda', 'ecommerce', 'online', 'shop', 'producto', 'ventas', 'shopify', 'dropshipping', 'vender'] },
-  { icon: Store, label: 'Pizzería / Restaurante', keywords: ['pizzeria', 'pizzería', 'pizza', 'restaurante', 'comida', 'gastronomia', 'parrillada', 'asado', 'sushi', 'hamburguesas', 'burguer', 'tacos', 'mexicana', 'pastas', 'asador', 'bodegon', 'comedor', 'bistro', 'food truck', 'cocina', 'platos'] },
-  { icon: Coffee, label: 'Cafetería / Bakery', keywords: ['cafe', 'café', 'cafeteria', 'cafetería', 'bakery', 'panaderia', 'reposteria', 'helado', 'heladería', 'postres', 'desayunos', 'merienda', 'brunch', 'tostadas', 'pasteleria'] },
-  { icon: ShieldCheck, label: 'Médico / Clínica', keywords: ['medico', 'médico', 'doctor', 'clinica', 'clínica', 'hospital', 'pediatra', 'ginecologo', 'cardiologo', 'psicologo', 'terapia', 'salud', 'fisioterapia', 'kinesiologia', 'estética médica', 'cirugia'] },
-  { icon: Activity, label: 'Dental / Odontología', keywords: ['dentista', 'odontologia', 'odontología', 'ortodoncia', 'diseño de sonrisa', 'brackets', 'implantes', 'dientes', 'limpieza dental', 'protesis'] },
-  { icon: Zap, label: 'Gimnasio / Fitness', keywords: ['gym', 'gimnasio', 'fitness', 'crossfit', 'entrenamiento', 'personal trainer', 'yoga', 'pilates', 'deporte', 'zumba', 'boxeo', 'artes marciales', 'musculacion', 'entrenador'] },
-  { icon: SparklesIcon, label: 'Belleza / Estética', keywords: ['spa', 'uñas', 'nails', 'manicura', 'pedicura', 'pestañas', 'cejas', 'estética', 'estetica', 'facial', 'masajes', 'skin care', 'depilacion', 'limpieza de cutis', 'microblading', 'lifting'] },
-  { icon: Scissors, label: 'Barbería / Peluquería', keywords: ['barberia', 'barbería', 'barber', 'peluqueria', 'peluquería', 'corte de cabello', 'estilista', 'salon de belleza', 'barba', 'pelo', 'cabello', 'coloracion', 'balayage', 'alisado'] },
-  { icon: Building2, label: 'Inmobiliaria / Real Estate', keywords: ['inmobiliaria', 'bienes raices', 'propiedades', 'apartamento', 'casa', 'alquiler', 'venta de casas', 'terrenos', 'broker', 'desarrollo inmobiliario', 'duplex', 'loft'] },
-  { icon: Scale, label: 'Legal / Abogados', keywords: ['abogado', 'legal', 'firma de abogados', 'bufete', 'leyes', 'notaria', 'asesoria legal', 'divorcios', 'penalista', 'civil', 'comercial', 'sucesiones'] },
-  { icon: Home, label: 'Servicios al Hogar', keywords: ['limpieza', 'fumigacion', 'plomeria', 'electricista', 'pintura', 'reparacion', 'aire acondicionado', 'jardin', 'mantenimiento', 'mudanzas', 'fletes', 'gasista', 'cerrajero'] },
-  { icon: Zap, label: 'Automotriz / Taller', keywords: ['repuestos', 'automotriz', 'taller', 'mecanico', 'autos', 'carros', 'llantas', 'baterias', 'frenos', 'mantenimiento preventivo', 'lavadero', 'car wash', 'mecanica'] },
-  { icon: BookOpen, label: 'Educación / Cursos', keywords: ['curso', 'academia', 'escuela', 'clases', 'ingles', 'formacion', 'taller', 'seminario', 'colegio', 'universidad', 'clases particulares', 'mentoria'] },
-  { icon: Globe2, label: 'Turismo / Viajes', keywords: ['hotel', 'turismo', 'viaje', 'tour', 'agencia de viajes', 'hospedaje', 'boletos aereos', 'vacaciones', 'posada', 'hostel', 'cabañas'] },
-  { icon: Heart, label: 'Mascotas / Veterinaria', keywords: ['veterinaria', 'pet shop', 'perros', 'gatos', 'grooming', 'mascotas', 'entrenamiento canino', 'alimento para mascotas', 'paseador'] },
-  { icon: PartyPopper, label: 'Eventos / Bodas', keywords: ['eventos', 'bodas', 'catering', 'fiestas', 'decoracion', 'fotografia', 'dj', 'planner', 'quince años', 'animacion', 'alquiler de salones'] },
-  { icon: Building2, label: 'Corporativo / Agencia', keywords: ['consultoria', 'agencia', 'marketing', 'software', 'b2b', 'logistica', 'transporte', 'contabilidad', 'empresa', 'coworking', 'asesoria'] },
+  // Priorizar nichos específicos antes que categorías genéricas
+  { icon: Activity, label: 'Dental / Odontología', keywords: ['dentista', 'odontologia', 'odontología', 'ortodoncia', 'diseño de sonrisa', 'brackets', 'implantes', 'dientes', 'limpieza dental', 'protesis', 'muela', 'blanqueamiento dental'] },
+  { icon: Scissors, label: 'Barbería / Peluquería', keywords: ['barberia', 'barbería', 'barber', 'peluqueria', 'peluquería', 'corte de cabello', 'estilista', 'salon de belleza', 'barba', 'pelo', 'cabello', 'coloracion', 'balayage', 'alisado', 'tinte', 'peinado'] },
+  { icon: SparklesIcon, label: 'Belleza / Estética / Uñas', keywords: ['spa', 'uñas', 'nails', 'manicura', 'pedicura', 'pestañas', 'cejas', 'estética', 'estetica', 'facial', 'masajes', 'skin care', 'depilacion', 'limpieza de cutis', 'microblading', 'lifting', 'botox', 'relleno labial'] },
+  { icon: Store, label: 'Taquería / Mexicana', keywords: ['tacos', 'taqueria', 'taquería', 'mexicana', 'burritos', 'quesadillas', 'nachos', 'chile', 'guacamole'] },
+  { icon: Store, label: 'Pizzería', keywords: ['pizzeria', 'pizzería', 'pizza', 'pizzas', 'calzone'] },
+  { icon: Store, label: 'Hamburgesería / Fast Food', keywords: ['hamburguesa', 'burguer', 'burger', 'hamburguesas', 'papas fritas', 'fast food', 'comida rapida', 'hot dog', 'pancho'] },
+  { icon: Coffee, label: 'Cafetería / Bakery', keywords: ['cafe', 'café', 'cafeteria', 'cafetería', 'bakery', 'panaderia', 'reposteria', 'helado', 'heladería', 'postres', 'desayunos', 'merienda', 'brunch', 'tostadas', 'pasteleria', 'tortas', 'dulces'] },
+  { icon: Store, label: 'Restaurante / Gastronomía', keywords: ['restaurante', 'comida', 'gastronomia', 'parrillada', 'asado', 'sushi', 'pastas', 'asador', 'bodegon', 'comedor', 'bistro', 'food truck', 'cocina', 'platos', 'menu', 'gourmet'] },
+  { icon: ShieldCheck, label: 'Médico / Clínica / Salud', keywords: ['medico', 'médico', 'doctor', 'clinica', 'clínica', 'hospital', 'pediatra', 'ginecologo', 'cardiologo', 'psicologo', 'terapia', 'salud', 'fisioterapia', 'kinesiologia', 'estética médica', 'cirugia', 'oftalmologo', 'nutricionista'] },
+  { icon: Zap, label: 'Gimnasio / Fitness', keywords: ['gym', 'gimnasio', 'fitness', 'crossfit', 'entrenamiento', 'personal trainer', 'yoga', 'pilates', 'deporte', 'zumba', 'boxeo', 'artes marciales', 'musculacion', 'entrenador', 'clases de fitness'] },
+  { icon: Building2, label: 'Inmobiliaria / Real Estate', keywords: ['inmobiliaria', 'bienes raices', 'propiedades', 'apartamento', 'casa', 'alquiler', 'venta de casas', 'terrenos', 'broker', 'desarrollo inmobiliario', 'duplex', 'loft', 'departamento'] },
+  { icon: Scale, label: 'Legal / Abogados', keywords: ['abogado', 'legal', 'firma de abogados', 'bufete', 'leyes', 'notaria', 'asesoria legal', 'divorcios', 'penalista', 'civil', 'comercial', 'sucesiones', 'juicios'] },
+  { icon: Home, label: 'Servicios al Hogar', keywords: ['limpieza', 'fumigacion', 'plomeria', 'electricista', 'pintura', 'reparacion', 'aire acondicionado', 'jardin', 'mantenimiento', 'mudanzas', 'fletes', 'gasista', 'cerrajero', 'albañil'] },
+  { icon: Zap, label: 'Automotriz / Taller', keywords: ['repuestos', 'automotriz', 'taller', 'mecanico', 'autos', 'carros', 'llantas', 'baterias', 'frenos', 'mantenimiento preventivo', 'lavadero', 'car wash', 'mecanica', 'neumaticos'] },
+  { icon: BookOpen, label: 'Educación / Cursos', keywords: ['curso', 'academia', 'escuela', 'clases', 'ingles', 'formacion', 'taller', 'seminario', 'colegio', 'universidad', 'clases particulares', 'mentoria', 'idiomas'] },
+  { icon: Globe2, label: 'Turismo / Viajes', keywords: ['hotel', 'turismo', 'viaje', 'tour', 'agencia de viajes', 'hospedaje', 'boletos aereos', 'vacaciones', 'posada', 'hostel', 'cabañas', 'vuelos'] },
+  { icon: Heart, label: 'Mascotas / Veterinaria', keywords: ['veterinaria', 'pet shop', 'perros', 'gatos', 'grooming', 'mascotas', 'entrenamiento canino', 'alimento para mascotas', 'paseador', 'adopcion'] },
+  { icon: PartyPopper, label: 'Eventos / Bodas', keywords: ['eventos', 'bodas', 'catering', 'fiestas', 'decoracion', 'fotografia', 'dj', 'planner', 'quince años', 'animacion', 'alquiler de salones', 'catering'] },
+  { icon: Building2, label: 'Corporativo / Agencia', keywords: ['consultoria', 'agencia', 'marketing', 'software', 'b2b', 'logistica', 'transporte', 'contabilidad', 'empresa', 'coworking', 'asesoria', 'desarrollo web'] },
+  { icon: Store, label: 'Tienda Online / Venta', keywords: ['tienda', 'ecommerce', 'online', 'shop', 'producto', 'ventas', 'shopify', 'dropshipping', 'vender', 'regalos', 'ropa', 'accesorios'] },
 ];
 
 const MIN_BUDGET = 5;
@@ -150,16 +154,35 @@ const inferBusinessCategory = (businessName: string, promote: string, selectedTy
   if (selectedType) return selectedType.split(' / ')[0];
   const source = normalizeText(`${businessName} ${promote}`);
   
-  const match = businessTypes.find((type) => 
-    type.keywords.some((keyword) => source.includes(normalizeText(keyword)))
-  );
+  // Scoring system for more surgical precision
+  const matches = businessTypes.map(type => {
+    let score = 0;
+    let matchedKeyword = '';
+    
+    type.keywords.forEach(kw => {
+      const normalizedKw = normalizeText(kw);
+      if (source.includes(normalizedKw)) {
+        // Longer keywords give higher score (more specific)
+        if (normalizedKw.length > score) {
+          score = normalizedKw.length;
+          matchedKeyword = kw;
+        }
+      }
+    });
 
-  if (match) {
-    const labelParts = match.label.split(' / ');
-    // Intentar encontrar la parte del label que más se acerque a lo que escribió el usuario
+    return { type, score, matchedKeyword };
+  }).filter(m => m.score > 0);
+
+  if (matches.length > 0) {
+    // Sort by score (length of keyword matched) descending
+    const bestMatch = matches.sort((a, b) => b.score - a.score)[0];
+    const labelParts = bestMatch.type.label.split(' / ');
+    
+    // Find the most specific part of the label that matches the input
     const specificPart = labelParts.find(part => 
-      match.keywords.some(kw => source.includes(normalizeText(kw)) && normalizeText(part).includes(normalizeText(kw)))
+      source.includes(normalizeText(part)) || normalizeText(part).includes(normalizeText(bestMatch.matchedKeyword))
     );
+    
     return specificPart || labelParts[0];
   }
   
@@ -561,22 +584,22 @@ const FlowsightAdsDashboard: React.FC = () => {
         educationalFact={educationalFacts[currentEducationalFactIndex]}
       />
       
-      <header className="sticky top-0 z-50 backdrop-blur-3xl bg-black/40 border-b border-white/[0.05]">
+      <header className="sticky top-0 z-50 backdrop-blur-3xl bg-background/60 border-b border-border/50 transition-colors duration-500">
         <div className="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
           <div className="flex items-center gap-4 group cursor-pointer" onClick={() => navigate('/')}>
             <div className="p-2.5 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-xl shadow-lg shadow-emerald-500/20 group-hover:scale-110 transition-transform">
-              <Sparkles className="w-5 h-5 text-black" />
+              <Sparkles className="w-5 h-5 text-black dark:text-black" />
             </div>
             <div>
-              <h1 className="text-xl font-black tracking-tight leading-none">Flowsight <span className="text-emerald-500">Ads</span></h1>
-              <p className="text-[9px] font-bold text-gray-500 uppercase tracking-widest mt-1">Inteligencia Operativa</p>
+              <h1 className="text-xl font-black tracking-tight leading-none text-foreground">Flowsight <span className="text-emerald-500">Ads</span></h1>
+              <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest mt-1">Inteligencia Operativa</p>
             </div>
           </div>
           <div className="flex items-center gap-6">
             <div className="hidden sm:block">
               <ThemeToggle />
             </div>
-            <Button variant="ghost" onClick={handleLogout} className="text-gray-400 hover:text-white font-bold gap-2 hover:bg-white/5 px-4 h-10 rounded-xl">
+            <Button variant="ghost" onClick={handleLogout} className="text-muted-foreground hover:text-foreground font-bold gap-2 hover:bg-muted px-4 h-10 rounded-xl transition-colors">
               <LogOut className="w-4 h-4" /> <span className="hidden sm:inline">Cerrar Sesión</span>
             </Button>
           </div>
@@ -603,7 +626,7 @@ const FlowsightAdsDashboard: React.FC = () => {
                     <>Estrategia <br /><span className="text-emerald-500 italic">Maestra</span></>
                   )}
                 </h2>
-                <p className="text-gray-400 text-2xl md:text-3xl font-bold max-w-3xl mx-auto leading-tight tracking-tight">
+                <p className="text-muted-foreground text-2xl md:text-3xl font-bold max-w-3xl mx-auto leading-tight tracking-tight">
                   {step === 1
                     ? 'Inteligencia Creativa. Simple. Bruta.'
                     : 'Avanza paso a paso con una experiencia diseñada para maximizar tu retorno de inversión.'}
@@ -632,31 +655,30 @@ const FlowsightAdsDashboard: React.FC = () => {
                       animate={{ opacity: 1, scale: 1, y: 0 }} 
                       exit={{ opacity: 0, scale: 0.98, y: -10 }} 
                       transition={{ duration: 0.4, ease: "easeOut" }} 
-                      className="grid lg:grid-cols-[0.9fr_1.1fr] gap-8 glass-card rounded-[48px] p-8 md:p-10 shadow-2xl relative"
-                    >
-                      <div className="relative rounded-[40px] bg-gradient-to-br from-emerald-500/[0.08] via-white/[0.02] to-transparent border border-white/[0.06] p-8 flex flex-col justify-between min-h-[400px]">
-                        <div>
-                          <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-8 shadow-inner shadow-emerald-500/10">
-                            <MessageSquareText className="w-7 h-7 text-emerald-400" />
+                      className="grid lg:grid-cols-[0.9fr_1.1fr] gap-8 bg-card/60 dark:bg-card/40 backdrop-blur-3xl rounded-[48px] p-8 md:p-10 border border-border/50 shadow-2xl relative overflow-hidden transition-all duration-500">
+                        <div className="relative rounded-[40px] bg-emerald-500/[0.04] dark:bg-emerald-500/[0.08] border border-emerald-500/10 p-8 flex flex-col justify-between min-h-[400px]">
+                          <div>
+                            <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-8 shadow-inner shadow-emerald-500/10">
+                              <MessageSquareText className="w-7 h-7 text-emerald-500 dark:text-emerald-400" />
+                            </div>
+                            <p className="text-[10px] font-black uppercase tracking-[0.25em] text-emerald-600 dark:text-emerald-500/80 mb-5">01. Inteligencia Creativa</p>
+                            <h3 className="text-4xl font-black tracking-tighter leading-[1.1] mb-5 text-foreground">
+                              {config.promote ? `Optimizando para ${detectedBusinessLabel}` : 'Define tu oferta maestra'}
+                            </h3>
+                            <p className="text-muted-foreground font-medium leading-relaxed text-lg">
+                              Olvídate de lo técnico. Describe tu producto o servicio con tus palabras y nosotros nos encargamos de la magia publicitaria.
+                            </p>
                           </div>
-                          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-emerald-500/80 mb-5">01. Inteligencia Creativa</p>
-                          <h3 className="text-4xl font-black tracking-tighter leading-[1.1] mb-5">
-                            {config.promote ? `Optimizando para ${detectedBusinessLabel}` : 'Define tu oferta maestra'}
-                          </h3>
-                          <p className="text-gray-400 font-medium leading-relaxed text-lg">
-                            Olvídate de lo técnico. Describe tu producto o servicio con tus palabras y nosotros nos encargamos de la magia publicitaria.
-                          </p>
+                          <motion.div 
+                            animate={{ opacity: config.promote ? 1 : 0.45, x: config.promote ? 0 : 5 }} 
+                            className="mt-10 p-5 rounded-[24px] bg-muted/50 dark:bg-black/40 border border-border dark:border-white/[0.06] backdrop-blur-md"
+                          >
+                            <p className="text-xs text-emerald-600 dark:text-emerald-400/80 font-black uppercase tracking-widest mb-1.5 flex items-center gap-2">
+                              <Sparkles className="w-3 h-3" /> Estado del motor
+                            </p>
+                            <p className="text-sm text-foreground dark:text-gray-300 font-bold italic">{config.promote ? `Estrategia detectada: "${detectedTone}". Pulsa continuar.` : 'Esperando señales de tu negocio...'}</p>
+                          </motion.div>
                         </div>
-                        <motion.div 
-                          animate={{ opacity: config.promote ? 1 : 0.45, x: config.promote ? 0 : 5 }} 
-                          className="mt-10 p-5 rounded-[24px] bg-black/40 border border-white/[0.06] backdrop-blur-md"
-                        >
-                          <p className="text-xs text-emerald-400/80 font-black uppercase tracking-widest mb-1.5 flex items-center gap-2">
-                            <Sparkles className="w-3 h-3" /> Estado del motor
-                          </p>
-                          <p className="text-sm text-gray-300 font-bold italic">{config.promote ? `Estrategia detectada: "${detectedTone}". Pulsa continuar.` : 'Esperando señales de tu negocio...'}</p>
-                        </motion.div>
-                      </div>
 
                       <div className="flex flex-col justify-between space-y-8">
                         <div className="space-y-4">
@@ -665,7 +687,7 @@ const FlowsightAdsDashboard: React.FC = () => {
                             <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500/10 to-cyan-500/10 rounded-[32px] blur-md opacity-0 group-focus-within:opacity-100 transition-opacity" />
                             <Textarea
                               placeholder="Ej: Café artesanal de especialidad, con opciones de brunch y delivery rápido en zona norte."
-                              className="relative min-h-[160px] bg-white/[0.03] border-white/[0.08] rounded-[32px] text-xl font-bold p-8 focus-visible:ring-emerald-500/40 transition-all placeholder:text-gray-700"
+                              className="relative min-h-[160px] bg-muted/30 dark:bg-white/[0.03] border-border dark:border-white/[0.08] rounded-[32px] text-xl font-bold p-8 focus-visible:ring-emerald-500/40 transition-all placeholder:text-muted-foreground/40 text-foreground"
                               value={config.promote}
                               onChange={(e) => {
                                 setConfig({ ...config, promote: e.target.value });
@@ -681,10 +703,10 @@ const FlowsightAdsDashboard: React.FC = () => {
                             { icon: Users, label: 'Público', val: 'Optimizado', color: 'purple' },
                             { icon: TrendingUp, label: 'Meta', val: 'Más Ventas', color: 'emerald' }
                           ].map((item, idx) => (
-                            <div key={idx} className={`p-5 rounded-[24px] bg-${item.color}-500/[0.03] border border-${item.color}-500/10 group hover:bg-${item.color}-500/10 transition-all duration-300`}>
-                              <item.icon className={`w-5 h-5 text-${item.color}-400 mb-3`} />
-                              <p className={`text-[9px] text-${item.color}-400/70 font-black uppercase tracking-[0.15em]`}>{item.label}</p>
-                              <p className="text-sm font-black mt-1 text-white">{item.val}</p>
+                            <div key={idx} className={`p-5 rounded-[24px] bg-${item.color}-500/[0.03] dark:bg-${item.color}-500/[0.03] border border-${item.color}-500/10 group hover:bg-${item.color}-500/10 transition-all duration-300`}>
+                              <item.icon className={`w-5 h-5 text-${item.color}-600 dark:text-${item.color}-400 mb-3`} />
+                              <p className={`text-[9px] text-${item.color}-600/70 dark:text-${item.color}-400/70 font-black uppercase tracking-[0.15em]`}>{item.label}</p>
+                              <p className="text-sm font-black mt-1 text-foreground">{item.val}</p>
                             </div>
                           ))}
                         </div>
@@ -692,7 +714,7 @@ const FlowsightAdsDashboard: React.FC = () => {
                         <Button 
                           onClick={() => setStep(2)} 
                           disabled={!config.promote.trim()} 
-                          className="h-24 px-16 rounded-[32px] bg-black dark:bg-black/80 border border-white/[0.1] text-white hover:bg-white/[0.05] font-black text-2xl gap-4 shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-20"
+                          className="h-24 px-16 rounded-[32px] bg-foreground text-background hover:opacity-90 font-black text-2xl gap-4 shadow-[0_20px_50px_rgba(0,0,0,0.3)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-20"
                         >
                           Siguiente <ArrowRight className="w-8 h-8" />
                         </Button>
