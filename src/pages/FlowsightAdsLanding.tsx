@@ -266,21 +266,23 @@ const FlowsightAdsLanding: React.FC = () => {
               </motion.div>
             </div>
 
-            {/* Auth Card - Glassmorphism Refined */}
-            <div className="rounded-[40px] border border-white/[0.08] dark:border-white/[0.05] bg-white/40 dark:bg-black/40 backdrop-blur-[80px] p-8 md:p-10 relative overflow-hidden shadow-[0_40px_100px_-20px_rgba(0,0,0,0.5)]">
-              <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent" />
+            {/* Auth Card - Premium Glassmorphism */}
+            <div className="rounded-[40px] border border-white/[0.12] bg-black/20 backdrop-blur-[32px] p-8 md:p-10 relative overflow-hidden shadow-[0_40px_100px_-20px_rgba(0,0,0,0.8)]">
+              {/* Inner subtle glow to simulate glass edge */}
+              <div className="absolute inset-0 bg-gradient-to-b from-white/[0.05] to-transparent pointer-events-none" />
+              <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-emerald-500/60 to-transparent" />
 
               {/* Tab Switcher */}
-              <div className="flex gap-1 p-1 bg-muted rounded-[20px] border border-border mb-10">
+              <div className="flex gap-1 p-1 bg-black/40 rounded-[20px] border border-white/10 mb-10 relative z-10">
                 <button 
                   onClick={() => setIsLogin(true)}
-                  className={`flex-1 py-3.5 rounded-[16px] font-black text-[11px] uppercase tracking-widest transition-all duration-300 ${isLogin ? 'bg-emerald-500 text-black shadow-[0_5px_15px_rgba(16,185,129,0.3)]' : 'text-muted-foreground hover:text-foreground'}`}
+                  className={`flex-1 py-3.5 rounded-[16px] font-black text-[11px] uppercase tracking-widest transition-all duration-300 ${isLogin ? 'bg-emerald-500 text-black shadow-[0_5px_15px_rgba(16,185,129,0.3)]' : 'text-white/50 hover:text-white'}`}
                 >
                   Entrar
                 </button>
                 <button 
                   onClick={() => setIsLogin(false)}
-                  className={`flex-1 py-3.5 rounded-[16px] font-black text-[11px] uppercase tracking-widest transition-all duration-300 ${!isLogin ? 'bg-emerald-500 text-black shadow-[0_5px_15px_rgba(16,185,129,0.3)]' : 'text-muted-foreground hover:text-foreground'}`}
+                  className={`flex-1 py-3.5 rounded-[16px] font-black text-[11px] uppercase tracking-widest transition-all duration-300 ${!isLogin ? 'bg-emerald-500 text-black shadow-[0_5px_15px_rgba(16,185,129,0.3)]' : 'text-white/50 hover:text-white'}`}
                 >
                   Unirse
                 </button>
@@ -290,7 +292,7 @@ const FlowsightAdsLanding: React.FC = () => {
                 <motion.div 
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
-                  className={`p-4 rounded-xl mb-6 text-xs font-bold ${messageType === 'error' ? 'bg-red-500/10 border border-red-500/20 text-red-400' : 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400'}`}
+                  className={`p-4 rounded-xl mb-6 text-xs font-bold relative z-10 backdrop-blur-md ${messageType === 'error' ? 'bg-red-500/10 border border-red-500/20 text-red-400' : 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400'}`}
                 >
                   {message}
                 </motion.div>
@@ -304,16 +306,16 @@ const FlowsightAdsLanding: React.FC = () => {
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: 10 }}
                     onSubmit={handleLogin} 
-                    className="space-y-6"
+                    className="space-y-6 relative z-10"
                   >
                     <div className="space-y-2">
-                      <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Email Empresarial</Label>
+                      <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/70 ml-1">Email Empresarial</Label>
                       <div className="relative group/input">
-                        <Mail className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within/input:text-emerald-500 transition-colors" />
+                        <Mail className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within/input:text-emerald-400 transition-colors" />
                         <Input 
                           type="email" 
                           placeholder="nombre@empresa.com" 
-                          className="h-16 pl-14 bg-muted border-border rounded-2xl focus:ring-1 focus:ring-emerald-500/50 transition-all text-sm font-bold text-foreground placeholder:text-muted-foreground" 
+                          className="h-16 pl-14 bg-white/[0.03] border border-white/10 rounded-2xl focus:ring-2 focus:ring-emerald-500/30 transition-all text-sm font-bold text-white placeholder:text-white/30 backdrop-blur-md" 
                           value={loginData.email}
                           onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
                           required
@@ -322,19 +324,19 @@ const FlowsightAdsLanding: React.FC = () => {
                     </div>
                     <div className="space-y-2">
                       <div className="flex justify-between items-center px-1">
-                        <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Contraseña</Label>
-                        <button type="button" className="text-[9px] font-black uppercase tracking-widest text-muted-foreground hover:text-emerald-400 transition-colors">Olvidé mi clave</button>
+                        <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/70">Contraseña</Label>
+                        <button type="button" className="text-[9px] font-black uppercase tracking-widest text-white/40 hover:text-emerald-400 transition-colors">Olvidé mi clave</button>
                       </div>
                       <div className="relative group/input">
-                        <Lock className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within/input:text-emerald-500 transition-colors" />
+                        <Lock className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within/input:text-emerald-400 transition-colors" />
                         <Input 
                           type={showPassword ? "text" : "password"} 
-                          className="h-16 pl-14 pr-14 bg-muted border-border rounded-2xl focus:ring-1 focus:ring-emerald-500/50 transition-all text-sm font-bold text-foreground placeholder:text-muted-foreground" 
+                          className="h-16 pl-14 pr-14 bg-white/[0.03] border border-white/10 rounded-2xl focus:ring-2 focus:ring-emerald-500/30 transition-all text-sm font-bold text-white placeholder:text-white/30 backdrop-blur-md" 
                           value={loginData.password}
                           onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
                           required
                         />
-                        <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-emerald-400 transition-colors">
+                        <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-5 top-1/2 -translate-y-1/2 text-white/40 hover:text-emerald-400 transition-colors">
                           {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                         </button>
                       </div>
@@ -342,21 +344,21 @@ const FlowsightAdsLanding: React.FC = () => {
                     
                     <Button 
                       type="submit" 
-                      className="w-full h-16 bg-emerald-500 hover:bg-emerald-400 text-black text-sm font-black rounded-2xl shadow-[0_10px_25px_rgba(16,185,129,0.3)] transition-all uppercase tracking-[0.2em]" 
+                      className="w-full h-16 bg-emerald-500 hover:bg-emerald-400 text-black text-sm font-black rounded-2xl shadow-[0_10px_25px_rgba(16,185,129,0.3)] hover:shadow-[0_15px_35px_rgba(16,185,129,0.4)] hover:-translate-y-0.5 transition-all uppercase tracking-[0.2em]" 
                       disabled={loading}
                     >
                       {loading ? 'Accediendo...' : 'Iniciar Sesión'}
                     </Button>
                     
                     <div className="relative my-8">
-                      <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-border"></span></div>
-                      <div className="relative flex justify-center text-[9px] font-black uppercase tracking-[0.4em]"><span className="bg-card px-4 text-muted-foreground transition-colors duration-500">O accede con</span></div>
+                      <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-white/10"></span></div>
+                      <div className="relative flex justify-center text-[9px] font-black uppercase tracking-[0.4em]"><span className="bg-[#0f1211] px-4 text-white/50 backdrop-blur-md rounded-full py-1">O accede con</span></div>
                     </div>
 
                     <Button 
                       type="button" 
                       variant="outline" 
-                      className="w-full h-16 rounded-2xl border border-white/[0.1] bg-black/90 dark:bg-black/60 text-white hover:bg-black/80 flex items-center justify-center gap-3 font-bold text-xs uppercase tracking-widest transition-all shadow-[0_10px_30px_rgba(0,0,0,0.2)] backdrop-blur-xl" 
+                      className="w-full h-16 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 text-white flex items-center justify-center gap-3 font-bold text-xs uppercase tracking-widest transition-all backdrop-blur-md" 
                       onClick={handleLoginWithGoogle}
                     >
                       <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -375,15 +377,15 @@ const FlowsightAdsLanding: React.FC = () => {
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -10 }}
                     onSubmit={handleRegister} 
-                    className="space-y-4"
+                    className="space-y-4 relative z-10"
                   >
                     <div className="space-y-2">
-                      <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Nombre Completo</Label>
+                      <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/70 ml-1">Nombre Completo</Label>
                       <div className="relative group/input">
-                        <User className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within/input:text-emerald-500 transition-colors" />
+                        <User className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within/input:text-emerald-400 transition-colors" />
                         <Input 
                           placeholder="Tu nombre" 
-                          className="h-16 pl-14 bg-muted border-border rounded-2xl focus:ring-1 focus:ring-emerald-500/50 transition-all text-sm font-bold text-foreground placeholder:text-muted-foreground" 
+                          className="h-16 pl-14 bg-white/[0.03] border border-white/10 rounded-2xl focus:ring-2 focus:ring-emerald-500/30 transition-all text-sm font-bold text-white placeholder:text-white/30 backdrop-blur-md" 
                           value={registerData.fullName}
                           onChange={(e) => setRegisterData({ ...registerData, fullName: e.target.value })}
                           required
@@ -391,13 +393,13 @@ const FlowsightAdsLanding: React.FC = () => {
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Email</Label>
+                      <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/70 ml-1">Email</Label>
                       <div className="relative group/input">
-                        <Mail className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within/input:text-emerald-500 transition-colors" />
+                        <Mail className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within/input:text-emerald-400 transition-colors" />
                         <Input 
                           type="email" 
                           placeholder="email@empresa.com" 
-                          className="h-16 pl-14 bg-muted border-border rounded-2xl focus:ring-1 focus:ring-emerald-500/50 transition-all text-sm font-bold text-foreground placeholder:text-muted-foreground" 
+                          className="h-16 pl-14 bg-white/[0.03] border border-white/10 rounded-2xl focus:ring-2 focus:ring-emerald-500/30 transition-all text-sm font-bold text-white placeholder:text-white/30 backdrop-blur-md" 
                           value={registerData.email}
                           onChange={(e) => setRegisterData({ ...registerData, email: e.target.value })}
                           required
@@ -406,12 +408,12 @@ const FlowsightAdsLanding: React.FC = () => {
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div className="space-y-2">
-                        <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Contraseña</Label>
+                        <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/70 ml-1">Contraseña</Label>
                         <div className="relative group/input">
-                          <Lock className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                          <Lock className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
                           <Input 
                             type="password" 
-                            className="h-16 pl-14 bg-muted border-border rounded-2xl focus:ring-1 focus:ring-emerald-500/50 transition-all text-sm font-bold text-foreground" 
+                            className="h-16 pl-14 bg-white/[0.03] border border-white/10 rounded-2xl focus:ring-2 focus:ring-emerald-500/30 transition-all text-sm font-bold text-white" 
                             value={registerData.password}
                             onChange={(e) => setRegisterData({ ...registerData, password: e.target.value })}
                             required
@@ -419,12 +421,12 @@ const FlowsightAdsLanding: React.FC = () => {
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Confirmar</Label>
+                        <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/70 ml-1">Confirmar</Label>
                         <div className="relative group/input">
-                          <Lock className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                          <Lock className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
                           <Input 
                             type="password" 
-                            className="h-16 pl-14 bg-muted border-border rounded-2xl focus:ring-1 focus:ring-emerald-500/50 transition-all text-sm font-bold text-foreground" 
+                            className="h-16 pl-14 bg-white/[0.03] border border-white/10 rounded-2xl focus:ring-2 focus:ring-emerald-500/30 transition-all text-sm font-bold text-white" 
                             value={registerData.confirmPassword}
                             onChange={(e) => setRegisterData({ ...registerData, confirmPassword: e.target.value })}
                             required
@@ -434,7 +436,7 @@ const FlowsightAdsLanding: React.FC = () => {
                     </div>
                     <Button 
                       type="submit" 
-                      className="w-full h-16 bg-emerald-500 hover:bg-emerald-400 text-black text-sm font-black rounded-2xl shadow-[0_10px_25px_rgba(16,185,129,0.3)] transition-all uppercase tracking-[0.2em] mt-2" 
+                      className="w-full h-16 bg-emerald-500 hover:bg-emerald-400 text-black text-sm font-black rounded-2xl shadow-[0_10px_25px_rgba(16,185,129,0.3)] hover:shadow-[0_15px_35px_rgba(16,185,129,0.4)] hover:-translate-y-0.5 transition-all uppercase tracking-[0.2em] mt-2" 
                       disabled={loading}
                     >
                       {loading ? 'Iniciando...' : 'Crear Cuenta'}
