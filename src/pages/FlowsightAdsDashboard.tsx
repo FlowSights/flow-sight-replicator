@@ -572,24 +572,6 @@ const FlowsightAdsDashboard: React.FC = () => {
             </div>
           </div>
           <div className="flex items-center gap-6">
-            {isConnected ? (
-              <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-emerald-500/5 border border-emerald-500/20 rounded-full text-emerald-400 text-[10px] font-black uppercase tracking-wider">
-                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
-                Google Ads Activo
-              </div>
-            ) : (
-              <Button 
-                variant="outline" 
-                onClick={connectGoogleAds}
-                disabled={isConnecting}
-                className="hidden md:flex text-[10px] h-10 font-black uppercase tracking-wider border-white/10 hover:bg-white/5 hover:text-white rounded-xl"
-              >
-                {isConnecting ? 'Conectando...' : 'Conectar Google Ads'}
-              </Button>
-            )}
-            
-            <div className="h-8 w-px bg-white/10 hidden md:block" />
-
             <Button variant="ghost" onClick={handleLogout} className="text-gray-400 hover:text-white font-bold gap-2 hover:bg-white/5 px-4 h-10 rounded-xl">
               <LogOut className="w-4 h-4" /> <span className="hidden sm:inline">Cerrar Sesión</span>
             </Button>
