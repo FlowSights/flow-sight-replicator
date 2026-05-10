@@ -751,9 +751,9 @@ const FlowsightAdsDashboard: React.FC = () => {
                     >
                       <div className="flex items-start justify-between gap-8 flex-col lg:flex-row">
                         <div>
-                          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-emerald-500/80 mb-3">02. Contexto de Marca</p>
-                          <h3 className="text-4xl md:text-5xl font-black tracking-tighter leading-tight">Define tu presencia</h3>
-                          <p className="text-gray-400 font-medium mt-4 max-w-xl text-lg">Usaremos tus redes y sitio web como señales de confianza para la IA. No necesitamos acceso, solo el enlace público.</p>
+                          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-emerald-600 dark:text-emerald-400 mb-3">02. Contexto de Marca</p>
+                          <h3 className="text-4xl md:text-5xl font-black tracking-tighter leading-tight text-foreground">Define tu presencia</h3>
+                          <p className="text-foreground/80 font-medium mt-4 max-w-xl text-lg">Usaremos tus redes y sitio web como señales de confianza para la IA. No necesitamos acceso, solo el enlace público.</p>
                         </div>
                         <div className="rounded-[32px] border border-emerald-500/20 bg-emerald-500/[0.05] p-6 min-w-[280px] backdrop-blur-xl">
                           <div className="flex items-center gap-4">
@@ -770,7 +770,7 @@ const FlowsightAdsDashboard: React.FC = () => {
 
                       <div className="grid md:grid-cols-2 gap-6">
                         <div className="space-y-3 md:col-span-2 group">
-                          <label className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-500/60 ml-2 flex items-center gap-2">
+                          <label className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-600 dark:text-emerald-400 ml-2 flex items-center gap-2">
                             <MapPin className="w-3.5 h-3.5" /> Ubicación de impacto (Países, ciudades o barrios)
                           </label>
                           <div className="relative">
@@ -783,22 +783,22 @@ const FlowsightAdsDashboard: React.FC = () => {
                         </div>
 
                         <div className="space-y-3 group">
-                          <label className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-500/60 ml-2">Nombre comercial</label>
+                          <label className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-600 dark:text-cyan-400 ml-2">Nombre comercial</label>
                           <Input 
                             placeholder="Ej: FlowSights AI" 
-                            className="h-16 px-6 bg-white/[0.03] border-white/10 focus:ring-2 focus:ring-cyan-500/30 rounded-2xl text-base font-bold transition-all backdrop-blur-md" 
+                            className="h-16 px-6 bg-white/30 dark:bg-white/[0.03] border-black/10 dark:border-white/10 focus:ring-2 focus:ring-cyan-500/30 rounded-2xl text-base font-bold transition-all backdrop-blur-md text-foreground placeholder:text-foreground/40" 
                             value={config.businessName} 
                             onChange={(e) => setConfig({ ...config, businessName: e.target.value })} 
                           />
                         </div>
 
                         <div className="space-y-3 group">
-                          <label className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-500/60 ml-2">Sitio Web</label>
+                          <label className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-600 dark:text-emerald-400 ml-2">Sitio Web</label>
                           <div className="relative">
-                            <Globe className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-emerald-500/40" />
+                            <Globe className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                             <Input 
                               placeholder="https://tuweb.com" 
-                              className="h-16 pl-14 bg-white/[0.03] border-white/10 focus:ring-2 focus:ring-emerald-500/30 rounded-2xl text-base font-bold transition-all backdrop-blur-md" 
+                              className="h-16 pl-14 bg-white/30 dark:bg-white/[0.03] border-black/10 dark:border-white/10 focus:ring-2 focus:ring-emerald-500/30 rounded-2xl text-base font-bold transition-all backdrop-blur-md text-foreground placeholder:text-foreground/40" 
                               value={config.websiteUrl} 
                               onChange={(e) => setConfig({ ...config, websiteUrl: e.target.value })} 
                               onBlur={() => fetchSiteMetadata(config.websiteUrl)} 
@@ -812,12 +812,12 @@ const FlowsightAdsDashboard: React.FC = () => {
                         </div>
 
                         <div className="space-y-3 group">
-                          <label className="text-[10px] font-black uppercase tracking-[0.2em] text-purple-500/60 ml-2">Instagram</label>
+                          <label className="text-[10px] font-black uppercase tracking-[0.2em] text-purple-600 dark:text-purple-400 ml-2">Instagram</label>
                           <div className="relative">
-                            <Camera className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-purple-500/40" />
+                            <Camera className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-purple-600 dark:text-purple-400" />
                             <Input 
                               placeholder="@tu_negocio" 
-                              className="h-16 pl-14 bg-white/[0.03] border-white/[0.08] focus:ring-2 focus:ring-purple-500/30 rounded-2xl text-base font-bold transition-all" 
+                              className="h-16 pl-14 bg-white/30 dark:bg-white/[0.03] border-black/10 dark:border-white/10 focus:ring-2 focus:ring-purple-500/30 rounded-2xl text-base font-bold transition-all backdrop-blur-md text-foreground placeholder:text-foreground/40" 
                               value={config.instagramUrl} 
                               onChange={(e) => setConfig({ ...config, instagramUrl: e.target.value })} 
                             />
@@ -825,12 +825,12 @@ const FlowsightAdsDashboard: React.FC = () => {
                         </div>
 
                         <div className="space-y-3 group">
-                          <label className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-500/60 ml-2">Facebook</label>
+                          <label className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400 ml-2">Facebook</label>
                           <div className="relative">
-                            <Share2 className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-blue-500/40" />
+                            <Share2 className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-blue-600 dark:text-blue-400" />
                             <Input 
                               placeholder="facebook.com/tu_negocio" 
-                              className="h-16 pl-14 bg-white/[0.03] border-white/[0.08] focus:ring-2 focus:ring-blue-500/30 rounded-2xl text-base font-bold transition-all" 
+                              className="h-16 pl-14 bg-white/30 dark:bg-white/[0.03] border-black/10 dark:border-white/10 focus:ring-2 focus:ring-blue-500/30 rounded-2xl text-base font-bold transition-all backdrop-blur-md text-foreground placeholder:text-foreground/40" 
                               value={config.facebookUrl} 
                               onChange={(e) => setConfig({ ...config, facebookUrl: e.target.value })} 
                             />
@@ -858,67 +858,81 @@ const FlowsightAdsDashboard: React.FC = () => {
                       animate={{ opacity: 1, scale: 1, y: 0 }} 
                       exit={{ opacity: 0, scale: 0.98, y: -10 }} 
                       transition={{ duration: 0.4, ease: "easeOut" }} 
-                      className="space-y-8 glass-card rounded-[48px] p-8 md:p-12 shadow-2xl relative overflow-hidden"
+                      className="grid lg:grid-cols-5 gap-10 glass-card rounded-[40px] p-8 md:p-10 relative overflow-hidden transition-all duration-500"
                     >
-                      <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-emerald-500/[0.08] blur-[180px] rounded-full pointer-events-none" />
+                      <div className="absolute -top-32 left-0 w-[600px] h-[600px] bg-emerald-500/[0.08] blur-[180px] rounded-full pointer-events-none" />
 
-                      <div className="text-center max-w-2xl mx-auto relative z-10">
-                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 text-emerald-300 text-[10px] font-black uppercase tracking-[0.2em] mb-6">
-                          <WandSparkles className="w-4 h-4" /> 03. Plan Maestro
+                      <div className="lg:col-span-2 relative z-10 flex flex-col justify-between">
+                        <div>
+                          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 text-emerald-300 text-[10px] font-black uppercase tracking-[0.2em] mb-6">
+                            <WandSparkles className="w-4 h-4" /> 03. Plan Maestro
+                          </div>
+                          <h3 className="text-5xl md:text-6xl font-black tracking-tighter leading-[1.05] text-foreground">Ruta <br/><span className="text-emerald-500 italic">Estratégica</span></h3>
+                          <p className="text-foreground/80 font-medium mt-6 text-xl leading-relaxed">Hemos diseñado la ruta óptima para tu negocio. Agrega contexto extra si hay algo clave que la IA deba considerar.</p>
                         </div>
-                        <h3 className="text-4xl md:text-6xl font-black tracking-tighter leading-[1.1]">Ruta <span className="text-emerald-500 italic">Estratégica</span></h3>
-                        <p className="text-gray-400 font-medium mt-5 text-xl leading-relaxed">Hemos diseñado la ruta óptima para tu negocio. Agrega contexto extra si hay algo clave que la IA debe tomar en cuenta antes de crear la campaña.</p>
+                        
+                        <div className="hidden lg:flex mt-8 items-center gap-4 text-emerald-500/50">
+                          <div className="w-16 h-16 rounded-[24px] bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shadow-inner shadow-emerald-500/10">
+                            <TrendingUp className="w-8 h-8 text-emerald-500" />
+                          </div>
+                          <div>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-emerald-500/80">IA Activa</p>
+                            <p className="text-sm font-bold text-foreground">Estrategia en tiempo real</p>
+                          </div>
+                        </div>
                       </div>
 
-                      <div className="grid md:grid-cols-3 gap-6 relative z-10">
-                        {[
-                          { label: 'Tono', val: detectedTone, color: 'emerald' },
-                          { label: 'Público', val: suggestedAudience, color: 'purple' },
-                          { label: 'Meta', val: suggestedObjective, color: 'cyan' }
-                        ].map((item, idx) => (
-                          <motion.div 
-                            key={idx}
-                            initial={{ opacity: 0, y: 15 }} 
-                            animate={{ opacity: 1, y: 0 }} 
-                            transition={{ delay: idx * 0.1 }} 
-                            className={`p-8 rounded-[36px] border border-${item.color}-500/20 bg-gradient-to-br from-${item.color}-500/[0.08] to-transparent hover:scale-[1.02] transition-all group`}
-                          >
-                            <p className={`text-[10px] font-black uppercase tracking-[0.25em] text-${item.color}-400 mb-4 opacity-70 group-hover:opacity-100 transition-opacity`}>{item.label}</p>
-                            <p className="text-2xl font-black leading-tight text-white capitalize">{item.val}</p>
-                          </motion.div>
-                        ))}
-                      </div>
+                      <div className="lg:col-span-3 flex flex-col justify-between space-y-8 relative z-10 py-2">
+                        <div className="grid md:grid-cols-3 gap-4">
+                          {[
+                            { label: 'Tono', val: detectedTone, color: 'emerald' },
+                            { label: 'Público', val: suggestedAudience, color: 'purple' },
+                            { label: 'Meta', val: suggestedObjective, color: 'cyan' }
+                          ].map((item, idx) => (
+                            <motion.div 
+                              key={idx}
+                              initial={{ opacity: 0, y: 15 }} 
+                              animate={{ opacity: 1, y: 0 }} 
+                              transition={{ delay: idx * 0.1 }} 
+                              className={`p-6 rounded-[28px] border border-${item.color}-500/20 bg-gradient-to-br from-${item.color}-500/[0.05] to-transparent bg-white/5 dark:bg-black/20 backdrop-blur-md hover:scale-[1.02] transition-all group`}
+                            >
+                              <p className={`text-[9px] font-black uppercase tracking-[0.2em] text-${item.color}-600 dark:text-${item.color}-400 mb-3 opacity-80 group-hover:opacity-100 transition-opacity`}>{item.label}</p>
+                              <p className="text-lg font-black leading-tight text-foreground capitalize">{item.val}</p>
+                            </motion.div>
+                          ))}
+                        </div>
 
-                      <motion.div 
-                        initial={{ opacity: 0, y: 12 }} 
-                        animate={{ opacity: 1, y: 0 }} 
-                        transition={{ delay: 0.3 }} 
-                        className="relative z-10 bg-black/40 border border-emerald-500/10 rounded-[40px] p-2 shadow-2xl"
-                      >
-                        <AIAgentBar 
-                          context={{
-                            businessName: config.businessName,
-                            promote: config.promote,
-                            idealCustomer: strategyWithContext,
-                            location: config.location,
-                            generatedAds: [],
-                            uploadedAssets: []
-                          }} 
-                          mode="context"
-                          onContextSubmit={(value) => setStrategyContext(value)}
-                          onUpdateAds={() => {}}
-                          onAddAssets={() => {}}
-                        />
-                      </motion.div>
-
-                      <div className="flex gap-4 pt-6 relative z-10">
-                        <Button variant="ghost" onClick={() => setStep(2)} className="flex-1 h-16 rounded-2xl font-bold text-gray-400 hover:text-white">Atrás</Button>
-                        <Button 
-                          onClick={() => { setConfig({ ...config, idealCustomer: strategyWithContext }); setStep(4); }} 
-                          className="flex-[2] h-16 text-xl font-black bg-emerald-500 hover:bg-emerald-400 text-black rounded-2xl shadow-xl shadow-emerald-500/20 group"
+                        <motion.div 
+                          initial={{ opacity: 0, y: 12 }} 
+                          animate={{ opacity: 1, y: 0 }} 
+                          transition={{ delay: 0.3 }} 
+                          className="bg-white/10 dark:bg-black/40 border border-black/10 dark:border-white/10 rounded-[32px] p-2 backdrop-blur-md shadow-xl"
                         >
-                          Confirmar y asignar presupuesto <ArrowRight className="ml-2 w-6 h-6 group-hover:translate-x-1 transition-transform" />
-                        </Button>
+                          <AIAgentBar 
+                            context={{
+                              businessName: config.businessName,
+                              promote: config.promote,
+                              idealCustomer: strategyWithContext,
+                              location: config.location,
+                              generatedAds: [],
+                              uploadedAssets: []
+                            }} 
+                            mode="context"
+                            onContextSubmit={(value) => setStrategyContext(value)}
+                            onUpdateAds={() => {}}
+                            onAddAssets={() => {}}
+                          />
+                        </motion.div>
+
+                        <div className="flex gap-4 pt-2">
+                          <Button variant="ghost" onClick={() => setStep(2)} className="flex-1 h-16 rounded-2xl font-bold text-foreground/50 hover:text-foreground hover:bg-white/5 transition-all">Atrás</Button>
+                          <Button 
+                            onClick={() => { setConfig({ ...config, idealCustomer: strategyWithContext }); setStep(4); }} 
+                            className="flex-[2] h-16 text-sm font-black bg-emerald-500 hover:bg-emerald-400 text-black rounded-2xl shadow-[0_15px_30px_rgba(16,185,129,0.3)] hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(16,185,129,0.4)] group transition-all uppercase tracking-widest"
+                          >
+                            Asignar Presupuesto <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                          </Button>
+                        </div>
                       </div>
                     </motion.div>
                   )}
