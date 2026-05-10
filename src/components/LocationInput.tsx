@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin } from 'lucide-react';
+import { ArrowRight, MapPin } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { searchLocations } from '@/data/worldLocations';
 
@@ -10,12 +10,18 @@ interface LocationInputProps {
   placeholder?: string;
 }
 
+type LocationSuggestion = {
+  label: string;
+  value: string;
+  type: string;
+};
+
 export const LocationInput: React.FC<LocationInputProps> = ({
   value,
   onChange,
   placeholder = "Escribe una ciudad o país..."
 }) => {
-  const [suggestions, setSuggestions] = useState<any[]>([]);
+  const [suggestions, setSuggestions] = useState<LocationSuggestion[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -47,16 +53,31 @@ export const LocationInput: React.FC<LocationInputProps> = ({
     setShowSuggestions(false);
   };
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Escape') {
+      setShowSuggestions(false);
+      return;
+    }
+
+    if (event.key === 'Enter' && showSuggestions && suggestions.length > 0) {
+      event.preventDefault();
+      handleSelectSuggestion(suggestions[0].value);
+    }
+  };
+
   return (
     <div ref={containerRef} className="relative w-full">
       <div className="relative group">
         <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 rounded-[32px] blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity" />
         <MapPin className="absolute left-8 top-1/2 -translate-y-1/2 text-emerald-500 w-6 h-6 z-10 pointer-events-none" />
         <Input
+          name="location"
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onFocus={() => value.length > 0 && setShowSuggestions(true)}
+          onKeyDown={handleKeyDown}
           placeholder={placeholder}
+          autoComplete="off"
           className="h-20 pl-16 pr-8 bg-white/[0.03] border-white/[0.08] focus:ring-2 focus:ring-emerald-500/30 rounded-[28px] text-xl font-bold transition-all placeholder:text-gray-700"
         />
       </div>
@@ -73,6 +94,7 @@ export const LocationInput: React.FC<LocationInputProps> = ({
             <div className="p-2">
               {suggestions.map((loc, idx) => (
                 <button
+                  type="button"
                   key={`${loc.value}-${idx}`}
                   onClick={() => handleSelectSuggestion(loc.value)}
                   className="w-full px-6 py-5 text-left hover:bg-emerald-500/10 rounded-2xl transition-all flex items-center gap-4 group"
