@@ -180,6 +180,17 @@ const FlowsightAdsLanding: React.FC = () => {
       <div className="min-h-screen bg-background text-foreground flex flex-col transition-colors duration-500 selection:bg-emerald-500/30 relative overflow-hidden">
         {/* Cinematic Background - Enhanced Dynamism */}
         <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+          {/* Background Video */}
+          <video 
+            src="/videos/login-bg.mp4" 
+            autoPlay 
+            muted 
+            loop 
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover opacity-30"
+          />
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+
           {/* Main Aurora Blobs */}
           <motion.div 
             animate={{ 

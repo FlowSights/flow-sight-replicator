@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Custom large files
+public/videos/login-bg.mp4
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

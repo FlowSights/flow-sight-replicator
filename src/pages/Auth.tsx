@@ -137,8 +137,20 @@ const Auth = () => {
         noindex={true}
       />
       <div className="min-h-screen bg-[#020202] text-white selection:bg-emerald-500/30 font-sans relative overflow-hidden">
-        {/* Background Glows */}
-        <div className="fixed inset-0 pointer-events-none">
+        {/* Background Video & Glows */}
+        <div className="fixed inset-0 pointer-events-none z-0">
+          <video 
+            src="/videos/login-bg.mp4" 
+            autoPlay 
+            muted 
+            loop 
+            playsInline
+            className="w-full h-full object-cover opacity-40"
+          />
+          {/* Dark Overlay for Readability */}
+          <div className="absolute inset-0 bg-black/60" />
+          
+          {/* Accent Glows */}
           <div className="absolute top-[-20%] left-[30%] w-[600px] h-[600px] bg-emerald-500/[0.04] blur-[150px] rounded-full" />
           <div className="absolute bottom-[-10%] right-[20%] w-[400px] h-[400px] bg-cyan-500/[0.03] blur-[120px] rounded-full" />
         </div>
