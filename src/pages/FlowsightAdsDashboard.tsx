@@ -717,7 +717,7 @@ const FlowsightAdsDashboard: React.FC = () => {
                         <Button 
                           onClick={() => setStep(2)} 
                           disabled={!config.promote.trim()} 
-                          className="h-24 px-16 rounded-[32px] bg-black dark:bg-white text-white dark:text-black hover:opacity-90 font-black text-2xl gap-4 shadow-[0_20px_50px_rgba(0,0,0,0.3)] dark:shadow-[0_20px_50px_rgba(255,255,255,0.1)] transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-20"
+                          className="h-24 px-16 rounded-[32px] bg-black/90 dark:bg-black/60 border border-white/[0.1] text-white hover:bg-black/80 font-black text-2xl gap-4 shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-20"
                         >
                           Siguiente <ArrowRight className="w-8 h-8" />
                         </Button>
