@@ -212,6 +212,17 @@ const FlowsightAdsLanding: React.FC = () => {
 
           {/* Dynamic Light Streaks */}
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,transparent_0%,hsl(var(--background))_100%)] opacity-40" />
+          
+          {/* Premium Grid Overlay - Dynamic */}
+          <div 
+            className="absolute inset-0 z-0 opacity-[0.15] dark:opacity-[0.2]"
+            style={{
+              backgroundImage: `linear-gradient(hsl(var(--foreground)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--foreground)) 1px, transparent 1px)`,
+              backgroundSize: '40px 40px',
+              maskImage: 'radial-gradient(circle at center, black 0%, transparent 80%)',
+              WebkitMaskImage: 'radial-gradient(circle at center, black 0%, transparent 80%)'
+            }}
+          />
         </div>
 
         <header className="sticky top-0 z-50 backdrop-blur-xl bg-background/40 border-b border-border/50">
