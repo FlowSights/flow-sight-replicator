@@ -570,19 +570,22 @@ const FlowsightAdsDashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-emerald-500/30 font-sans relative overflow-x-hidden transition-colors duration-500">
-      {/* Cinematic Background Elements */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute top-0 inset-x-0 h-[500px] bg-gradient-to-b from-emerald-500/[0.03] to-transparent opacity-50" />
-        <div className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-emerald-500/[0.05] blur-[120px] rounded-full animate-pulse" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-teal-500/[0.03] blur-[100px] rounded-full" />
-        <div className="absolute top-1/4 right-[15%] w-[300px] h-[300px] bg-cyan-500/[0.02] blur-[80px] rounded-full" />
-        
-        {/* Subtle Grid Pattern - Theme Aware */}
-        <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05]" 
-             style={{ 
-               backgroundImage: `radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)`, 
-               backgroundSize: '40px 40px' 
-             }} />
+      {/* Cinematic Background - Consistent with Login */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        {/* Background Video */}
+        <video 
+          src="/videos/login-bg.mp4" 
+          autoPlay 
+          muted 
+          loop 
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover opacity-100"
+        />
+        <div className="absolute inset-0 bg-black/40" />
+
+        <div className="absolute top-0 inset-x-0 h-[500px] bg-gradient-to-b from-emerald-500/[0.05] to-transparent opacity-50" />
+        <div className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-emerald-500/[0.08] blur-[120px] rounded-full animate-pulse" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-teal-500/[0.05] blur-[100px] rounded-full" />
       </div>
 
       <PremiumLoadingScreen 
