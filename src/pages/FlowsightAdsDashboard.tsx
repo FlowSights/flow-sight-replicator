@@ -658,39 +658,46 @@ const FlowsightAdsDashboard: React.FC = () => {
                       animate={{ opacity: 1, scale: 1, y: 0 }} 
                       exit={{ opacity: 0, scale: 0.98, y: -10 }} 
                       transition={{ duration: 0.4, ease: "easeOut" }} 
-                      className="grid lg:grid-cols-[0.9fr_1.1fr] gap-8 bg-card/60 dark:bg-card/40 backdrop-blur-3xl rounded-[48px] p-8 md:p-10 border border-border/50 shadow-2xl relative overflow-hidden transition-all duration-500">
-                        <div className="relative rounded-[40px] bg-emerald-500/[0.04] dark:bg-emerald-500/[0.08] border border-emerald-500/10 p-8 flex flex-col justify-between min-h-[400px]">
+                      className="grid lg:grid-cols-[0.85fr_1.15fr] gap-8 bg-card/60 dark:bg-card/40 backdrop-blur-3xl rounded-[48px] p-8 md:p-12 border border-border/50 shadow-2xl relative overflow-hidden transition-all duration-500">
+                        <div className="relative rounded-[40px] bg-emerald-500/[0.02] dark:bg-emerald-500/[0.04] border border-emerald-500/10 p-10 flex flex-col justify-between min-h-[480px]">
                           <div>
-                            <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-8 shadow-inner shadow-emerald-500/10">
-                              <MessageSquareText className="w-7 h-7 text-emerald-500 dark:text-emerald-400" />
+                            <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-10 shadow-inner shadow-emerald-500/10">
+                              <MessageSquareText className="w-8 h-8 text-emerald-500 dark:text-emerald-400" />
                             </div>
-                            <p className="text-[10px] font-black uppercase tracking-[0.25em] text-emerald-600 dark:text-emerald-500/80 mb-5">01. Inteligencia Creativa</p>
-                            <h3 className="text-4xl font-black tracking-tighter leading-[1.1] mb-5 text-foreground">
-                              {config.promote ? `Optimizando para ${detectedBusinessLabel}` : 'Define tu oferta maestra'}
+                            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600 dark:text-emerald-500/80 mb-6">Cuéntame tu negocio</p>
+                            <h3 className="text-5xl font-black tracking-tighter leading-[1.05] mb-6 text-foreground">
+                              {config.promote ? (
+                                <>Atraeremos <br />clientes para <span className="text-emerald-500">{detectedBusinessLabel}</span></>
+                              ) : (
+                                <>Define tu <br />oferta maestra</>
+                              )}
                             </h3>
-                            <p className="text-muted-foreground font-medium leading-relaxed text-lg">
-                              Olvídate de lo técnico. Describe tu producto o servicio con tus palabras y nosotros nos encargamos de la magia publicitaria.
+                            <p className="text-muted-foreground font-medium leading-relaxed text-xl">
+                              Describe qué ofreces. La IA procesará tu idea en tiempo real y construirá una estrategia letal.
                             </p>
                           </div>
+                          
                           <motion.div 
-                            animate={{ opacity: config.promote ? 1 : 0.45, x: config.promote ? 0 : 5 }} 
-                            className="mt-10 p-5 rounded-[24px] bg-muted/50 dark:bg-black/40 border border-border dark:border-white/[0.06] backdrop-blur-md"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: config.promote ? 1 : 0.4 }}
+                            className="mt-12 p-6 rounded-[28px] border border-border dark:border-white/[0.08] bg-muted/30 dark:bg-black/20"
                           >
-                            <p className="text-xs text-emerald-600 dark:text-emerald-400/80 font-black uppercase tracking-widest mb-1.5 flex items-center gap-2">
-                              <Sparkles className="w-3 h-3" /> Estado del motor
+                            <p className="text-sm text-foreground dark:text-gray-200 font-bold leading-snug">
+                              {config.promote 
+                                ? "Entendido: vamos a convertir esto en una campaña de alto impacto para conseguir resultados." 
+                                : "Esperando detalles para estructurar tu estrategia maestra..."}
                             </p>
-                            <p className="text-sm text-foreground dark:text-gray-300 font-bold italic">{config.promote ? `Estrategia detectada: "${detectedTone}". Pulsa continuar.` : 'Esperando señales de tu negocio...'}</p>
                           </motion.div>
                         </div>
 
-                      <div className="flex flex-col justify-between space-y-8">
-                        <div className="space-y-4">
-                          <label className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-500/60 ml-2">¿Qué quieres promocionar hoy?</label>
+                      <div className="flex flex-col justify-between space-y-10 py-2">
+                        <div className="space-y-6">
+                          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-emerald-600 dark:text-emerald-500/80 ml-2">¿Qué quieres promocionar?</p>
                           <div className="relative group">
-                            <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500/10 to-cyan-500/10 rounded-[32px] blur-md opacity-0 group-focus-within:opacity-100 transition-opacity" />
+                            <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 rounded-[32px] blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity" />
                             <Textarea
-                              placeholder="Ej: Café artesanal de especialidad, con opciones de brunch y delivery rápido en zona norte."
-                              className="relative min-h-[160px] bg-muted/30 dark:bg-white/[0.03] border-border dark:border-white/[0.08] rounded-[32px] text-xl font-bold p-8 focus-visible:ring-emerald-500/40 transition-all placeholder:text-muted-foreground/40 text-foreground"
+                              placeholder="Ej: Clínica dental de alta gama con servicios de ortodoncia invisible..."
+                              className="relative min-h-[180px] bg-muted/40 dark:bg-black/40 border-2 border-border dark:border-white/[0.05] rounded-[32px] text-2xl font-bold p-10 focus-visible:ring-emerald-500/40 transition-all placeholder:text-muted-foreground/30 text-foreground"
                               value={config.promote}
                               onChange={(e) => {
                                 setConfig({ ...config, promote: e.target.value });
@@ -702,14 +709,14 @@ const FlowsightAdsDashboard: React.FC = () => {
 
                         <div className="grid grid-cols-3 gap-4">
                           {[
-                            { icon: Target, label: 'Enfoque', val: 'Conversión', color: 'blue' },
-                            { icon: Users, label: 'Público', val: 'Optimizado', color: 'purple' },
-                            { icon: TrendingUp, label: 'Meta', val: 'Más Ventas', color: 'emerald' }
+                            { icon: Target, label: 'Enfoque', val: 'Clientes reales', color: 'emerald' },
+                            { icon: Users, label: 'Audiencia', val: 'Detectada', color: 'blue' },
+                            { icon: TrendingUp, label: 'Meta', val: 'Conversión', color: 'purple' }
                           ].map((item, idx) => (
-                            <div key={idx} className={`p-5 rounded-[24px] bg-${item.color}-500/[0.03] dark:bg-${item.color}-500/[0.03] border border-${item.color}-500/10 group hover:bg-${item.color}-500/10 transition-all duration-300`}>
-                              <item.icon className={`w-5 h-5 text-${item.color}-600 dark:text-${item.color}-400 mb-3`} />
-                              <p className={`text-[9px] text-${item.color}-600/70 dark:text-${item.color}-400/70 font-black uppercase tracking-[0.15em]`}>{item.label}</p>
-                              <p className="text-sm font-black mt-1 text-foreground">{item.val}</p>
+                            <div key={idx} className="p-6 rounded-[32px] bg-muted/20 dark:bg-white/[0.02] border border-border dark:border-white/[0.05] flex flex-col items-center text-center group hover:border-emerald-500/30 transition-all duration-300">
+                              <item.icon className="w-6 h-6 text-muted-foreground mb-4 group-hover:text-emerald-500 transition-colors" />
+                              <p className="text-[8px] text-muted-foreground font-black uppercase tracking-[0.2em] mb-1">{item.label}</p>
+                              <p className="text-xs font-black text-foreground">{item.val}</p>
                             </div>
                           ))}
                         </div>
@@ -717,9 +724,10 @@ const FlowsightAdsDashboard: React.FC = () => {
                         <Button 
                           onClick={() => setStep(2)} 
                           disabled={!config.promote.trim()} 
-                          className="h-24 px-16 rounded-[32px] bg-black/90 dark:bg-black/60 border border-white/[0.1] text-white hover:bg-black/80 font-black text-2xl gap-4 shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-20"
+                          className="h-24 px-12 rounded-[32px] bg-[#10b981] hover:bg-[#059669] text-black font-black text-2xl gap-4 shadow-[0_20px_50px_rgba(16,185,129,0.4)] transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-20 relative group overflow-hidden"
                         >
-                          Siguiente <ArrowRight className="w-8 h-8" />
+                          <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                          Continuar al contexto <ArrowRight className="w-8 h-8" />
                         </Button>
                       </div>
                     </motion.div>
