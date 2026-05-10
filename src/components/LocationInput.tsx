@@ -68,7 +68,7 @@ export const LocationInput: React.FC<LocationInputProps> = ({
   return (
     <div ref={containerRef} className="relative w-full">
       <div className="relative group">
-        <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 rounded-[32px] blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity" />
+        <div className="pointer-events-none absolute -inset-1 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 rounded-[32px] blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity" />
         <MapPin className="absolute left-8 top-1/2 -translate-y-1/2 text-emerald-500 w-6 h-6 z-10 pointer-events-none" />
         <Input
           name="location"
@@ -78,7 +78,7 @@ export const LocationInput: React.FC<LocationInputProps> = ({
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           autoComplete="off"
-          className="h-20 pl-16 pr-8 bg-white/[0.03] border-white/[0.08] focus:ring-2 focus:ring-emerald-500/30 rounded-[28px] text-xl font-bold transition-all placeholder:text-gray-700"
+          className="relative z-10 h-20 pl-16 pr-8 bg-white/[0.03] border-white/[0.08] focus:ring-2 focus:ring-emerald-500/30 rounded-[28px] text-xl font-bold transition-all placeholder:text-gray-700"
         />
       </div>
 
