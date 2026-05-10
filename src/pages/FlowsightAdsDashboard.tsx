@@ -263,6 +263,7 @@ const FlowsightAdsDashboard: React.FC = () => {
   const [imageMode, setImageMode] = useState<ImageMode>('copyonly');
   const [uploadedAssets, setUploadedAssets] = useState<Array<{ name: string; dataUrl: string }>>([]);
   const [promptCopied, setPromptCopied] = useState(false);
+  const [strategyContext, setStrategyContext] = useState('');
 
   const updateIdealCustomer = useCallback(() => {
     if (selectedBusinessType && selectedAgeRange && selectedGeographicReach) {
@@ -416,7 +417,7 @@ const FlowsightAdsDashboard: React.FC = () => {
         setIsLoading(false);
         uiToast({ title: 'Estrategia Maestra lista' });
       }, 500);
-    } catch (error: any) {
+    } catch {
       setIsLoading(false);
       uiToast({ title: 'Error al generar anuncios', variant: 'destructive' });
     }
@@ -536,6 +537,10 @@ const FlowsightAdsDashboard: React.FC = () => {
   const detectedTone = inferCommunicationStyle(config.promote);
   const suggestedAudience = getSuggestedAudience(detectedBusinessLabel);
   const suggestedObjective = getSuggestedObjective(detectedBusinessLabel);
+  const strategyBase = `${suggestedAudience} — ${suggestedObjective}`;
+  const strategyWithContext = strategyContext.trim()
+    ? `${strategyBase}. Contexto adicional del negocio: ${strategyContext.trim()}`
+    : strategyBase;
   const selectedContentType = contentTypes.find((type) => type.id === imageMode) || contentTypes[0];
   const budgetProjection = getBudgetProjection(config.budget);
   const budgetRecommendation = getBudgetRecommendation(config.budget);
@@ -545,7 +550,7 @@ const FlowsightAdsDashboard: React.FC = () => {
     `Tipo de negocio detectado: ${detectedBusinessLabel}.`,
     `Tono sugerido: ${detectedTone}.`,
     `Objetivo de campaña: ${suggestedObjective}.`,
-    `Audiencia: ${suggestedAudience}.`,
+    `Audiencia: ${strategyWithContext}.`,
     `Formato solicitado: ${selectedContentType.title}.`,
     config.websiteUrl ? `Sitio web de referencia: ${config.websiteUrl}.` : '',
     config.instagramUrl ? `Instagram de referencia: ${config.instagramUrl}.` : '',
@@ -860,7 +865,7 @@ const FlowsightAdsDashboard: React.FC = () => {
                           <WandSparkles className="w-4 h-4" /> 03. Plan Maestro
                         </div>
                         <h3 className="text-4xl md:text-6xl font-black tracking-tighter leading-[1.1]">Ruta <span className="text-emerald-500 italic">Estratégica</span></h3>
-                        <p className="text-gray-400 font-medium mt-5 text-xl leading-relaxed">Hemos diseñado la ruta óptima para tu negocio. Puedes chatear con nuestra IA para pulir cualquier detalle.</p>
+                        <p className="text-gray-400 font-medium mt-5 text-xl leading-relaxed">Hemos diseñado la ruta óptima para tu negocio. Agrega contexto extra si hay algo clave que la IA debe tomar en cuenta antes de crear la campaña.</p>
                       </div>
 
                       <div className="grid md:grid-cols-3 gap-6 relative z-10">
@@ -886,17 +891,19 @@ const FlowsightAdsDashboard: React.FC = () => {
                         initial={{ opacity: 0, y: 12 }} 
                         animate={{ opacity: 1, y: 0 }} 
                         transition={{ delay: 0.3 }} 
-                        className="relative z-10 bg-black/40 border border-white/[0.06] rounded-[40px] p-2 shadow-2xl"
+                        className="relative z-10 bg-black/40 border border-emerald-500/10 rounded-[40px] p-2 shadow-2xl"
                       >
                         <AIAgentBar 
                           context={{
                             businessName: config.businessName,
                             promote: config.promote,
-                            idealCustomer: `${suggestedAudience} — ${suggestedObjective}`,
+                            idealCustomer: strategyWithContext,
                             location: config.location,
                             generatedAds: [],
                             uploadedAssets: []
                           }} 
+                          mode="context"
+                          onContextSubmit={(value) => setStrategyContext(value)}
                           onUpdateAds={() => {}}
                           onAddAssets={() => {}}
                         />
@@ -905,7 +912,7 @@ const FlowsightAdsDashboard: React.FC = () => {
                       <div className="flex gap-4 pt-6 relative z-10">
                         <Button variant="ghost" onClick={() => setStep(2)} className="flex-1 h-16 rounded-2xl font-bold text-gray-400 hover:text-white">Atrás</Button>
                         <Button 
-                          onClick={() => { setConfig({ ...config, idealCustomer: `${suggestedAudience} — ${suggestedObjective}` }); setStep(4); }} 
+                          onClick={() => { setConfig({ ...config, idealCustomer: strategyWithContext }); setStep(4); }} 
                           className="flex-[2] h-16 text-xl font-black bg-emerald-500 hover:bg-emerald-400 text-black rounded-2xl shadow-xl shadow-emerald-500/20 group"
                         >
                           Confirmar y asignar presupuesto <ArrowRight className="ml-2 w-6 h-6 group-hover:translate-x-1 transition-transform" />

@@ -1,8 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Loader2, X, Sparkles } from 'lucide-react';
+import { CheckCircle2, Loader2, Send, Sparkles, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabaseClient';
+import type { GeneratedAd } from '@/types/ads';
+
+type UploadedAsset = {
+  name: string;
+  dataUrl: string;
+};
+
+type AdUpdate = Partial<GeneratedAd> & Pick<GeneratedAd, 'platform'>;
 
 interface AIAgentBarProps {
   context: {
@@ -10,12 +18,14 @@ interface AIAgentBarProps {
     promote: string;
     idealCustomer: string;
     location: string;
-    generatedAds: any[];
-    uploadedAssets?: any[];
+    generatedAds: GeneratedAd[];
+    uploadedAssets?: UploadedAsset[];
   };
   hasPaid?: boolean;
-  onUpdateAds?: (newAds: any[]) => void;
+  onUpdateAds?: (newAds: AdUpdate[]) => void;
   onAddAssets?: (files: File[]) => void;
+  mode?: 'chat' | 'context';
+  onContextSubmit?: (context: string) => void;
 }
 
 const GeminiIcon = () => (
@@ -33,7 +43,14 @@ const GeminiIcon = () => (
   </svg>
 );
 
-export const AIAgentBar: React.FC<AIAgentBarProps> = ({ context, hasPaid = true, onUpdateAds, onAddAssets }) => {
+export const AIAgentBar: React.FC<AIAgentBarProps> = ({
+  context,
+  hasPaid = true,
+  onUpdateAds,
+  onAddAssets,
+  mode = 'chat',
+  onContextSubmit,
+}) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState('');
   const [loading, setLoading] = useState(false);
@@ -43,6 +60,7 @@ export const AIAgentBar: React.FC<AIAgentBarProps> = ({ context, hasPaid = true,
   const [isExpanded, setIsExpanded] = useState(false);
   const typingTimerRef = useRef<NodeJS.Timeout | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [contextSent, setContextSent] = useState(false);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -85,6 +103,15 @@ export const AIAgentBar: React.FC<AIAgentBarProps> = ({ context, hasPaid = true,
   const handleAskGemini = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (!query.trim() || loading) return;
+
+    if (mode === 'context') {
+      const contextValue = query.trim();
+      onContextSubmit?.(contextValue);
+      setContextSent(true);
+      setQuery('');
+      window.setTimeout(() => setContextSent(false), 2600);
+      return;
+    }
 
     setLoading(true);
     setIsOpen(true);
@@ -151,7 +178,7 @@ Nota sobre modificaciones: Solo incluye las plataformas que realmente modificast
 
       if (extractedJson) {
         try {
-          let jsonString = extractedJson.replace(/```json/gi, "").replace(/```/gi, "").trim();
+          const jsonString = extractedJson.replace(/```json/gi, "").replace(/```/gi, "").trim();
           const parsed = JSON.parse(jsonString);
           if (Array.isArray(parsed) && parsed.length > 0 && parsed[0].headline) {
             if (onUpdateAds) {
@@ -227,8 +254,39 @@ Nota sobre modificaciones: Solo incluye las plataformas que realmente modificast
 
       <form 
         onSubmit={handleAskGemini}
-        className="relative flex flex-col bg-white/[0.01] backdrop-blur-[60px] border border-white/[0.05] rounded-[32px] p-2 shadow-[0_20px_80px_rgba(0,0,0,0.5)] transition-all group hover:bg-white/[0.03] hover:border-white/10"
+        className={`relative flex flex-col backdrop-blur-[60px] border rounded-[32px] p-2 shadow-[0_20px_80px_rgba(0,0,0,0.5)] transition-all group ${
+          mode === 'context'
+            ? 'bg-emerald-500/[0.03] border-emerald-500/15 hover:bg-emerald-500/[0.05] hover:border-emerald-400/30'
+            : 'bg-white/[0.01] border-white/[0.05] hover:bg-white/[0.03] hover:border-white/10'
+        }`}
       >
+        {mode === 'context' && (
+          <div className="px-5 pt-4 pb-1">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-[0.22em] text-emerald-400/80">
+                  Contexto extra para la IA
+                </p>
+                <p className="mt-1 text-sm font-medium text-white/45">
+                  Agrega detalles de tu negocio, clientes, ofertas o zona. No es un chat; es una nota para mejorar la campaña.
+                </p>
+              </div>
+              <AnimatePresence>
+                {contextSent && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9, y: 6 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95, y: -4 }}
+                    className="hidden sm:flex shrink-0 items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-400/10 px-4 py-2 text-xs font-black uppercase tracking-widest text-emerald-300"
+                  >
+                    <CheckCircle2 className="h-4 w-4" />
+                    Enviado
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
+        )}
         <div className="flex items-center px-4 py-1.5">
           
           <div className="mr-3 shrink-0 drop-shadow-[0_0_12px_rgba(79,172,254,0.4)]">
@@ -238,25 +296,66 @@ Nota sobre modificaciones: Solo incluye las plataformas que realmente modificast
           <input 
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder={hasPaid ? "Pregúntale a Gemini..." : "Desbloquea premium para usar la IA"}
+            placeholder={
+              mode === 'context'
+                ? "Ej: vendemos cafés especiales, tenemos delivery y queremos atraer oficinas cercanas..."
+                : hasPaid ? "Pregúntale a Gemini..." : "Desbloquea premium para usar la IA"
+            }
             disabled={!hasPaid || loading}
-            className="flex-1 bg-transparent border-none outline-none text-lg md:text-xl font-medium text-white placeholder:text-white/20 px-0 h-10 py-0 transition-all caret-white"
+            className={`flex-1 bg-transparent border-none outline-none font-medium text-white px-0 py-0 transition-all caret-white ${
+              mode === 'context'
+                ? 'h-12 text-base md:text-lg placeholder:text-emerald-100/25'
+                : 'h-10 text-lg md:text-xl placeholder:text-white/20'
+            }`}
           />
 
           <div className="flex items-center gap-2 ml-3">
             <button 
               type="submit"
               disabled={!query.trim() || loading || !hasPaid}
-              className={`p-2.5 rounded-full transition-all flex items-center justify-center ${
+              aria-label={mode === 'context' ? 'Añadir contexto a la estrategia' : 'Enviar mensaje a Gemini'}
+              className={`rounded-full transition-all flex items-center justify-center ${
                 query.trim()
-                  ? 'bg-white text-black shadow-[0_0_15px_rgba(255,255,255,0.3)]' 
+                  ? mode === 'context'
+                    ? 'bg-emerald-400 text-black px-5 py-3 shadow-[0_0_25px_rgba(52,211,153,0.35)]'
+                    : 'bg-white text-black p-2.5 shadow-[0_0_15px_rgba(255,255,255,0.3)]'
                   : 'bg-white/5 text-white/20'
               } disabled:opacity-50`}
             >
-              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
+              {loading ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : contextSent ? (
+                <motion.span
+                  initial={{ scale: 0.8 }}
+                  animate={{ scale: 1 }}
+                  className="flex items-center gap-2 text-sm font-black"
+                >
+                  <CheckCircle2 className="w-5 h-5" />
+                  <span className="hidden md:inline">Listo</span>
+                </motion.span>
+              ) : (
+                <span className="flex items-center gap-2 text-sm font-black">
+                  <Send className="w-5 h-5" />
+                  {mode === 'context' && <span className="hidden md:inline">Añadir</span>}
+                </span>
+              )}
             </button>
           </div>
         </div>
+        {mode === 'context' && (
+          <AnimatePresence>
+            {contextSent && (
+              <motion.div
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                className="px-5 pb-4 text-center text-sm font-bold text-emerald-300"
+              >
+                Contexto añadido. Puedes continuar con el siguiente paso.
+              </motion.div>
+            )}
+          </AnimatePresence>
+        )}
       </form>
 
       <AnimatePresence>
