@@ -88,23 +88,23 @@ interface CampaignConfig {
 type ImageMode = 'copyonly' | 'image' | 'carousel' | 'video';
 
 const businessTypes = [
-  { icon: Store, label: 'Ecommerce / Tienda Online', keywords: ['tienda', 'ecommerce', 'online', 'shop', 'producto', 'ventas', 'shopify', 'dropshipping'] },
-  { icon: Store, label: 'Pizzería / Restaurante', keywords: ['pizzeria', 'pizzería', 'pizza', 'restaurante', 'comida', 'gastronomia', 'parrillada', 'asado', 'sushi', 'hamburguesas', 'burguer', 'tacos', 'mexicana', 'pastas'] },
-  { icon: Coffee, label: 'Cafetería / Bakery', keywords: ['cafe', 'café', 'cafeteria', 'cafetería', 'bakery', 'panaderia', 'reposteria', 'helado', 'heladería', 'postres', 'desayunos'] },
-  { icon: ShieldCheck, label: 'Médico / Clínica', keywords: ['medico', 'médico', 'doctor', 'clinica', 'clínica', 'hospital', 'pediatra', 'ginecologo', 'cardiologo', 'psicologo', 'terapia', 'salud'] },
-  { icon: Activity, label: 'Dental / Odontología', keywords: ['dentista', 'odontologia', 'odontología', 'ortodoncia', 'diseño de sonrisa', 'brackets', 'implantes'] },
-  { icon: Zap, label: 'Gimnasio / Fitness', keywords: ['gym', 'gimnasio', 'fitness', 'crossfit', 'entrenamiento', 'personal trainer', 'yoga', 'pilates', 'deporte', 'zumba', 'boxeo', 'artes marciales'] },
-  { icon: SparklesIcon, label: 'Belleza / Estética', keywords: ['spa', 'uñas', 'nails', 'manicura', 'pedicura', 'pestañas', 'cejas', 'estética', 'estetica', 'facial', 'masajes', 'skin care'] },
-  { icon: Scissors, label: 'Barbería / Peluquería', keywords: ['barberia', 'barbería', 'barber', 'peluqueria', 'peluquería', 'corte de cabello', 'estilista', 'salon de belleza', 'barba'] },
-  { icon: Building2, label: 'Inmobiliaria / Real Estate', keywords: ['inmobiliaria', 'bienes raices', 'propiedades', 'apartamento', 'casa', 'alquiler', 'venta de casas', 'terrenos', 'broker'] },
-  { icon: Scale, label: 'Legal / Abogados', keywords: ['abogado', 'legal', 'firma de abogados', 'bufete', 'leyes', 'notaria', 'asesoria legal', 'divorcios', 'penalista'] },
-  { icon: Home, label: 'Servicios al Hogar', keywords: ['limpieza', 'fumigacion', 'plomeria', 'electricista', 'pintura', 'reparacion', 'aire acondicionado', 'jardin', 'mantenimiento', 'mudanzas'] },
-  { icon: Zap, label: 'Automotriz / Taller', keywords: ['repuestos', 'automotriz', 'taller', 'mecanico', 'autos', 'carros', 'llantas', 'baterias', 'frenos', 'mantenimiento preventivo'] },
-  { icon: BookOpen, label: 'Educación / Cursos', keywords: ['curso', 'academia', 'escuela', 'clases', 'ingles', 'formacion', 'taller', 'seminario', 'colegio', 'universidad'] },
-  { icon: Globe2, label: 'Turismo / Viajes', keywords: ['hotel', 'turismo', 'viaje', 'tour', 'agencia de viajes', 'hospedaje', 'boletos aereos', 'vacaciones'] },
-  { icon: Heart, label: 'Mascotas / Veterinaria', keywords: ['veterinaria', 'pet shop', 'perros', 'gatos', 'grooming', 'mascotas', 'entrenamiento canino'] },
-  { icon: PartyPopper, label: 'Eventos / Bodas', keywords: ['eventos', 'bodas', 'catering', 'fiestas', 'decoracion', 'fotografia', 'dj', 'planner'] },
-  { icon: Building2, label: 'Corporativo / Agencia', keywords: ['consultoria', 'agencia', 'marketing', 'software', 'b2b', 'logistica', 'transporte', 'contabilidad', 'empresa'] },
+  { icon: Store, label: 'Ecommerce / Tienda Online', keywords: ['tienda', 'ecommerce', 'online', 'shop', 'producto', 'ventas', 'shopify', 'dropshipping', 'vender'] },
+  { icon: Store, label: 'Pizzería / Restaurante', keywords: ['pizzeria', 'pizzería', 'pizza', 'restaurante', 'comida', 'gastronomia', 'parrillada', 'asado', 'sushi', 'hamburguesas', 'burguer', 'tacos', 'mexicana', 'pastas', 'asador', 'bodegon', 'comedor', 'bistro', 'food truck', 'cocina', 'platos'] },
+  { icon: Coffee, label: 'Cafetería / Bakery', keywords: ['cafe', 'café', 'cafeteria', 'cafetería', 'bakery', 'panaderia', 'reposteria', 'helado', 'heladería', 'postres', 'desayunos', 'merienda', 'brunch', 'tostadas', 'pasteleria'] },
+  { icon: ShieldCheck, label: 'Médico / Clínica', keywords: ['medico', 'médico', 'doctor', 'clinica', 'clínica', 'hospital', 'pediatra', 'ginecologo', 'cardiologo', 'psicologo', 'terapia', 'salud', 'fisioterapia', 'kinesiologia', 'estética médica', 'cirugia'] },
+  { icon: Activity, label: 'Dental / Odontología', keywords: ['dentista', 'odontologia', 'odontología', 'ortodoncia', 'diseño de sonrisa', 'brackets', 'implantes', 'dientes', 'limpieza dental', 'protesis'] },
+  { icon: Zap, label: 'Gimnasio / Fitness', keywords: ['gym', 'gimnasio', 'fitness', 'crossfit', 'entrenamiento', 'personal trainer', 'yoga', 'pilates', 'deporte', 'zumba', 'boxeo', 'artes marciales', 'musculacion', 'entrenador'] },
+  { icon: SparklesIcon, label: 'Belleza / Estética', keywords: ['spa', 'uñas', 'nails', 'manicura', 'pedicura', 'pestañas', 'cejas', 'estética', 'estetica', 'facial', 'masajes', 'skin care', 'depilacion', 'limpieza de cutis', 'microblading', 'lifting'] },
+  { icon: Scissors, label: 'Barbería / Peluquería', keywords: ['barberia', 'barbería', 'barber', 'peluqueria', 'peluquería', 'corte de cabello', 'estilista', 'salon de belleza', 'barba', 'pelo', 'cabello', 'coloracion', 'balayage', 'alisado'] },
+  { icon: Building2, label: 'Inmobiliaria / Real Estate', keywords: ['inmobiliaria', 'bienes raices', 'propiedades', 'apartamento', 'casa', 'alquiler', 'venta de casas', 'terrenos', 'broker', 'desarrollo inmobiliario', 'duplex', 'loft'] },
+  { icon: Scale, label: 'Legal / Abogados', keywords: ['abogado', 'legal', 'firma de abogados', 'bufete', 'leyes', 'notaria', 'asesoria legal', 'divorcios', 'penalista', 'civil', 'comercial', 'sucesiones'] },
+  { icon: Home, label: 'Servicios al Hogar', keywords: ['limpieza', 'fumigacion', 'plomeria', 'electricista', 'pintura', 'reparacion', 'aire acondicionado', 'jardin', 'mantenimiento', 'mudanzas', 'fletes', 'gasista', 'cerrajero'] },
+  { icon: Zap, label: 'Automotriz / Taller', keywords: ['repuestos', 'automotriz', 'taller', 'mecanico', 'autos', 'carros', 'llantas', 'baterias', 'frenos', 'mantenimiento preventivo', 'lavadero', 'car wash', 'mecanica'] },
+  { icon: BookOpen, label: 'Educación / Cursos', keywords: ['curso', 'academia', 'escuela', 'clases', 'ingles', 'formacion', 'taller', 'seminario', 'colegio', 'universidad', 'clases particulares', 'mentoria'] },
+  { icon: Globe2, label: 'Turismo / Viajes', keywords: ['hotel', 'turismo', 'viaje', 'tour', 'agencia de viajes', 'hospedaje', 'boletos aereos', 'vacaciones', 'posada', 'hostel', 'cabañas'] },
+  { icon: Heart, label: 'Mascotas / Veterinaria', keywords: ['veterinaria', 'pet shop', 'perros', 'gatos', 'grooming', 'mascotas', 'entrenamiento canino', 'alimento para mascotas', 'paseador'] },
+  { icon: PartyPopper, label: 'Eventos / Bodas', keywords: ['eventos', 'bodas', 'catering', 'fiestas', 'decoracion', 'fotografia', 'dj', 'planner', 'quince años', 'animacion', 'alquiler de salones'] },
+  { icon: Building2, label: 'Corporativo / Agencia', keywords: ['consultoria', 'agencia', 'marketing', 'software', 'b2b', 'logistica', 'transporte', 'contabilidad', 'empresa', 'coworking', 'asesoria'] },
 ];
 
 const MIN_BUDGET = 5;
@@ -572,6 +572,9 @@ const FlowsightAdsDashboard: React.FC = () => {
             </div>
           </div>
           <div className="flex items-center gap-6">
+            <div className="hidden sm:block">
+              <ThemeToggle />
+            </div>
             <Button variant="ghost" onClick={handleLogout} className="text-gray-400 hover:text-white font-bold gap-2 hover:bg-white/5 px-4 h-10 rounded-xl">
               <LogOut className="w-4 h-4" /> <span className="hidden sm:inline">Cerrar Sesión</span>
             </Button>
@@ -661,7 +664,7 @@ const FlowsightAdsDashboard: React.FC = () => {
                             <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500/10 to-cyan-500/10 rounded-[32px] blur-md opacity-0 group-focus-within:opacity-100 transition-opacity" />
                             <Textarea
                               placeholder="Ej: Café artesanal de especialidad, con opciones de brunch y delivery rápido en zona norte."
-                              className="relative min-h-[260px] bg-white/[0.03] border-white/[0.08] rounded-[32px] text-xl font-bold p-8 focus-visible:ring-emerald-500/40 transition-all placeholder:text-gray-700"
+                              className="relative min-h-[160px] bg-white/[0.03] border-white/[0.08] rounded-[32px] text-xl font-bold p-8 focus-visible:ring-emerald-500/40 transition-all placeholder:text-gray-700"
                               value={config.promote}
                               onChange={(e) => {
                                 setConfig({ ...config, promote: e.target.value });
@@ -688,7 +691,7 @@ const FlowsightAdsDashboard: React.FC = () => {
                         <Button 
                           onClick={() => setStep(2)} 
                           disabled={!config.promote.trim()} 
-                          className="h-24 px-16 rounded-[32px] bg-white text-black hover:bg-gray-200 font-black text-2xl gap-4 shadow-[0_20px_50px_rgba(255,255,255,0.1)] transition-all hover:scale-105 active:scale-95 disabled:opacity-20"
+                          className="h-24 px-16 rounded-[32px] bg-black dark:bg-black/80 border border-white/[0.1] text-white hover:bg-white/[0.05] font-black text-2xl gap-4 shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-20"
                         >
                           Siguiente <ArrowRight className="w-8 h-8" />
                         </Button>
