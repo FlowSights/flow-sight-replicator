@@ -564,7 +564,7 @@ const FlowsightAdsDashboard: React.FC = () => {
         <div className="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
           <div className="flex items-center gap-4 group cursor-pointer" onClick={() => navigate('/')}>
             <div className="p-2.5 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-xl shadow-lg shadow-emerald-500/20 group-hover:scale-110 transition-transform">
-              <BarChart3 className="w-5 h-5 text-black" />
+              <Sparkles className="w-5 h-5 text-black" />
             </div>
             <div>
               <h1 className="text-xl font-black tracking-tight leading-none">Flowsight <span className="text-emerald-500">Ads</span></h1>
