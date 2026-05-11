@@ -138,14 +138,15 @@ const Auth = () => {
       />
       <div className="min-h-screen bg-[#020202] text-white selection:bg-emerald-500/30 font-sans relative overflow-hidden">
         {/* Background Video & Glows */}
-        <div className="fixed inset-0 pointer-events-none z-0">
+        <div className="fixed inset-0 pointer-events-none z-0 bg-[#020605]">
           <video 
             src="/videos/login-bg.mp4" 
             autoPlay 
             muted 
             loop 
             playsInline
-            className="w-full h-full object-cover opacity-40"
+            onCanPlay={(e) => { e.currentTarget.style.opacity = '0.4'; }}
+            className="w-full h-full object-cover opacity-0 transition-opacity duration-[2000ms] ease-out"
           />
           {/* Dark Overlay for Readability */}
           <div className="absolute inset-0 bg-black/60" />

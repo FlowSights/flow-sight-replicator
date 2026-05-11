@@ -179,7 +179,7 @@ const FlowsightAdsLanding: React.FC = () => {
 
       <div className="min-h-screen bg-background text-foreground flex flex-col transition-colors duration-500 selection:bg-emerald-500/30 relative overflow-hidden">
         {/* Cinematic Background - Enhanced Dynamism */}
-        <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+        <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none bg-[#020605]">
           {/* Background Video */}
           <video 
             src="/videos/login-bg.mp4" 
@@ -187,7 +187,8 @@ const FlowsightAdsLanding: React.FC = () => {
             muted 
             loop 
             playsInline
-            className="absolute inset-0 w-full h-full object-cover opacity-100"
+            onCanPlay={(e) => { e.currentTarget.style.opacity = '1'; }}
+            className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-[2000ms] ease-out"
           />
           <div className="absolute inset-0 bg-black/40" />
 

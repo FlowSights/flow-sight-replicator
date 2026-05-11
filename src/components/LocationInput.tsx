@@ -78,7 +78,7 @@ export const LocationInput: React.FC<LocationInputProps> = ({
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           autoComplete="off"
-          className="relative z-10 h-20 pl-16 pr-8 bg-white/[0.03] border-white/[0.08] focus:ring-2 focus:ring-emerald-500/30 rounded-[28px] text-xl font-bold transition-all placeholder:text-gray-700"
+          className="relative z-10 h-16 pl-14 pr-8 bg-white/5 dark:bg-white/[0.03] border border-black/10 dark:border-white/10 focus:ring-2 focus:ring-emerald-500/30 rounded-2xl text-base font-bold transition-all backdrop-blur-md text-foreground placeholder:text-foreground/40"
         />
       </div>
 

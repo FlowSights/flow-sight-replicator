@@ -572,7 +572,7 @@ const FlowsightAdsDashboard: React.FC = () => {
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-emerald-500/30 font-sans relative overflow-x-hidden transition-colors duration-500">
       {/* Cinematic Background - Consistent with Login */}
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-[#020605]">
         {/* Background Video */}
         <video 
           src="/videos/login-bg.mp4" 
@@ -580,7 +580,8 @@ const FlowsightAdsDashboard: React.FC = () => {
           muted 
           loop 
           playsInline
-          className="absolute inset-0 w-full h-full object-cover opacity-100"
+          onCanPlay={(e) => { e.currentTarget.style.opacity = '1'; }}
+          className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-[2000ms] ease-out"
         />
         <div className="absolute inset-0 bg-black/40" />
 
@@ -787,7 +788,7 @@ const FlowsightAdsDashboard: React.FC = () => {
                           <label className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-600 dark:text-cyan-400 ml-2">Nombre comercial</label>
                           <Input 
                             placeholder="Ej: FlowSights AI" 
-                            className="h-16 px-6 bg-white/30 dark:bg-white/[0.03] border-black/10 dark:border-white/10 focus:ring-2 focus:ring-cyan-500/30 rounded-2xl text-base font-bold transition-all backdrop-blur-md text-foreground placeholder:text-foreground/40" 
+                            className="h-16 px-6 bg-white/5 dark:bg-white/[0.03] border border-black/10 dark:border-white/10 focus:ring-2 focus:ring-cyan-500/30 rounded-2xl text-base font-bold transition-all backdrop-blur-md text-foreground placeholder:text-foreground/40" 
                             value={config.businessName} 
                             onChange={(e) => setConfig({ ...config, businessName: e.target.value })} 
                           />
@@ -799,7 +800,7 @@ const FlowsightAdsDashboard: React.FC = () => {
                             <Globe className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                             <Input 
                               placeholder="https://tuweb.com" 
-                              className="h-16 pl-14 bg-white/30 dark:bg-white/[0.03] border-black/10 dark:border-white/10 focus:ring-2 focus:ring-emerald-500/30 rounded-2xl text-base font-bold transition-all backdrop-blur-md text-foreground placeholder:text-foreground/40" 
+                              className="h-16 pl-14 bg-white/5 dark:bg-white/[0.03] border border-black/10 dark:border-white/10 focus:ring-2 focus:ring-emerald-500/30 rounded-2xl text-base font-bold transition-all backdrop-blur-md text-foreground placeholder:text-foreground/40" 
                               value={config.websiteUrl} 
                               onChange={(e) => setConfig({ ...config, websiteUrl: e.target.value })} 
                               onBlur={() => fetchSiteMetadata(config.websiteUrl)} 
@@ -818,7 +819,7 @@ const FlowsightAdsDashboard: React.FC = () => {
                             <Camera className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-purple-600 dark:text-purple-400" />
                             <Input 
                               placeholder="@tu_negocio" 
-                              className="h-16 pl-14 bg-white/30 dark:bg-white/[0.03] border-black/10 dark:border-white/10 focus:ring-2 focus:ring-purple-500/30 rounded-2xl text-base font-bold transition-all backdrop-blur-md text-foreground placeholder:text-foreground/40" 
+                              className="h-16 pl-14 bg-white/5 dark:bg-white/[0.03] border border-black/10 dark:border-white/10 focus:ring-2 focus:ring-purple-500/30 rounded-2xl text-base font-bold transition-all backdrop-blur-md text-foreground placeholder:text-foreground/40" 
                               value={config.instagramUrl} 
                               onChange={(e) => setConfig({ ...config, instagramUrl: e.target.value })} 
                             />
@@ -831,7 +832,7 @@ const FlowsightAdsDashboard: React.FC = () => {
                             <Share2 className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-blue-600 dark:text-blue-400" />
                             <Input 
                               placeholder="facebook.com/tu_negocio" 
-                              className="h-16 pl-14 bg-white/30 dark:bg-white/[0.03] border-black/10 dark:border-white/10 focus:ring-2 focus:ring-blue-500/30 rounded-2xl text-base font-bold transition-all backdrop-blur-md text-foreground placeholder:text-foreground/40" 
+                              className="h-16 pl-14 bg-white/5 dark:bg-white/[0.03] border border-black/10 dark:border-white/10 focus:ring-2 focus:ring-blue-500/30 rounded-2xl text-base font-bold transition-all backdrop-blur-md text-foreground placeholder:text-foreground/40" 
                               value={config.facebookUrl} 
                               onChange={(e) => setConfig({ ...config, facebookUrl: e.target.value })} 
                             />
@@ -1039,7 +1040,7 @@ const FlowsightAdsDashboard: React.FC = () => {
                           <label className="text-[10px] font-black uppercase tracking-[0.25em] text-emerald-600 dark:text-emerald-500/80 ml-2">Plataformas Activas</label>
                           <div className="grid grid-cols-2 gap-4">
                             {(['meta', 'google', 'tiktok', 'linkedin'] as const).map((platform) => {
-                              const isActive = config.platforms.includes(platform);
+                              const isActive = activePlatforms.includes(platform);
                               const pName = platformNames[platform].split(' ')[0];
                               const pTheme = platformThemes[platform];
                               return (
@@ -1047,7 +1048,7 @@ const FlowsightAdsDashboard: React.FC = () => {
                                   key={platform}
                                   whileHover={{ y: -3 }}
                                   whileTap={{ scale: 0.97 }}
-                                  onClick={() => handlePlatformToggle(platform)}
+                                  onClick={() => setActivePlatforms(prev => prev.includes(platform) ? prev.filter(p => p !== platform) : [...prev, platform])}
                                   className={`p-5 rounded-[24px] border-2 transition-all flex items-center gap-4 ${
                                     isActive 
                                       ? `bg-gradient-to-r ${pTheme.gradient} border-white/20 shadow-lg shadow-${platform === 'meta' ? 'blue' : 'emerald'}-500/20` 
@@ -1146,7 +1147,7 @@ const FlowsightAdsDashboard: React.FC = () => {
                         <Button variant="ghost" onClick={() => setStep(4)} className="w-48 h-16 rounded-2xl font-bold text-foreground/50 hover:text-foreground hover:bg-white/5 transition-all">Atrás</Button>
                         <Button 
                           onClick={handleGenerate}
-                          disabled={isGenerating || config.platforms.length === 0}
+                          disabled={isGenerating || activePlatforms.length === 0}
                           className="flex-1 h-16 text-sm md:text-lg font-black bg-emerald-500 hover:bg-emerald-400 text-black rounded-2xl shadow-[0_15px_30px_rgba(16,185,129,0.3)] hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(16,185,129,0.4)] group transition-all uppercase tracking-widest disabled:opacity-50 disabled:pointer-events-none"
                         >
                           {isGenerating ? (

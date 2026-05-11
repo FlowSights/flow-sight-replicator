@@ -42,7 +42,7 @@ export const PremiumHero = ({ onContactClick }: PremiumHeroProps) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 2, ease: "easeOut", delay: 0.5 }}
-          className="absolute inset-0"
+          className="absolute inset-0 bg-[#020605]"
         >
           <video 
             src="/videos/demo.mp4" 
@@ -50,7 +50,8 @@ export const PremiumHero = ({ onContactClick }: PremiumHeroProps) => {
             muted 
             loop 
             playsInline
-            className="w-full h-full object-cover opacity-100"
+            onCanPlay={(e) => { e.currentTarget.style.opacity = '1'; }}
+            className="w-full h-full object-cover opacity-0 transition-opacity duration-[2000ms] ease-out"
           />
         </motion.div>
         {/* Very subtle dark gradient overlay to ensure text readability */}
