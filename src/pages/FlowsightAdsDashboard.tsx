@@ -399,16 +399,7 @@ const FlowsightAdsDashboard: React.FC = () => {
         
         try {
           const { data: { session } } = await supabase.auth.getSession();
-          if (session?.user?.id) {
-            await supabase
-              .from('campaign_generations')
-              .upsert({
-                user_id: session.user.id,
-                business_name: config.businessName,
-                generated_at: new Date().toISOString(),
-                follow_up_sent: false,
-              }, { onConflict: 'user_id' });
-          }
+          // Eliminado insert a campaign_generations para evitar error 404
         } catch {
           // silencioso
         }
@@ -908,7 +899,7 @@ const FlowsightAdsDashboard: React.FC = () => {
                           initial={{ opacity: 0, y: 12 }} 
                           animate={{ opacity: 1, y: 0 }} 
                           transition={{ delay: 0.3 }} 
-                          className="bg-white/10 dark:bg-black/40 border border-black/10 dark:border-white/10 rounded-[32px] p-2 backdrop-blur-md shadow-xl"
+                          className="w-full max-w-2xl mx-auto mt-6"
                         >
                           <AIAgentBar 
                             context={{
@@ -959,7 +950,7 @@ const FlowsightAdsDashboard: React.FC = () => {
                           <p className="text-foreground/80 font-medium mt-6 text-xl leading-relaxed">Tú decides el ritmo. Empieza con poco o escala para dominar tu mercado.</p>
                         </div>
                         
-                        <div className="mt-12 rounded-[32px] border border-emerald-500/10 dark:border-white/[0.06] bg-emerald-500/[0.02] dark:bg-gradient-to-br dark:from-white/[0.03] dark:to-transparent p-8 shadow-2xl relative">
+                        <div className="mt-8 rounded-[32px] border border-emerald-500/10 dark:border-white/[0.06] bg-emerald-500/[0.02] dark:bg-gradient-to-br dark:from-white/[0.03] dark:to-transparent p-8 shadow-2xl relative">
                           <p className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600 dark:text-emerald-500/60 mb-4">Inversión diaria sugerida</p>
                           <motion.p 
                             key={config.budget} 
@@ -970,6 +961,36 @@ const FlowsightAdsDashboard: React.FC = () => {
                             {formatBudget(config.budget)}
                           </motion.p>
                           <p className="text-foreground/60 font-bold mt-6 text-sm leading-relaxed">{budgetRecommendation}</p>
+                        </div>
+                        
+                        <div className="mt-8">
+                          <label className="text-[10px] font-black uppercase tracking-[0.25em] text-emerald-600 dark:text-emerald-500/80 mb-4 block">Plataformas Activas</label>
+                          <div className="grid grid-cols-2 gap-4">
+                            {(['meta', 'google', 'tiktok', 'linkedin'] as const).map((platform) => {
+                              const isActive = activePlatforms.includes(platform);
+                              const pName = platformNames[platform].split(' ')[0];
+                              const pTheme = platformThemes[platform];
+                              return (
+                                <motion.button
+                                  key={platform}
+                                  whileHover={{ y: -3 }}
+                                  whileTap={{ scale: 0.97 }}
+                                  onClick={() => setActivePlatforms(prev => prev.includes(platform) ? prev.filter(p => p !== platform) : [...prev, platform])}
+                                  className={`p-4 rounded-[20px] border transition-all flex items-center gap-3 ${
+                                    isActive 
+                                      ? `bg-gradient-to-r ${pTheme.gradient} border-white/20 shadow-lg shadow-${platform === 'meta' ? 'blue' : 'emerald'}-500/20` 
+                                      : 'bg-white/5 dark:bg-white/[0.02] border-black/5 dark:border-white/5 hover:border-black/10 dark:hover:border-white/10 text-foreground/50 hover:text-foreground'
+                                  }`}
+                                >
+                                  <div className={`w-8 h-8 rounded-[12px] flex items-center justify-center bg-white/10 ${isActive ? 'text-white' : ''}`}>
+                                    <PlatformIcon platform={platform} size={16} />
+                                  </div>
+                                  <span className={`font-black text-sm tracking-tight ${isActive ? 'text-white' : ''}`}>{pName}</span>
+                                  {isActive && <Check className="w-4 h-4 ml-auto text-white" />}
+                                </motion.button>
+                              );
+                            })}
+                          </div>
                         </div>
                       </div>
 
@@ -1043,39 +1064,7 @@ const FlowsightAdsDashboard: React.FC = () => {
                         </div>
                       </div>
 
-                      <div className="grid lg:grid-cols-2 gap-8 relative z-10">
-                        {/* PLATAFORMAS */}
-                        <div className="space-y-4">
-                          <label className="text-[10px] font-black uppercase tracking-[0.25em] text-emerald-600 dark:text-emerald-500/80 ml-2">Plataformas Activas</label>
-                          <div className="grid grid-cols-2 gap-4">
-                            {(['meta', 'google', 'tiktok', 'linkedin'] as const).map((platform) => {
-                              const isActive = activePlatforms.includes(platform);
-                              const pName = platformNames[platform].split(' ')[0];
-                              const pTheme = platformThemes[platform];
-                              return (
-                                <motion.button
-                                  key={platform}
-                                  whileHover={{ y: -3 }}
-                                  whileTap={{ scale: 0.97 }}
-                                  onClick={() => setActivePlatforms(prev => prev.includes(platform) ? prev.filter(p => p !== platform) : [...prev, platform])}
-                                  className={`p-5 rounded-[24px] border-2 transition-all flex items-center gap-4 ${
-                                    isActive 
-                                      ? `bg-gradient-to-r ${pTheme.gradient} border-white/20 shadow-lg shadow-${platform === 'meta' ? 'blue' : 'emerald'}-500/20` 
-                                      : 'bg-white/5 dark:bg-black/40 border-black/10 dark:border-white/5 hover:border-white/10 text-foreground/50 hover:text-foreground'
-                                  }`}
-                                >
-                                  <div className={`w-10 h-10 rounded-[16px] flex items-center justify-center bg-white/10 ${isActive ? 'text-white' : ''}`}>
-                                    <PlatformIcon platform={platform} size={20} />
-                                  </div>
-                                  <span className={`font-black text-lg tracking-tight ${isActive ? 'text-white' : ''}`}>{pName}</span>
-                                  {isActive && <Check className="w-5 h-5 ml-auto text-white" />}
-                                </motion.button>
-                              );
-                            })}
-                          </div>
-                        </div>
-
-                        {/* FORMATOS */}
+                      <div className="max-w-3xl mx-auto w-full relative z-10 space-y-8">
                         <div className="space-y-4">
                           <label className="text-[10px] font-black uppercase tracking-[0.25em] text-emerald-600 dark:text-emerald-500/80 ml-2">Formato Visual</label>
                           <div className="grid grid-cols-2 gap-4">
@@ -1188,9 +1177,9 @@ const FlowsightAdsDashboard: React.FC = () => {
                     {hasPaid ? 'Análisis y activos optimizados por IA para máxima conversión en cada plataforma.' : 'Previsualiza tu campaña maestra. Desbloquea el material profesional para empezar a vender.'}
                   </p>
                   
-                  <div className="relative group">
+                  <div className="relative group w-full mt-10">
                     <div className="absolute -inset-1 bg-emerald-500/10 rounded-[40px] blur-xl opacity-50 group-hover:opacity-100 transition-opacity" />
-                    <div className="glass-card rounded-[40px] p-2 shadow-2xl relative z-10">
+                    <div className="relative z-10">
                       <AIAgentBar 
                         context={{
                           businessName: config.businessName,
