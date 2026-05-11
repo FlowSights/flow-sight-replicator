@@ -939,54 +939,51 @@ const FlowsightAdsDashboard: React.FC = () => {
                       transition={{ duration: 0.4, ease: "easeOut" }} 
                       className="grid lg:grid-cols-2 gap-10 glass-card rounded-[40px] p-8 md:p-10 relative overflow-hidden transition-all duration-500"
                     >
-                      <div className="absolute -top-32 left-0 w-[600px] h-[600px] bg-emerald-500/[0.05] blur-[180px] rounded-full pointer-events-none" />
+                      <div className="absolute -top-32 left-0 w-[600px] h-[600px] bg-emerald-500/[0.02] blur-[120px] rounded-full pointer-events-none" />
 
                       <div className="relative z-10 flex flex-col justify-between">
                         <div>
-                          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 text-emerald-300 text-[10px] font-black uppercase tracking-[0.2em] mb-6">
-                            <CreditCard className="w-4 h-4" /> 04. Inversión Inteligente
+                          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-black/5 dark:border-white/5 bg-white/[0.02] text-foreground/60 text-[10px] font-semibold uppercase tracking-[0.2em] mb-6 shadow-sm">
+                            <CreditCard className="w-3.5 h-3.5" /> 04. Inversión Inteligente
                           </div>
-                          <h3 className="text-5xl md:text-6xl font-black tracking-tighter leading-[1.05] text-foreground">Presupuesto <br/><span className="text-emerald-500 italic">a tu medida</span></h3>
-                          <p className="text-foreground/80 font-medium mt-6 text-xl leading-relaxed">Tú decides el ritmo. Empieza con poco o escala para dominar tu mercado.</p>
+                          <h3 className="text-4xl md:text-5xl font-semibold tracking-tight leading-[1.1] text-foreground/90">Presupuesto <br/><span className="text-emerald-500/80 italic font-medium">a tu medida</span></h3>
+                          <p className="text-foreground/60 font-medium mt-4 text-lg leading-relaxed">Tú decides el ritmo. Empieza con poco o escala para dominar tu mercado.</p>
                         </div>
                         
-                        <div className="mt-8 rounded-[32px] border border-emerald-500/10 dark:border-white/[0.06] bg-emerald-500/[0.02] dark:bg-gradient-to-br dark:from-white/[0.03] dark:to-transparent p-8 shadow-2xl relative">
-                          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600 dark:text-emerald-500/60 mb-4">Inversión diaria sugerida</p>
+                        <div className="mt-8 rounded-3xl border border-black/5 dark:border-white/[0.04] bg-white/[0.01] p-8 shadow-sm relative">
+                          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-foreground/40 mb-3">Inversión diaria sugerida</p>
                           <motion.p 
                             key={config.budget} 
-                            initial={{ scale: 0.95, opacity: 0.8 }} 
-                            animate={{ scale: 1, opacity: 1 }} 
-                            className="text-[80px] md:text-[100px] font-black tracking-tighter leading-none text-foreground drop-shadow-[0_0_40px_rgba(16,185,129,0.15)]"
+                            initial={{ opacity: 0.8 }} 
+                            animate={{ opacity: 1 }} 
+                            className="text-6xl md:text-7xl font-semibold tracking-tight leading-none text-foreground/90 drop-shadow-sm"
                           >
                             {formatBudget(config.budget)}
                           </motion.p>
-                          <p className="text-foreground/60 font-bold mt-6 text-sm leading-relaxed">{budgetRecommendation}</p>
+                          <p className="text-foreground/50 font-medium mt-4 text-sm leading-relaxed">{budgetRecommendation}</p>
                         </div>
                         
                         <div className="mt-8">
-                          <label className="text-[10px] font-black uppercase tracking-[0.25em] text-emerald-600 dark:text-emerald-500/80 mb-4 block">Plataformas Activas</label>
-                          <div className="grid grid-cols-2 gap-4">
+                          <label className="text-[10px] font-semibold uppercase tracking-[0.2em] text-foreground/40 mb-4 block ml-1">Plataformas Activas</label>
+                          <div className="grid grid-cols-2 gap-3">
                             {(['meta', 'google', 'tiktok', 'linkedin'] as const).map((platform) => {
                               const isActive = activePlatforms.includes(platform);
                               const pName = platformNames[platform].split(' ')[0];
-                              const pTheme = platformThemes[platform];
                               return (
                                 <motion.button
                                   key={platform}
-                                  whileHover={{ y: -3 }}
-                                  whileTap={{ scale: 0.97 }}
                                   onClick={() => setActivePlatforms(prev => prev.includes(platform) ? prev.filter(p => p !== platform) : [...prev, platform])}
-                                  className={`p-4 rounded-[20px] border transition-all flex items-center gap-3 ${
+                                  className={`p-4 rounded-2xl border transition-all flex items-center gap-3 ${
                                     isActive 
-                                      ? `bg-gradient-to-r ${pTheme.gradient} border-white/20 shadow-lg shadow-${platform === 'meta' ? 'blue' : 'emerald'}-500/20` 
-                                      : 'bg-white/5 dark:bg-white/[0.02] border-black/5 dark:border-white/5 hover:border-black/10 dark:hover:border-white/10 text-foreground/50 hover:text-foreground'
+                                      ? `bg-white/[0.04] border-white/10 ring-1 ring-emerald-500/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] text-foreground/90` 
+                                      : 'bg-transparent border-black/5 dark:border-white/[0.03] hover:bg-white/[0.02] text-foreground/50 hover:text-foreground/80'
                                   }`}
                                 >
-                                  <div className={`w-8 h-8 rounded-[12px] flex items-center justify-center bg-white/10 ${isActive ? 'text-white' : ''}`}>
+                                  <div className={`w-8 h-8 rounded-xl flex items-center justify-center transition-colors ${isActive ? 'bg-white/10 text-foreground' : 'bg-white/[0.02] text-foreground/40'}`}>
                                     <PlatformIcon platform={platform} size={16} />
                                   </div>
-                                  <span className={`font-black text-sm tracking-tight ${isActive ? 'text-white' : ''}`}>{pName}</span>
-                                  {isActive && <Check className="w-4 h-4 ml-auto text-white" />}
+                                  <span className={`font-medium text-sm tracking-tight ${isActive ? 'text-foreground' : 'text-foreground/70'}`}>{pName}</span>
+                                  {isActive && <Check className="w-4 h-4 ml-auto text-emerald-500/70" />}
                                 </motion.button>
                               );
                             })}
@@ -995,10 +992,10 @@ const FlowsightAdsDashboard: React.FC = () => {
                       </div>
 
                       <div className="relative z-10 flex flex-col justify-between space-y-8 py-2">
-                        <div className="rounded-[32px] bg-white/5 dark:bg-white/[0.03] border border-black/10 dark:border-white/10 p-8 backdrop-blur-xl shadow-lg relative overflow-hidden">
-                          <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/[0.02] to-transparent pointer-events-none" />
-                          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-600 dark:text-emerald-400 mb-8 relative z-10">Ajusta tu inversión</p>
-                          <div className="relative pb-4 z-10">
+                        <div className="rounded-3xl bg-white/[0.01] border border-black/5 dark:border-white/[0.04] p-8 relative overflow-hidden shadow-sm">
+                          <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/[0.01] to-transparent pointer-events-none" />
+                          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-foreground/40 mb-6 relative z-10">Ajusta tu inversión</p>
+                          <div className="relative pb-2 z-10">
                             <input
                               type="range"
                               min={MIN_BUDGET}
@@ -1006,37 +1003,37 @@ const FlowsightAdsDashboard: React.FC = () => {
                               step={5}
                               value={config.budget}
                               onChange={(e) => setConfig({ ...config, budget: Number(e.target.value) })}
-                              className="w-full h-3 rounded-full appearance-none cursor-pointer bg-black/5 dark:bg-white/10 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-8 [&::-webkit-slider-thumb]:w-8 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-emerald-500 [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white [&::-webkit-slider-thumb]:shadow-[0_0_20px_rgba(16,185,129,0.5)]"
+                              className="w-full h-2 rounded-full appearance-none cursor-pointer bg-black/5 dark:bg-white/[0.04] [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-emerald-500 [&::-webkit-slider-thumb]:border-[1.5px] [&::-webkit-slider-thumb]:border-white [&::-webkit-slider-thumb]:shadow-md"
                               style={{ background: `linear-gradient(90deg, #10b981 0%, #34d399 ${budgetSliderProgress}%, transparent ${budgetSliderProgress}%, transparent 100%)` }}
                             />
-                            <div className="flex justify-between text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 mt-6">
+                            <div className="flex justify-between text-[10px] font-medium text-foreground/40 mt-4">
                               <span>$5</span>
                               <span>$2,000</span>
                             </div>
                           </div>
                         </div>
 
-                        <div className="grid grid-cols-3 gap-4">
+                        <div className="grid grid-cols-3 gap-3">
                           {[
                             { label: 'Alcance', val: budgetProjection.reach.split(' ')[0], color: 'blue', desc: 'Personas' },
                             { label: 'Clicks', val: budgetProjection.clicks.split(' ')[0], color: 'purple', desc: 'Estimados' },
                             { label: 'Leads', val: budgetProjection.leads.split(' ')[0], color: 'emerald', desc: 'Contactos' }
                           ].map((item, idx) => (
-                            <div key={idx} className={`p-5 rounded-[24px] bg-white/10 dark:bg-${item.color}-500/[0.05] border border-black/10 dark:border-${item.color}-500/10 backdrop-blur-md shadow-sm group hover:scale-[1.05] hover:shadow-lg transition-all`}>
-                              <p className={`text-[9px] text-${item.color}-600 dark:text-${item.color}-400 font-black uppercase tracking-[0.2em] mb-2 opacity-80 group-hover:opacity-100 transition-opacity`}>{item.label}</p>
-                              <p className="text-2xl lg:text-3xl font-black text-foreground">{item.val}</p>
-                              <p className="text-[8px] text-foreground/50 font-bold mt-1 uppercase tracking-widest">{item.desc}</p>
+                            <div key={idx} className="p-6 rounded-2xl bg-white/[0.01] border border-black/5 dark:border-white/[0.04] shadow-sm group hover:bg-white/[0.03] transition-colors relative overflow-hidden">
+                              <p className="text-[9px] text-foreground/40 font-semibold uppercase tracking-[0.2em] mb-2">{item.label}</p>
+                              <p className="text-2xl font-semibold tracking-tight text-foreground/90">{item.val}</p>
+                              <p className="text-[8px] text-foreground/30 font-medium mt-1 uppercase tracking-wider">{item.desc}</p>
                             </div>
                           ))}
                         </div>
 
-                        <div className="flex gap-4 pt-4">
-                          <Button variant="ghost" onClick={() => setStep(3)} className="flex-1 h-16 rounded-2xl font-bold text-foreground/50 hover:text-foreground hover:bg-black/5 dark:hover:bg-white/5 transition-all">Atrás</Button>
+                        <div className="flex gap-4 pt-6">
+                          <Button variant="ghost" onClick={() => setStep(3)} className="flex-1 h-14 rounded-xl font-medium text-foreground/60 hover:text-foreground hover:bg-black/5 dark:hover:bg-white/5 transition-colors">Atrás</Button>
                           <Button 
                             onClick={() => setStep(5)} 
-                            className="flex-[2] h-16 text-sm md:text-lg font-black bg-emerald-500 hover:bg-emerald-400 text-black rounded-2xl shadow-[0_15px_30px_rgba(16,185,129,0.3)] hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(16,185,129,0.4)] group transition-all uppercase tracking-widest"
+                            className="flex-[2] h-14 text-sm font-medium bg-emerald-500/90 hover:bg-emerald-400 text-black rounded-xl shadow-[0_2px_10px_rgba(16,185,129,0.2),inset_0_1px_0_rgba(255,255,255,0.3)] hover:shadow-[0_4px_15px_rgba(16,185,129,0.3),inset_0_1px_0_rgba(255,255,255,0.4)] transition-all px-6 tracking-wide"
                           >
-                            Personalizar contenido <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                            Personalizar contenido <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />
                           </Button>
                         </div>
                       </div>
@@ -1052,46 +1049,44 @@ const FlowsightAdsDashboard: React.FC = () => {
                       transition={{ duration: 0.4, ease: "easeOut" }} 
                       className="flex flex-col gap-10 glass-card rounded-[40px] p-8 md:p-12 relative overflow-hidden transition-all duration-500 w-full"
                     >
-                      <div className="absolute -top-32 left-0 w-[600px] h-[600px] bg-emerald-500/[0.08] blur-[180px] rounded-full pointer-events-none" />
+                      <div className="absolute -top-32 left-0 w-[600px] h-[600px] bg-emerald-500/[0.02] blur-[120px] rounded-full pointer-events-none" />
 
                       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 relative z-10">
                         <div>
-                          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 text-emerald-300 text-[10px] font-black uppercase tracking-[0.2em] mb-6">
-                            <ImageIcon className="w-4 h-4" /> 05. Activos Visuales
+                          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-black/5 dark:border-white/5 bg-white/[0.02] text-foreground/60 text-[10px] font-semibold uppercase tracking-[0.2em] mb-6 shadow-sm">
+                            <ImageIcon className="w-3.5 h-3.5" /> 05. Activos Visuales
                           </div>
-                          <h3 className="text-5xl md:text-6xl font-black tracking-tighter leading-[1.05] text-foreground">Potencia <br/><span className="text-emerald-500 italic">el visual</span></h3>
-                          <p className="text-foreground/80 font-medium mt-4 text-xl leading-relaxed max-w-2xl">Selecciona tus plataformas objetivo y elige el formato ideal. Nuestra IA adaptará la estrategia al instante.</p>
+                          <h3 className="text-4xl md:text-5xl font-semibold tracking-tight leading-[1.1] text-foreground/90">Potencia <br/><span className="text-emerald-500/80 italic font-medium">el visual</span></h3>
+                          <p className="text-foreground/60 font-medium mt-4 text-lg leading-relaxed max-w-2xl">Elige el formato ideal y agrega contenido si lo deseas. Nuestra IA adaptará la estrategia al instante.</p>
                         </div>
                       </div>
 
                       <div className="max-w-3xl mx-auto w-full relative z-10 space-y-8">
                         <div className="space-y-4">
-                          <label className="text-[10px] font-black uppercase tracking-[0.25em] text-emerald-600 dark:text-emerald-500/80 ml-2">Formato Visual</label>
-                          <div className="grid grid-cols-2 gap-4">
+                          <label className="text-[10px] font-semibold uppercase tracking-[0.2em] text-foreground/40 ml-1">Formato Visual</label>
+                          <div className="grid grid-cols-2 gap-3">
                             {contentTypes.map((type) => {
                               const Icon = type.icon;
                               const isActive = imageMode === type.id;
                               const colorConfig = {
-                                copyonly: { border: 'hover:border-blue-500/50', selected: 'bg-blue-500/10 border-blue-500/40 shadow-[0_0_20px_rgba(59,130,246,0.2)]', icon: 'text-blue-500' },
-                                image: { border: 'hover:border-purple-500/50', selected: 'bg-purple-500/10 border-purple-500/40 shadow-[0_0_20px_rgba(168,85,247,0.2)]', icon: 'text-purple-500' },
-                                carousel: { border: 'hover:border-amber-500/50', selected: 'bg-amber-500/10 border-amber-500/40 shadow-[0_0_20px_rgba(245,158,11,0.2)]', icon: 'text-amber-500' },
-                                video: { border: 'hover:border-emerald-500/50', selected: 'bg-emerald-500/10 border-emerald-500/40 shadow-[0_0_20px_rgba(16,185,129,0.2)]', icon: 'text-emerald-500' },
+                                copyonly: { border: 'hover:bg-white/[0.02]', selected: 'bg-white/[0.04] border-white/10 ring-1 ring-blue-500/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]', icon: 'text-blue-500/80' },
+                                image: { border: 'hover:bg-white/[0.02]', selected: 'bg-white/[0.04] border-white/10 ring-1 ring-purple-500/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]', icon: 'text-purple-500/80' },
+                                carousel: { border: 'hover:bg-white/[0.02]', selected: 'bg-white/[0.04] border-white/10 ring-1 ring-amber-500/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]', icon: 'text-amber-500/80' },
+                                video: { border: 'hover:bg-white/[0.02]', selected: 'bg-white/[0.04] border-white/10 ring-1 ring-emerald-500/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]', icon: 'text-emerald-500/80' },
                               }[type.id as keyof typeof colorConfig];
 
                               return (
                                 <motion.button
                                   key={type.id}
-                                  whileHover={{ y: -3 }}
-                                  whileTap={{ scale: 0.97 }}
                                   onClick={() => handleImageModeSelect(type.id)}
-                                  className={`p-5 rounded-[24px] border-2 transition-all text-left relative overflow-hidden group flex items-center gap-4 ${isActive ? colorConfig.selected : `bg-white/5 dark:bg-black/40 border-black/10 dark:border-white/5 ${colorConfig.border}`}`}
+                                  className={`p-4 rounded-2xl border transition-all text-left relative overflow-hidden group flex items-center gap-4 ${isActive ? colorConfig.selected : `bg-transparent border-black/5 dark:border-white/[0.03] ${colorConfig.border}`}`}
                                 >
-                                  <div className={`w-10 h-10 rounded-[16px] bg-white/5 flex items-center justify-center shrink-0 ${isActive ? colorConfig.icon : 'text-foreground/50 group-hover:text-foreground'}`}>
+                                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors ${isActive ? 'bg-white/10 ' + colorConfig.icon : 'bg-white/[0.02] text-foreground/40'}`}>
                                     <Icon className="w-5 h-5" />
                                   </div>
                                   <div>
-                                    <p className="font-black text-foreground text-sm tracking-tight">{type.title}</p>
-                                    <p className="text-[9px] text-foreground/50 font-bold uppercase tracking-widest">{type.description}</p>
+                                    <p className={`font-medium text-sm tracking-tight ${isActive ? 'text-foreground/90' : 'text-foreground/70'}`}>{type.title}</p>
+                                    <p className="text-[9px] text-foreground/40 font-medium uppercase tracking-wider mt-0.5">{type.description}</p>
                                   </div>
                                 </motion.button>
                               );
@@ -1141,20 +1136,20 @@ const FlowsightAdsDashboard: React.FC = () => {
                         </motion.div>
                       )}
 
-                      <div className="flex gap-4 pt-6 mt-4 border-t border-black/5 dark:border-white/5 relative z-10 w-full">
-                        <Button variant="ghost" onClick={() => setStep(4)} className="w-48 h-16 rounded-2xl font-bold text-foreground/50 hover:text-foreground hover:bg-white/5 transition-all">Atrás</Button>
+                      <div className="flex gap-4 pt-6 mt-4 border-t border-black/5 dark:border-white/[0.04] relative z-10 w-full">
+                        <Button variant="ghost" onClick={() => setStep(4)} className="w-40 h-14 rounded-xl font-medium text-foreground/60 hover:text-foreground hover:bg-black/5 dark:hover:bg-white/5 transition-colors">Atrás</Button>
                         <Button 
                           onClick={handleGenerate}
                           disabled={isLoading || activePlatforms.length === 0}
-                          className="flex-1 h-16 text-sm md:text-lg font-black bg-emerald-500 hover:bg-emerald-400 text-black rounded-2xl shadow-[0_15px_30px_rgba(16,185,129,0.3)] hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(16,185,129,0.4)] group transition-all uppercase tracking-widest disabled:opacity-50 disabled:pointer-events-none"
+                          className="flex-1 h-14 text-sm font-medium bg-emerald-500/90 hover:bg-emerald-400 text-black rounded-xl shadow-[0_2px_10px_rgba(16,185,129,0.2),inset_0_1px_0_rgba(255,255,255,0.3)] hover:shadow-[0_4px_15px_rgba(16,185,129,0.3),inset_0_1px_0_rgba(255,255,255,0.4)] transition-all px-6 tracking-wide group disabled:opacity-50 disabled:pointer-events-none"
                         >
                           {isLoading ? (
                             <span className="flex items-center">
-                              <RefreshCw className="w-5 h-5 mr-3 animate-spin" /> Procesando Estrategia...
+                              <RefreshCw className="w-4 h-4 mr-3 animate-spin" /> Procesando Estrategia...
                             </span>
                           ) : (
                             <span className="flex items-center">
-                              Lanzar Estrategia Maestra <Zap className="ml-3 w-6 h-6 group-hover:scale-125 transition-transform" />
+                              Lanzar Estrategia Maestra <Zap className="ml-2 w-4 h-4 transition-transform group-hover:scale-110" />
                             </span>
                           )}
                         </Button>
