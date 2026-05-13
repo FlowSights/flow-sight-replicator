@@ -7,7 +7,8 @@ import {
   AlertCircle,
   Sparkles,
   ArrowUpRight,
-  ArrowDownRight
+  ArrowDownRight,
+  BarChart3
 } from "lucide-react";
 import { motion } from "framer-motion";
 
